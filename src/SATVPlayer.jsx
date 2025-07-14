@@ -555,7 +555,7 @@ function VideoPlayer({ videoUrl }) {
               marginTop: '-8.14em',
               position: 'relative',
               left: '55.1em',
-              display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
+              visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
             }}
           >
             {formatTime(duration - currentTime)}
