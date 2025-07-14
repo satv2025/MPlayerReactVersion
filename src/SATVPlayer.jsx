@@ -142,6 +142,14 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
 }
 
 function VideoPlayer({ videoUrl }) {
+  const iconButtonStyle = {
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+  };
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const progressRef = useRef(null);
@@ -641,14 +649,5 @@ function VideoPlayer({ videoUrl }) {
       </div>
     </div>
   );
-
-  const iconButtonStyle = {
-    background: 'none',
-    border: 'none',
-    padding: 0,
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-  };
 }
 export default VideoPlayer;
