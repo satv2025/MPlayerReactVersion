@@ -3,18 +3,40 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "hls.js": "1.6.7",
+    "hls.js": "^1.6.7",
     "react": "17.0.0",
     "react-dom": "17.0.0",
+    "react-to-webcomponent": "^2.0.1",
     "styled-components": "^6.1.19"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:embed": "webpack --config webpack.embed.config.js --mode production"
   },
   "devDependencies": {
-    "react-scripts": "latest"
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "react-scripts": "latest",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.100.1",
+    "webpack-cli": "^6.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

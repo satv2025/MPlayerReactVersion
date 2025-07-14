@@ -1,12 +1,20 @@
 import React from 'react';
-import VideoPlayer from './VideoPlayer';
-import './netflix.css'; // este archivo lo vamos a crear para importar la fuente
+import ReactDOM from 'react-dom';
+import reactToWebComponent from 'react-to-webcomponent';
+
+import SATVPlayer_wrapper from './SATVPlayer.jsx'; // importás el componente React
+import './css/SATVPlayer.css'; // estilos
+
+// Convertís el componente React a Web Component (solo una vez)
+const SATVPlayerElement = reactToWebComponent(SATVPlayer_wrapper, React, ReactDOM);
+if (!customElements.get('satv-player')) {
+  customElements.define('satv-player', SATVPlayerElement);
+}
 
 function App() {
   return (
-    <div className="app">
-      <h1>Mi Reproductor HLS con React</h1>
-      <VideoPlayer url="https://cdn.jsdelivr.net/gh/satv2025/media@main/videos/app/e5/Asesinato-Para-Principiantes-T1-E5.m3u8" />
+    <div>
+      <satv-player></satv-player> {/* Usás el web component */}
     </div>
   );
 }
