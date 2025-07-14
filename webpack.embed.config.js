@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
   entry: "./src/embed.js",
   output: {
-    path: path.resolve(__dirname, "build"),  // acá va 'public/build'
+    path: path.resolve(__dirname, "public/build"),  // acá va 'public/build'
     filename: "SATVPlayer.js",
     library: "SATVPlayer",
     libraryTarget: "umd",
