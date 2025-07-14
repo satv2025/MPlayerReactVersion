@@ -654,18 +654,18 @@ function VideoPlayer({ videoUrl }) {
           </div>
   
           <button onClick={toggleFullscreen} style={iconButtonStyle}>
-            <img
-              src={
-                fullscreen
-                  ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
-                  : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
-              }
-              alt="Fullscreen toggle"
-              style={{ width: 40, height: 40, marginRight: '0.7em' }}
-            />
-          </button>
-          <button
-  style={{ ...iconButtonStyle, position: 'absolute', left: '127em', top: '3.2em', }}
+  <img
+    src={
+      fullscreen
+        ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
+        : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
+    }
+    alt="Fullscreen toggle"
+    style={{ width: 40, height: 40, marginRight: '3em' }}
+  />
+</button>
+<button
+  style={{ ...iconButtonStyle, marginRight: '1.6em' }}
   // Sin funcionalidad por ahora
 >
   <img
