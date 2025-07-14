@@ -173,7 +173,13 @@ function VideoPlayer({ videoUrl }) {
   const hideControlsTimeout = useRef(null);
 
   const resetHideTimeout = () => {
+    // Mostrar controles inmediatamente cuando hay movimiento
+    setShouldHideTimeAndBar(false);
+  
+    // Limpiar timeout anterior
     clearTimeout(hideControlsTimeout.current);
+  
+    // Programar ocultar controles después de 3 segundos sin movimiento
     hideControlsTimeout.current = setTimeout(() => {
       setShouldHideTimeAndBar(true);
     }, 3000);
@@ -430,7 +436,6 @@ function VideoPlayer({ videoUrl }) {
           height: '100%',
           objectFit: 'contain',
           backgroundColor: 'black',
-          cursor: 'pointer',
           display: 'block',
         }}
         onClick={togglePlay}
