@@ -183,7 +183,7 @@ function VideoPlayer() {
     } else {
       console.error('Este navegador no soporta HLS');
     }
-  }, [videoUrl]);  // <--- agregá videoUrl como dependencia  
+  }, [videoUrl]);
 
   useEffect(() => {
     const video = videoRef.current;
