@@ -623,7 +623,7 @@ function VideoPlayer({ videoUrl }) {
                       }}
                       style={{
                         padding: '5px 10px',
-                        backgroundColor: sp === speed ? '#e50914' : 'transparent',
+                        backgroundColor: sp === speed ? 'transparent' : 'transparent',
                         border: 'none',
                         color: sp === speed ? 'white' : 'gray',
                         cursor: 'pointer',
