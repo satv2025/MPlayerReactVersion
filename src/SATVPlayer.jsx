@@ -143,7 +143,6 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
 
 function VideoPlayer({ videoUrl }) {
   const videoRef = useRef(null);
-
   const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const containerRef = useRef(null);
@@ -168,17 +167,31 @@ function VideoPlayer({ videoUrl }) {
       console.error("No video URL provided");
       return;
     }
-
+  
+    let hls;
+  
     if (Hls.isSupported()) {
-      const hls = new Hls();
+      hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
+      video.addEventListener("loadedmetadata", () => {
+        video.play().catch(() => {});
+      });
     } else {
       console.error("Este navegador no soporta HLS");
     }
-  }, [videoUrl]);
+  
+    return () => {
+      if (hls) {
+        hls.destroy();
+      }
+    };
+  }, [videoUrl]);  
 
   useEffect(() => {
     const video = videoRef.current;
