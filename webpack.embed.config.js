@@ -3,12 +3,12 @@ const path = require("path");
 module.exports = {
   entry: "./src/embed.js",
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "build"),  // cambiar "dist" por "build"
     filename: "SATVPlayer.js",
     library: "SATVPlayer",
     libraryTarget: "umd",
-    globalObject: "this",  // muy importante
-  },
+    globalObject: "this",
+  },  
   externals: {
     react: "React",
     "react-dom/client": "ReactDOM",
