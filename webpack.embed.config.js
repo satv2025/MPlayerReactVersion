@@ -11,8 +11,8 @@ module.exports = {
   },
   externals: {
     react: "React",
-    "react-dom/client": "ReactDOM",
-  },
+    "react-dom": "ReactDOM",
+  },  
   module: {
     rules: [
       {
