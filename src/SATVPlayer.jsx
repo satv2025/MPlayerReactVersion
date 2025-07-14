@@ -143,10 +143,13 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
 
 function VideoPlayer({ videoUrl }) {
   const videoRef = useRef(null);
-  const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
-  const [showSpeedModal, setShowSpeedModal] = useState(false);
   const containerRef = useRef(null);
   const progressRef = useRef(null);
+  const sliderRef = useRef(null);
+  const hideSpeedTimeout = useRef(null);
+  const inactivityTimer = useRef(null);
+  const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
+  const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [buffering, setBuffering] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -154,12 +157,11 @@ function VideoPlayer({ videoUrl }) {
   const [volume, setVolume] = useState(1);
   const [speed, setSpeed] = useState(1);
   const [fullscreen, setFullscreen] = useState(false);
-  const hideSpeedTimeout = useRef(null);
   const [progressHover, setProgressHover] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [showSlider, setShowSlider] = useState(false);
-  const sliderRef = useRef(null);
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -399,6 +401,8 @@ function VideoPlayer({ videoUrl }) {
         overflow: 'hidden',
         userSelect: 'none',
       }}
+      onMouseMove={resetHideTimeout}
+      onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
       <video
@@ -423,61 +427,72 @@ function VideoPlayer({ videoUrl }) {
           left: 20,
           right: 20,
           color: 'white',
-          display: 'flex',
+          display: shouldHideTimeAndBar ? 'none' : 'flex',
           flexDirection: 'column',
           fontFamily: 'Arial, sans-serif',
           fontSize: 14,
           userSelect: 'none',
         }}
+        onMouseMove={resetHideTimeout}
+        onMouseEnter={resetHideTimeout}
       >
-<div
-  ref={progressRef}
-  onPointerDown={handleProgressPointerDown}
-  onPointerMove={handleProgressPointerMove}
-  onPointerUp={handleProgressPointerUp}
-  onPointerCancel={handleProgressPointerUp}
-  onMouseEnter={() => setProgressHover(true)}
-  onMouseLeave={() => setProgressHover(false)}
-  style={{
-    height: progressHover ? 6 : 4,
-    width: '95.4%',
-    backgroundColor: 'rgb(139 139 139 / 72%)',
-    cursor: 'pointer',
-    position: 'relative',
-    borderRadius: 0,
-    marginBottom: 10,
-    marginLeft: '0.7em',
-    transition: 'height 0.2s ease',
-    display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
-  }}
->
-  <div
-    style={{
-      width: (currentTime / duration) * 100 + '%',
-      backgroundColor: '#e50914',
-      height: '100%',
-      borderRadius: 0,
-      position: 'relative',
-    }}
-  >
-    <div
-      style={{
-        position: 'absolute',
-        right: 0,
-        top: '50%',
-        transform: 'translate(50%, -50%)',
-        width: '1rem',
-        height: '1rem',
-        borderRadius: '50%',
-        backgroundColor: '#e50914',
-        cursor: 'pointer',
-      }}
-    />
-  </div>
-</div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 27, marginBottom: '1em',
-    marginTop: '1.7em', }}>
+        {/* Barra de progreso */}
+        <div
+          ref={progressRef}
+          onPointerDown={handleProgressPointerDown}
+          onPointerMove={handleProgressPointerMove}
+          onPointerUp={handleProgressPointerUp}
+          onPointerCancel={handleProgressPointerUp}
+          onMouseEnter={() => setProgressHover(true)}
+          onMouseLeave={() => setProgressHover(false)}
+          style={{
+            height: progressHover ? 6 : 4,
+            width: '95.4%',
+            backgroundColor: 'rgb(139 139 139 / 72%)',
+            cursor: 'pointer',
+            position: 'relative',
+            borderRadius: 0,
+            marginBottom: 10,
+            marginLeft: '0.7em',
+            transition: 'height 0.2s ease',
+            display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
+          }}
+        >
+          <div
+            style={{
+              width: (currentTime / duration) * 100 + '%',
+              backgroundColor: '#e50914',
+              height: '100%',
+              borderRadius: 0,
+              position: 'relative',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '50%',
+                transform: 'translate(50%, -50%)',
+                width: '1rem',
+                height: '1rem',
+                borderRadius: '50%',
+                backgroundColor: '#e50914',
+                cursor: 'pointer',
+              }}
+            />
+          </div>
+        </div>
+  
+        {/* Controles inferiores (botones y demás) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 27,
+            marginBottom: '1em',
+            marginTop: '1.7em',
+          }}
+        >
           <button onClick={togglePlay} style={iconButtonStyle}>
             <img
               src={
@@ -503,78 +518,106 @@ function VideoPlayer({ videoUrl }) {
               style={{ width: 40, height: 40 }}
             />
           </button>
-
+  
           <VolumeControl
-  volume={volume}
-  onVolumeChange={changeVolume}
-  onSliderVisibilityChange={setVolumeSliderVisible}
-/>
-
-<div
-  style={{
-    flexGrow: 1,
-    textAlign: 'center',
-    userSelect: 'text',
-    fontSize: '15px',
-    marginTop: '-7.9em',
-    position: 'relative',
-    left: '55.1em',
-    visibility: shouldHideTimeAndBar ? 'hidden' : 'visible',
-  }}
->
-  {formatTime(duration - currentTime)}
-</div>
+            volume={volume}
+            onVolumeChange={changeVolume}
+            onSliderVisibilityChange={setVolumeSliderVisible}
+          />
+  
+          <div
+            style={{
+              flexGrow: 1,
+              textAlign: 'center',
+              userSelect: 'text',
+              fontSize: '15px',
+              marginTop: '-7.9em',
+              position: 'relative',
+              left: '55.1em',
+              visibility: shouldHideTimeAndBar ? 'hidden' : 'visible',
+            }}
+          >
+            {formatTime(duration - currentTime)}
+          </div>
+  
+          {/* Control de velocidad */}
           <div
             style={{ position: 'relative', cursor: 'pointer', width: 24 }}
             onMouseEnter={handleMouseEnterSpeed}
             onMouseLeave={handleMouseLeaveSpeed}
           >
-<button
-  style={iconButtonStyle}
-  onMouseEnter={() => setShowSpeedModal(true)}
-  onMouseLeave={() => {
-    // Dejamos que el modal controle si se cierra o no.
-    // No lo cerramos inmediatamente para evitar parpadeo.
-  }}
->
-  <img
-    src="https://static.solargentinotv.com.ar/controls/icons/png/velocidad.png"
-    alt="Speed"
-    style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
-  />
-</button>
-
-{showSpeedModal && (
-  <div
-    className="speed-modal"
-    onMouseEnter={() => setShowSpeedModal(true)}
-    onMouseLeave={() => setShowSpeedModal(false)}
-  >
-    <div style={{ marginBottom: 10 }}>
-      <div style={{ fontWeight: 'bold', fontSize: '30px', marginLeft: '0.8em', marginTop: '0.4em' }}>
-        Velocidad de reproducción
-      </div>
-    </div>
-
-    <div className="speed-options-container">
-      {speeds.map((sp) => (
-        <button
-          key={sp}
-          className={`speed-option ${sp === speed ? 'active' : ''}`}
-          onClick={() => {
-            setSpeed(sp);
-            videoRef.current.playbackRate = sp;
-            setShowSpeedModal(false);
-          }}
-        >
-          {sp}x
-        </button>
-      ))}
-    </div>
-  </div>
-)}
-</div>
-
+            <button
+              style={iconButtonStyle}
+              onMouseEnter={() => setShowSpeedModal(true)}
+              onMouseLeave={() => {
+                /* No cerramos inmediatamente para evitar parpadeo */
+              }}
+            >
+              <img
+                src="https://static.solargentinotv.com.ar/controls/icons/png/velocidad.png"
+                alt="Speed"
+                style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+              />
+            </button>
+  
+            {showSpeedModal && (
+              <div
+                className="speed-modal"
+                onMouseEnter={() => setShowSpeedModal(true)}
+                onMouseLeave={() => setShowSpeedModal(false)}
+                style={{
+                  position: 'absolute',
+                  bottom: '50px',
+                  right: 0,
+                  backgroundColor: 'rgba(0,0,0,0.8)',
+                  padding: '10px',
+                  borderRadius: '5px',
+                  zIndex: 100,
+                  userSelect: 'none',
+                }}
+              >
+                <div style={{ marginBottom: 10 }}>
+                  <div
+                    style={{
+                      fontWeight: 'bold',
+                      fontSize: '30px',
+                      marginLeft: '0.8em',
+                      marginTop: '0.4em',
+                      color: 'white',
+                    }}
+                  >
+                    Velocidad de reproducción
+                  </div>
+                </div>
+  
+                <div className="speed-options-container" style={{ display: 'flex', gap: '10px' }}>
+                  {speeds.map((sp) => (
+                    <button
+                      key={sp}
+                      className={`speed-option ${sp === speed ? 'active' : ''}`}
+                      onClick={() => {
+                        setSpeed(sp);
+                        videoRef.current.playbackRate = sp;
+                        setShowSpeedModal(false);
+                      }}
+                      style={{
+                        padding: '5px 10px',
+                        backgroundColor: sp === speed ? '#e50914' : 'transparent',
+                        border: 'none',
+                        color: sp === speed ? 'white' : 'gray',
+                        cursor: 'pointer',
+                        borderRadius: '3px',
+                        fontWeight: sp === speed ? 'bold' : 'normal',
+                      }}
+                    >
+                      {sp}x
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+  
           <button onClick={toggleFullscreen} style={iconButtonStyle}>
             <img
               src={
@@ -583,7 +626,7 @@ function VideoPlayer({ videoUrl }) {
                   : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
               }
               alt="Fullscreen toggle"
-              style={{ width: 40, height: 40, marginRight: '0.7em',}}
+              style={{ width: 40, height: 40, marginRight: '0.7em' }}
             />
           </button>
         </div>
@@ -591,14 +634,4 @@ function VideoPlayer({ videoUrl }) {
     </div>
   );
 }
-
-const iconButtonStyle = {
-  background: 'none',
-  border: 'none',
-  padding: 0,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-};
-
 export default VideoPlayer;
