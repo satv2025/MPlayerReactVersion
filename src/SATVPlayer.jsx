@@ -664,9 +664,20 @@ function VideoPlayer({ videoUrl }) {
               style={{ width: 40, height: 40, marginRight: '0.7em' }}
             />
           </button>
+          <button
+  style={{ marginLeft: '-3em' }}
+  // Sin funcionalidad por ahora
+>
+  <img
+    src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
+    alt="Captions"
+    style={{ width: 40, height: 40 }}
+  />
+</button>
         </div>
       </div>
     </div>
   );
+  
 }
 export default VideoPlayer;
