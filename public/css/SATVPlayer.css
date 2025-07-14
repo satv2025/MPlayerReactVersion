@@ -50,7 +50,8 @@
 
 .speed-option:active,
 .speed-option.active {
-  font-weight: 700;
+  font-weight: 700 !important;
+  background-color: #ffffff00 !important;
 }
 
 /* Ocultar círculos y etiquetas viejas */
