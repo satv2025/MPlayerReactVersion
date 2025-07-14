@@ -168,19 +168,22 @@ function VideoPlayer() {
 
   useEffect(() => {
     const video = videoRef.current;
-    const hlsUrl =
-      'https://cdn.jsdelivr.net/gh/satv2025/media@main/videos/app/e5/Asesinato-Para-Principiantes-T1-E5.m3u8';
-
+  
+    if (!videoUrl) {
+      console.error("No video URL provided");
+      return;
+    }
+  
     if (Hls.isSupported()) {
       const hls = new Hls();
-      hls.loadSource(hlsUrl);
+      hls.loadSource(videoUrl);
       hls.attachMedia(video);
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = hlsUrl;
+      video.src = videoUrl;
     } else {
       console.error('Este navegador no soporta HLS');
     }
-  }, []);
+  }, [videoUrl]);  // <--- agregá videoUrl como dependencia  
 
   useEffect(() => {
     const video = videoRef.current;
