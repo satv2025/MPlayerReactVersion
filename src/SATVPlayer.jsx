@@ -641,5 +641,14 @@ function VideoPlayer({ videoUrl }) {
       </div>
     </div>
   );
+
+  const iconButtonStyle = {
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+  };
 }
 export default VideoPlayer;
