@@ -162,6 +162,14 @@ function VideoPlayer({ videoUrl }) {
   const [showSlider, setShowSlider] = useState(false);
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
+  const hideControlsTimeout = useRef(null);
+
+  const resetHideTimeout = () => {
+    clearTimeout(hideControlsTimeout.current);
+    hideControlsTimeout.current = setTimeout(() => {
+      setShouldHideTimeAndBar(true);
+    }, 3000);
+  };  
 
   useEffect(() => {
     const video = videoRef.current;
