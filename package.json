@@ -2,6 +2,7 @@
   "name": "satvplayer-embed",
   "version": "1.0.0",
   "scripts": {
+    "build": "npm run build:embed",
     "build:embed": "webpack --config webpack.embed.config.js --mode production"
   },
   "devDependencies": {
