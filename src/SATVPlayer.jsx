@@ -146,6 +146,7 @@ function VideoPlayer({ videoUrl }) {
 
   const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
+  const containerRef = useRef(null);
   const [buffering, setBuffering] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
