@@ -141,20 +141,12 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
   );
 }
 
-function VideoPlayer() {
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.volume = 0.5;
-      setVolume(0.5);
-    }
-  }, []);
-  const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
+function VideoPlayer({ videoUrl }) {
+  const videoRef = useRef(null);
+
+  const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [buffering, setBuffering] = useState(false);
-  const videoRef = useRef(null);
-  const containerRef = useRef(null);
-  const progressRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -162,28 +154,33 @@ function VideoPlayer() {
   const [speed, setSpeed] = useState(1);
   const [fullscreen, setFullscreen] = useState(false);
   const hideSpeedTimeout = useRef(null);
-  const shouldHideTimeAndBar = volumeSliderVisible || showSpeedModal;
-
   const [progressHover, setProgressHover] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
-  
     if (!videoUrl) {
       console.error("No video URL provided");
       return;
     }
-  
+
     if (Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
     } else {
-      console.error('Este navegador no soporta HLS');
+      console.error("Este navegador no soporta HLS");
     }
   }, [videoUrl]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.volume = 0.5;
+      setVolume(0.5);
+    }
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
