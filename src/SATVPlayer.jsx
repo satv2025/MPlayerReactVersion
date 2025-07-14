@@ -665,7 +665,7 @@ function VideoPlayer({ videoUrl }) {
             />
           </button>
           <button
-  style={{ marginLeft: '-3em' }}
+  style={{ ...iconButtonStyle, marginLeft: '-3em' }}
   // Sin funcionalidad por ahora
 >
   <img
