@@ -1,1 +1,31 @@
-<div id="root"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test SATVPlayer</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="/build/SATVPlayer.js"></script>
+  <style>
+    body, html {
+      margin: 0; padding: 0; background: black; height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+    }
+    #player video {
+      max-width: 90vw; max-height: 80vh; outline: none; background: black;
+    }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      SATVPlayerEmbed({
+        elementId: "player",
+        videoUrl: "https://libertadores.solargentinotv.com.ar/ALI-BOC-TELEFE.mp4"
+      });
+    });
+  </script>
+</body>
+</html>
