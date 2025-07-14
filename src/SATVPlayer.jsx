@@ -183,7 +183,10 @@ function VideoPlayer({ videoUrl }) {
         video.play().catch(() => {});
       });
     } else {
-      console.error("Este navegador no soporta HLS");
+      // Si el video es mp4 normal
+      video.src = videoUrl;
+      video.load();
+      video.play().catch(() => {});
     }
   
     return () => {
