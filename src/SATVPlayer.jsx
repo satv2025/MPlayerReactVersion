@@ -552,10 +552,10 @@ function VideoPlayer({ videoUrl }) {
               textAlign: 'center',
               userSelect: 'text',
               fontSize: '15px',
-              marginTop: '-7.9em',
+              marginTop: '-8.14em',
               position: 'relative',
               left: '55.1em',
-              display: shouldHideTimeAndBar ? 'none' : 'block',
+              display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
             }}
           >
             {formatTime(duration - currentTime)}
