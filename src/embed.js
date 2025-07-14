@@ -7,6 +7,6 @@ window.SATVPlayerEmbed = function ({ elementId, videoUrl }) {
   if (el) {
     ReactDOM.render(<SATVPlayer src={videoUrl} />, el);
   } else {
-    console.error("No se encontró el elemento con ID:", elementId);
+    console.error("Elemento no encontrado:", elementId);
   }
 };
