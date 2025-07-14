@@ -270,6 +270,20 @@ function VideoPlayer({ videoUrl }) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.code === 'Space') {
+        e.preventDefault();  // para que no haga scroll
+        togglePlay();
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [toggleFullscreen, togglePlay]);  
+
   // Detectar cambios de fullscreen para actualizar estado
   useEffect(() => {
     const handleFullscreenChange = () => {
