@@ -157,6 +157,10 @@ function VideoPlayer({ videoUrl }) {
   const [fullscreen, setFullscreen] = useState(false);
   const hideSpeedTimeout = useRef(null);
   const [progressHover, setProgressHover] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [showSlider, setShowSlider] = useState(false);
+  const sliderRef = useRef(null);
+  const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
