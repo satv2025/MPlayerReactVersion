@@ -50,7 +50,7 @@ export function EpisodesControl() {
         <img
           src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
           alt="Episodios"
-          style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+          style={{ width: 40, height: 40, marginLeft: '0' }}
         />
       </button>
 
