@@ -699,7 +699,7 @@ function VideoPlayer({ videoUrl }) {
       ...iconButtonStyle,
       width: '40px',
       height: '40px',
-      display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
+      visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
     }}
     
     >
