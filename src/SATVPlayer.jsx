@@ -680,7 +680,7 @@ function VideoPlayer({ videoUrl }) {
       <img
         src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
         alt="Captions"
-        style={{ width: 40, height: 40 }}
+        style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
   </div>
