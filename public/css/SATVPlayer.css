@@ -157,7 +157,6 @@ img {
   transition: transform 0.3s ease; /* transición suave */
   width: 46px !important;
   height: 46px !important;
-  transform: ;
 }
 
 img:hover {
