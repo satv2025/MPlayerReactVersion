@@ -96,7 +96,7 @@ const EpisodesModal = () => {
               <img src={ep.image} alt={ep.title} />
               <div className="episode-info">
                 <h4>{ep.title}</h4>
-                <p>{ep.description.slice(0, 60)}...</p>
+                <p>{ep.description}</p>
               </div>
             </div>
           ))}
