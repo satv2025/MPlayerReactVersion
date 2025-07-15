@@ -216,8 +216,8 @@ function VideoPlayer({ videoUrl }) {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!videoUrl) {
-      console.error("No video URL provided");
+    if (!video || !videoUrl) {
+      console.error("No se encontró el video o no se proporcionó URL");
       return;
     }
   
@@ -228,18 +228,30 @@ function VideoPlayer({ videoUrl }) {
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => {});
+        video.play().catch((err) => {
+          console.warn("Error al reproducir (HLS):", err);
+        });
       });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
-      video.addEventListener("loadedmetadata", () => {
-        video.play().catch(() => {});
-      });
+      const onLoadedMetadata = () => {
+        video.play().catch((err) => {
+          console.warn("Error al reproducir (nativo HLS):", err);
+        });
+      };
+      video.addEventListener("loadedmetadata", onLoadedMetadata);
+      // Limpieza del listener
+      return () => {
+        video.removeEventListener("loadedmetadata", onLoadedMetadata);
+        if (hls) hls.destroy();
+      };
     } else {
-      // Si el video es mp4 normal
+      // Video MP4 u otro formato simple
       video.src = videoUrl;
       video.load();
-      video.play().catch(() => {});
+      video.play().catch((err) => {
+        console.warn("Error al reproducir (formato básico):", err);
+      });
     }
   
     return () => {
@@ -768,7 +780,7 @@ function VideoPlayer({ videoUrl }) {
     />
   </button>
 
-  
+  {showEpisodesModal && (
     <div
       className="episodes-modal"
       onMouseEnter={handleMouseEnterEpisodes}
@@ -777,7 +789,7 @@ function VideoPlayer({ videoUrl }) {
         position: 'absolute',
         bottom: '50px',
         right: 0,
-        backgroundColor: 'rgba(0,0,0,0.8)',
+        backgroundColor: '#181818',
         padding: '10px',
         borderRadius: '5px',
         zIndex: 100,
@@ -793,7 +805,7 @@ function VideoPlayer({ videoUrl }) {
             fontWeight: 'bold',
             fontSize: '24px',
             marginLeft: '0.8em',
-            marginTop: '0.4em',
+            marginTop: '0.14em',
             color: 'white',
           }}
         >
@@ -821,19 +833,21 @@ function VideoPlayer({ videoUrl }) {
             gap: '10px',
             padding: '5px',
             borderRadius: '3px',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
           }}
         >
-          <img
-            src={ep.image}
-            alt={ep.title}
-            style={{
-              width: '60px',
-              height: '40px',
-              objectFit: 'cover',
-              borderRadius: '3px',
-            }}
-          />
+<img
+  src={ep.image}
+  alt={ep.title}
+  style={{
+    width: '60px',
+    height: '40px',
+    objectFit: 'cover',
+    borderRadius: '3px',
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.all = 'unset';
+  }}
+/>
           <div style={{ color: 'white' }}>
             <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
             <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
@@ -843,6 +857,7 @@ function VideoPlayer({ videoUrl }) {
         </div>
       ))}
     </div>
+  )}
 </div>
         </div>
       </div>
