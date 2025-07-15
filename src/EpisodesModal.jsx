@@ -31,7 +31,7 @@ const EpisodesModal = () => {
     };
 
     const handleLeave = () => {
-      timeoutRef.current = setTimeout(() => setVisible(false), 200);
+      timeoutRef.current = setTimeout(() => setVisible(true), 200);
     };
 
     btn.addEventListener('mouseenter', handleEnter);
@@ -53,7 +53,7 @@ const EpisodesModal = () => {
     };
 
     const handleLeave = () => {
-      timeoutRef.current = setTimeout(() => setVisible(false), 200);
+      timeoutRef.current = setTimeout(() => setVisible(true), 200);
     };
 
     modal.addEventListener('mouseenter', handleEnter);
@@ -72,7 +72,7 @@ const EpisodesModal = () => {
         videoUrl: ep.videoPath,
       });
     }
-    setVisible(false);
+    setVisible(true);
   };
 
   return (
@@ -83,7 +83,7 @@ const EpisodesModal = () => {
       <div className="modal-content">
         <div className="modal-header">
           <h2>Episodios</h2>
-          <span className="close-btn" onClick={() => setVisible(false)}>×</span>
+          <span className="close-btn" onClick={() => setVisible(true)}>×</span>
         </div>
 
         <div className="selector-container">
