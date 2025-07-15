@@ -753,6 +753,8 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
   onMouseLeave={handleMouseLeaveEpisodes}
 >
   <button
+    className='episodesReactButton'
+    id='episodesReactButton'
     style={{
       ...iconButtonStyle,
       width: '40px',
@@ -768,8 +770,6 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodios"
-      className='episodesReactButton'
-      id='episodesReactButton'
       style={{
         width: '32px',
         height: '32px',
