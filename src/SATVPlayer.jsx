@@ -715,18 +715,40 @@ function VideoPlayer({ videoUrl }) {
   </div>
 {/* Control de episodios */}
 <div
-  style={{ position: 'relative', cursor: 'pointer', width: 40 }}
+  style={{
+    position: 'relative',
+    cursor: 'pointer',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}
   onMouseEnter={handleMouseEnterEpisodes}
   onMouseLeave={handleMouseLeaveEpisodes}
 >
   <button
-    style={iconButtonStyle}
+    style={{
+      ...iconButtonStyle,
+      width: '40px',
+      height: '40px',
+      padding: 0,
+      margin: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
     onMouseEnter={handleMouseEnterEpisodes}
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodios"
-      style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+      style={{
+        width: '32px',
+        height: '32px',
+        objectFit: 'contain',
+        display: 'block',
+      }}
     />
   </button>
 
