@@ -708,7 +708,10 @@ function VideoPlayer({ videoUrl }) {
      style={{ width: 40, height: 40, marginLeft: '-17.3em', }}
      />
      </button>
-     <EpisodesModal />
+     <EpisodesModal
+  volumeSliderVisible={volumeSliderVisible}
+  showSpeedModal={showSpeedModal}
+/>
   </div>
         </div>
       </div>

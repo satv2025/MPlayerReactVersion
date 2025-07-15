@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
-const EpisodesModal = () => {
+const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
   const [episodes, setEpisodes] = useState([]);
   const [visible, setVisible] = useState(false);
   const modalRef = useRef(null);
@@ -79,6 +79,9 @@ const EpisodesModal = () => {
     <div
       ref={modalRef}
       className={`modal ${visible ? 'visible' : 'hidden'}`}
+      style={{
+        display: volumeSliderVisible || showSpeedModal ? 'none' : 'block',
+      }}
     >
       <div className="modal-content">
         <div className="modal-header">
@@ -105,14 +108,5 @@ const EpisodesModal = () => {
     </div>
   );
 };
-
-// 🔻 MONTAJE en #episodes-root
-document.addEventListener('DOMContentLoaded', () => {
-  const rootEl = document.getElementById('episodes-root');
-  if (rootEl) {
-    const root = createRoot(rootEl);
-    root.render(<EpisodesModal />);
-  }
-});
 
 export default EpisodesModal;
