@@ -196,7 +196,7 @@ function VideoPlayer({ videoUrl }) {
   // 🚪⬅️ HANDLE MOUSE LEAVE EPISODES
   const handleMouseLeaveEpisodes = () => {
     episodesTimeout.current = setTimeout(() => {
-      setShowEpisodesModal(false);
+      setShowEpisodesModal(true);
     }, 200);
   };
 
