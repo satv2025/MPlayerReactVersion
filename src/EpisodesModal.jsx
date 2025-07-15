@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { createRoot } from 'react-dom/client';
 
 const EpisodesModal = () => {
   const [episodes, setEpisodes] = useState([]);
@@ -104,5 +105,14 @@ const EpisodesModal = () => {
     </div>
   );
 };
+
+// 🔻 MONTAJE en #episodes-root
+document.addEventListener('DOMContentLoaded', () => {
+  const rootEl = document.getElementById('episodes-root');
+  if (rootEl) {
+    const root = createRoot(rootEl);
+    root.render(<EpisodesModal />);
+  }
+});
 
 export default EpisodesModal;
