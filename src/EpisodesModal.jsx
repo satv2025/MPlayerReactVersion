@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
 
 const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
   const [episodes, setEpisodes] = useState([]);
@@ -7,7 +6,6 @@ const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
   const modalRef = useRef(null);
   const timeoutRef = useRef(null);
 
-  // Leer datos desde el DOM
   useEffect(() => {
     const dataEl = document.getElementById('episodes-data');
     if (dataEl) {
@@ -20,7 +18,6 @@ const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
     }
   }, []);
 
-  // Mostrar/Ocultar modal al pasar sobre botón
   useEffect(() => {
     const btn = document.getElementById('episodesButtonReact');
     if (!btn) return;
@@ -43,7 +40,6 @@ const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
     };
   }, []);
 
-  // Ocultar modal si el cursor sale de él
   useEffect(() => {
     const modal = modalRef.current;
     if (!modal) return;
