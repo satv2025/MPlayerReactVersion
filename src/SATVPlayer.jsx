@@ -531,7 +531,7 @@ function VideoPlayer({ videoUrl }) {
             marginBottom: 10,
             marginLeft: '0.7em',
             transition: 'height 0.2s ease',
-            display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
+            display: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'none' : 'block',
           }}
         >
           <div
@@ -820,7 +820,6 @@ function VideoPlayer({ videoUrl }) {
             padding: '5px',
             borderRadius: '3px',
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
           }}
         >
           <img
