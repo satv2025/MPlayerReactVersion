@@ -162,6 +162,7 @@ function VideoPlayer({ videoUrl }) {
   // 🛠️🔧 REFS
   const episodesTimeout = useRef(null);
   const videoRef = useRef(null);
+  const [currentVideoUrl, setCurrentVideoUrl] = useState("");
   const containerRef = useRef(null);
   const progressRef = useRef(null);
   const sliderRef = useRef(null);
@@ -215,51 +216,51 @@ function VideoPlayer({ videoUrl }) {
   };
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !videoUrl) {
-      console.error("No se encontró el video o no se proporcionó URL");
-      return;
+    // Leer JSON embebido
+    const jsonData = document.getElementById("episodes-data")?.textContent;
+    if (jsonData) {
+      setEpisodes(JSON.parse(jsonData));
+      // Por defecto, cargo el primer episodio
+      const parsed = JSON.parse(jsonData);
+      if (parsed.length > 0) setVideoUrl(parsed[0].videoPath);
     }
-  
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!videoUrl) return;
+
     let hls;
-  
+
     if (Hls.isSupported()) {
       hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch((err) => {
-          console.warn("Error al reproducir (HLS):", err);
-        });
+        video.play().catch(() => {});
       });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
-      const onLoadedMetadata = () => {
-        video.play().catch((err) => {
-          console.warn("Error al reproducir (nativo HLS):", err);
-        });
-      };
-      video.addEventListener("loadedmetadata", onLoadedMetadata);
-      // Limpieza del listener
-      return () => {
-        video.removeEventListener("loadedmetadata", onLoadedMetadata);
-        if (hls) hls.destroy();
-      };
+      video.addEventListener("loadedmetadata", () => {
+        video.play().catch(() => {});
+      });
     } else {
-      // Video MP4 u otro formato simple
       video.src = videoUrl;
       video.load();
-      video.play().catch((err) => {
-        console.warn("Error al reproducir (formato básico):", err);
-      });
+      video.play().catch(() => {});
     }
-  
+
     return () => {
-      if (hls) {
-        hls.destroy();
-      }
+      if (hls) hls.destroy();
     };
-  }, [videoUrl]);  
+  }, [videoUrl]);
+
+  // Función para cambiar episodio y reproducir
+  const playEpisode = (index) => {
+    setVideoUrl(episodes[index].videoPath);
+    setShowEpisodesModal(false);
+    // Podés agregar más lógica, como cambiar texto de título si querés
+  };
 
   useEffect(() => {
     const video = videoRef.current;
@@ -838,16 +839,16 @@ function VideoPlayer({ videoUrl }) {
 <img
   src={ep.image}
   alt={ep.title}
+  id="epImage"
+  className="epImage"
   style={{
     width: '60px',
     height: '40px',
     objectFit: 'cover',
     borderRadius: '3px',
   }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.all = 'unset';
-  }}
 />
+
           <div style={{ color: 'white' }}>
             <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
             <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
