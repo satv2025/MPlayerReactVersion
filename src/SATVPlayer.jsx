@@ -5,78 +5,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import Hls from 'hls.js';
 import { createGlobalStyle } from 'styled-components';
 
-export function EpisodesButton({ volumeSliderVisible, showSpeedModal }) {
-  const [showEpisodesModal, setShowEpisodesModal] = useState(false);
-  const [episodes, setEpisodes] = useState([]);
-
-  useEffect(() => {
-    const dataEl = document.getElementById('episodes-data');
-    if (dataEl) {
-      try {
-        const data = JSON.parse(dataEl.textContent || '[]');
-        setEpisodes(data);
-      } catch (e) {
-        console.error('Error parsing episodes data:', e);
-      }
-    }
-  }, []);
-
-  return (
-    <div
-      className="episodes-button-container"
-      onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(false)}
-    >
-      <button className="episodes-button">
-        <img
-          src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-          alt="Episodes"
-          style={{ width: 40, height: 40 }}
-        />
-      </button>
-
-      {showEpisodesModal && (
-  <div
-    className="episodes-modal"
-    onMouseEnter={() => setShowEpisodesModal(true)}
-    onMouseLeave={() => setShowEpisodesModal(false)}
-    style={{ visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible' }}
-  >
-          <div className="episodes-modal-title">Episodios</div>
-
-          {episodes.map((ep, index) => (
-            <div
-              key={index}
-              className="episode-item"
-              onClick={() => {
-                if (typeof window.SATVPlayerEmbed === 'function') {
-                  window.SATVPlayerEmbed({
-                    elementId: 'player',
-                    videoUrl: ep.videoPath,
-                  });
-                }
-
-                const epnameEl = document.getElementById('epname');
-                if (epnameEl) {
-                  epnameEl.textContent = `E${index + 1} ${ep.title}`;
-                }
-
-                setShowEpisodesModal(false);
-              }}
-            >
-              <img src={ep.image} alt={ep.title} />
-              <div className="episode-info">
-                <h4>{ep.title}</h4>
-                <p>{ep.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 // 4. Archivos de estilo (CSS, SCSS, etc.)
 import './css/SATVPlayer.css';
 
@@ -759,6 +687,58 @@ function VideoPlayer({ videoUrl }) {
         style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
+    <div
+      className="episodes-button-container"
+      onMouseEnter={() => setShowEpisodesModal(true)}
+      onMouseLeave={() => setShowEpisodesModal(false)}
+    >
+      <button className="episodes-button">
+        <img
+          src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+          alt="Episodes"
+          style={{ width: 40, height: 40 }}
+        />
+      </button>
+
+      {showEpisodesModal && (
+  <div
+    className="episodes-modal"
+    onMouseEnter={() => setShowEpisodesModal(true)}
+    onMouseLeave={() => setShowEpisodesModal(false)}
+    style={{ visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible' }}
+  >
+          <div className="episodes-modal-title">Episodios</div>
+
+          {episodes.map((ep, index) => (
+            <div
+              key={index}
+              className="episode-item"
+              onClick={() => {
+                if (typeof window.SATVPlayerEmbed === 'function') {
+                  window.SATVPlayerEmbed({
+                    elementId: 'player',
+                    videoUrl: ep.videoPath,
+                  });
+                }
+              
+                const epnameEl = document.getElementById('epname');
+                if (epnameEl) {
+                  epnameEl.textContent = `E${index + 1} ${ep.title}`;
+                }
+              
+                setShowEpisodesModal(false);
+              }}              
+            >
+              <img src={ep.image} alt={ep.title} />
+              <div className="episode-info">
+                <h4>{ep.title}</h4>
+                <p>{ep.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   </div>
         </div>
       </div>
