@@ -693,9 +693,9 @@ function VideoPlayer({ videoUrl }) {
     </button>
 
     <button
+    className="episodesButtonReact"
+    id="episodesButtonReact"
     style={{
-      className: 'episodesButtonReact',
-      id: 'episodesButtonReact',
       ...iconButtonStyle,
       width: '40px',
       height: '40px',
