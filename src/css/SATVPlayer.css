@@ -163,26 +163,112 @@ img:hover {
   transform: scale(1.2);
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: none; /* React cambiará a flex para mostrar */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+/* Botón de episodios */
+#episodesButtonReact img {
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
+#episodesButtonReact img:hover {
+  transform: scale(1.2);
+}
+
+/* Modal (sin fondo translúcido) */
+.modal {
+  position: fixed;
+  top: 5em;
+  right: 1em;
+  z-index: 9999;
+  pointer-events: none; /* evita que bloquee eventos fuera del contenido */
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal.visible {
+  display: flex;
+}
+
+/* Contenido del modal */
 .modal-content {
-  background: #181818;
+  background: #222;
   padding: 20px;
   border-radius: 10px;
   overflow-y: auto;
-  width: 90%;
+  width: 90vw;
   max-width: 749px;
   max-height: 90vh;
   color: #ccc;
-  box-shadow: 0 0 10px rgba(0,0,0,0.7);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+/* Cabecera */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  color: #fff;
+}
+
+.close-btn {
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #ccc;
+}
+
+/* Selector de episodios */
+.selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 2em;
+}
+
+/* Estilos de cada episodio */
+.episode {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 21px;
+  padding: 21px 2em;
+  border-bottom: 1px solid #444;
+  border-radius: 5px;
+  background: transparent;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.episode:hover {
+  background: #444;
+}
+
+.episode img {
+  width: 132px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.episode-info h4 {
+  margin: 0 0 5px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.episode-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* Borde superior en el primer episodio */
+.e1item {
+  border-top: 1px solid #444;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }

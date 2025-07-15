@@ -19,7 +19,7 @@ const EpisodesModal = () => {
     }
   }, []);
 
-  // Conectarse al botón que ya existe en SATVPlayer.jsx
+  // Mostrar/Ocultar modal al pasar sobre botón
   useEffect(() => {
     const btn = document.getElementById('episodesButtonReact');
     if (!btn) return;
@@ -42,18 +42,27 @@ const EpisodesModal = () => {
     };
   }, []);
 
-  // Ocultar modal al salir
+  // Ocultar modal si el cursor sale de él
   useEffect(() => {
     const modal = modalRef.current;
     if (!modal) return;
 
-    const handleLeave = () => setVisible(false);
+    const handleEnter = () => {
+      clearTimeout(timeoutRef.current);
+    };
+
+    const handleLeave = () => {
+      timeoutRef.current = setTimeout(() => setVisible(false), 200);
+    };
+
+    modal.addEventListener('mouseenter', handleEnter);
     modal.addEventListener('mouseleave', handleLeave);
 
     return () => {
+      modal.removeEventListener('mouseenter', handleEnter);
       modal.removeEventListener('mouseleave', handleLeave);
     };
-  }, [modalRef]);
+  }, []);
 
   const handlePlay = (ep) => {
     if (typeof SATVPlayerEmbed === 'function') {
@@ -65,13 +74,10 @@ const EpisodesModal = () => {
     setVisible(false);
   };
 
-  if (!visible) return null;
-
   return (
     <div
       ref={modalRef}
-      className="modal"
-      style={{ display: 'flex' }}
+      className={`modal ${visible ? 'visible' : 'hidden'}`}
     >
       <div className="modal-content">
         <div className="modal-header">
