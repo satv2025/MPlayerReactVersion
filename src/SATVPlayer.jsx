@@ -193,26 +193,23 @@ function VideoPlayer({ videoUrl }) {
   
     let hls;
   
-    const handleAutoplay = () => {
-      video.play()
-        .then(() => {
-          setPlaying(true);  // <-- Actualiza el estado para que el ícono muestre "pause"
-        })
-        .catch(() => {});
-    };
-  
     if (Hls.isSupported()) {
       hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, handleAutoplay);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
-      video.addEventListener("loadedmetadata", handleAutoplay);
+      video.addEventListener("loadedmetadata", () => {
+        video.play().catch(() => {});
+      });
     } else {
+      // Si el video es mp4 normal
       video.src = videoUrl;
       video.load();
-      handleAutoplay();
+      video.play().catch(() => {});
     }
   
     return () => {
