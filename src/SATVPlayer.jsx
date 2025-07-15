@@ -148,7 +148,7 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
   );
 }
 
-function VideoPlayer({ videoUrl }) {
+function VideoPlayer({ videoUrl: propVideoUrl }) {
   // 🎨✨ ICON BUTTON STYLE
   const iconButtonStyle = {
     background: 'none',
@@ -162,7 +162,7 @@ function VideoPlayer({ videoUrl }) {
   // 🛠️🔧 REFS
   const episodesTimeout = useRef(null);
   const videoRef = useRef(null);
-  const [currentVideoUrl, setCurrentVideoUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const containerRef = useRef(null);
   const progressRef = useRef(null);
   const sliderRef = useRef(null);
