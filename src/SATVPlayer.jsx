@@ -653,41 +653,32 @@ function VideoPlayer({ videoUrl }) {
             )}
           </div>
   
-{/* Contenedor relativo para fullscreen, captions y episodes */}
-<div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-  {/* Botón Fullscreen */}
-  <button onClick={toggleFullscreen} style={iconButtonStyle}>
-    <img
-      src={
-        fullscreen
-          ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
-          : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
-      }
-      alt="Fullscreen toggle"
-      style={{ width: 40, height: 40, marginRight: '0.7em' }}
-    />
-  </button>
-
+{/* Contenedor relativo para los botones */}
+<div
+  style={{
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%', // o el ancho que tenga tu control bar
+    padding: '0 1em',
+  }}
+>
   {/* Botón Captions */}
   <button
     style={{
       ...iconButtonStyle,
-      position: 'absolute',
-      left: '-50px',
-      top: '50%',
-      transform: 'translateY(-50%)',
+      width: 40,
+      height: 40,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     }}
-    // Sin funcionalidad por ahora
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
       alt="Captions"
-      style={{
-        width: 40,
-        height: 40,
-        marginLeft: '-7em',
-        marginTop: '0.16em',
-      }}
+      style={{ width: 40, height: 40 }}
     />
   </button>
 
@@ -698,13 +689,38 @@ function VideoPlayer({ videoUrl }) {
       ...iconButtonStyle,
       width: 40,
       height: 40,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     }}
-    // Sin funcionalidad por ahora
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodes"
-      style={{ width: 40, height: 40, }}
+      style={{ width: 40, height: 40 }}
+    />
+  </button>
+
+  {/* Botón Fullscreen */}
+  <button
+    onClick={toggleFullscreen}
+    style={{
+      ...iconButtonStyle,
+      width: 40,
+      height: 40,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <img
+      src={
+        fullscreen
+          ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
+          : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
+      }
+      alt="Fullscreen toggle"
+      style={{ width: 40, height: 40 }}
     />
   </button>
 </div>
