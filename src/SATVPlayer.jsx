@@ -718,7 +718,7 @@ function VideoPlayer({ videoUrl }) {
         borderRadius: '5px',
         zIndex: 100,
         userSelect: 'none',
-        width: '300px', // ajusta según tu diseño
+        width: '300px',
         maxHeight: '400px',
         overflowY: 'auto',
       }}
@@ -737,13 +737,17 @@ function VideoPlayer({ videoUrl }) {
         </div>
       </div>
 
-      {/* Aquí mapea tus episodios, ejemplo: */}
       {episodes.map((ep, index) => (
         <div
           key={index}
           className="episode-item"
           onClick={() => {
-            if (typeof window.SATVPlayerEmbed === 'function') {
+            const videoEl = document.querySelector('#player video');
+            if (videoEl) {
+              videoEl.src = ep.videoPath;
+              videoEl.play();
+            } else if (typeof window.SATVPlayerEmbed === 'function') {
+              // fallback solo si no hay video existente
               window.SATVPlayerEmbed({
                 elementId: 'player',
                 videoUrl: ep.videoPath,
@@ -771,7 +775,12 @@ function VideoPlayer({ videoUrl }) {
           <img
             src={ep.image}
             alt={ep.title}
-            style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
+            style={{
+              width: '60px',
+              height: '40px',
+              objectFit: 'cover',
+              borderRadius: '3px',
+            }}
           />
           <div style={{ color: 'white' }}>
             <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
