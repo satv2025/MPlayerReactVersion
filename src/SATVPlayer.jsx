@@ -636,7 +636,7 @@ function VideoPlayer({ videoUrl }) {
                         setShowSpeedModal(false);
                       }}
                       style={{
-                        padding: '5px 8px',
+                        padding: '5px px',
                         backgroundColor: sp === speed ? 'transparent' : 'transparent',
                         border: 'none',
                         color: sp === speed ? 'white' : 'gray',
@@ -653,16 +653,27 @@ function VideoPlayer({ videoUrl }) {
             )}
           </div>
   
-{/* Contenedor para Fullscreen y Captions */}
+{/* Contenedor de los 3 botones: Fullscreen, Captions, Episodes */}
 <div
   style={{
-    position: 'relative',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '0.5em', // espacio entre botones
+    width: '100%', // opcional, si querés que ocupen el ancho del contenedor padre
   }}
 >
+  {/* Botón Captions */}
+  <button style={iconButtonStyle} className="captionsButton">
+    <img
+      src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
+      alt="Captions"
+      style={{ width: 40, height: 40 }}
+    />
+  </button>
+
   {/* Botón Fullscreen */}
-  <button onClick={toggleFullscreen} style={iconButtonStyle}>
+  <button onClick={toggleFullscreen} style={iconButtonStyle} className="fullscreenButton">
     <img
       src={
         fullscreen
@@ -670,50 +681,12 @@ function VideoPlayer({ videoUrl }) {
           : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
       }
       alt="Fullscreen toggle"
-      style={{ width: 40, height: 40, marginRight: '0.7em' }}
-    />
-  </button>
-
-  {/* Botón Captions */}
-  <button
-    style={{
-      ...iconButtonStyle,
-      width: 40,
-      height: 40,
-      position: 'absolute',
-      left: '-50px', // Ajustalo según lo que necesites
-      top: '50%',
-      transform: 'translateY(-50%)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 0,
-    }}
-  >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
-      alt="Captions"
       style={{ width: 40, height: 40 }}
     />
   </button>
-</div>
 
-{/* Contenedor separado para Episodes */}
-<div
-  style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  }}
->
-  <button
-    className="episodesButtonReact"
-    style={{
-      ...iconButtonStyle,
-      width: 40,
-      height: 40,
-    }}
-  >
+  {/* Botón Episodes */}
+  <button style={{ ...iconButtonStyle, marginLeft: 'auto' }} className="episodesButton">
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodes"
