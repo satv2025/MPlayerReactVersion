@@ -1,15 +1,7 @@
-// 1. React y hooks
 import React, { useState, useRef, useEffect } from 'react';
-
-// 2. Librerías de terceros
+import './css/SATVPlayer.css';
 import Hls from 'hls.js';
 import { createGlobalStyle } from 'styled-components';
-
-// 3. Componentes internos
-import EpisodesModal from './EpisodesModal';
-
-// 4. Archivos de estilo (CSS, SCSS, etc.)
-import './css/SATVPlayer.css';
 
 export const GlobalStyle = createGlobalStyle`
   @import url('https://fuentes.solargentinotv.com.ar/netflixsans.css');
@@ -27,7 +19,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const speeds = [0.5, 0.75, 1, 1.25, 1.5,];
+const speeds = [0.5, 0.75, 1, 1.25, 1.5];
 
 
 function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
@@ -671,7 +663,7 @@ function VideoPlayer({ videoUrl }) {
             : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
         }
         alt="Fullscreen toggle"
-        style={{ width: 40, height: 40, marginRight: '-2.3em' }}
+        style={{ width: 40, height: 40, marginRight: '0.7em' }}
       />
     </button>
 
@@ -683,6 +675,7 @@ function VideoPlayer({ videoUrl }) {
         top: '50%',
         transform: 'translateY(-50%)',
       }}
+      // Sin funcionalidad por ahora
     >
       <img
         src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
@@ -690,91 +683,6 @@ function VideoPlayer({ videoUrl }) {
         style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
-
-{/* Control de episodios */}
-<div
-  style={{ position: 'relative', cursor: 'pointer', width: 24 }}
-  onMouseEnter={() => setShowEpisodesModal(true)}
-  onMouseLeave={() => setShowEpisodesModal(false)}
->
-  <button
-    style={{
-      ...iconButtonStyle,
-      width: '40px',
-      height: '40px',
-      marginLeft: '-17.3em',
-    }}
-  >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodes"
-      style={{ width: 40, height: 40 }}
-    />
-  </button>
-
-  {showEpisodesModal && (
-    <div
-      className="episodes-modal"
-      onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(false)}
-      style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 100,
-        userSelect: 'none',
-        width: '300px',
-        maxHeight: '400px',
-        overflowY: 'auto',
-      }}
-    >
-      <div
-        style={{
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: '20px',
-          marginBottom: '10px',
-        }}
-      >
-        Episodios
-      </div>
-
-      {episodes.map((ep, index) => (
-        <div
-          key={index}
-          onClick={() => {
-            if (typeof SATVPlayerEmbed === 'function') {
-              SATVPlayerEmbed({
-                elementId: 'player',
-                videoUrl: ep.videoPath,
-              });
-            }
-            setShowEpisodesModal(false);
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '10px',
-            cursor: 'pointer',
-          }}
-        >
-          <img
-            src={ep.image}
-            alt={ep.title}
-            style={{ width: '60px', height: 'auto', marginRight: '10px' }}
-          />
-          <div style={{ color: 'white' }}>
-            <h4 style={{ margin: 0 }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '0.8em' }}>{ep.description}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
   </div>
         </div>
       </div>
