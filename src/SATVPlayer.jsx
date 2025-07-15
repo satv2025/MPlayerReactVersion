@@ -683,6 +683,21 @@ function VideoPlayer({ videoUrl }) {
         style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
+
+    <button
+    style={{
+      ...iconButtonStyle,
+      width: '40px',
+      height: '40px',
+    }}
+    
+    >
+    <img
+     src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+     alt="Episodes"
+     style={{ width: 40, height: 40, marginLeft: '-5em', }}
+     />
+     </button>
   </div>
         </div>
       </div>
