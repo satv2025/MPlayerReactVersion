@@ -178,6 +178,21 @@ function VideoPlayer({ videoUrl }) {
   const [showSlider, setShowSlider] = useState(false);
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
+  const SATVPlayer = () => {
+    const [episodesVisible, setEpisodesVisible] = useState(false);
+  
+    return (
+      <>
+        <EpisodesModal onVisibilityChange={setEpisodesVisible} />
+  
+        {/* Ocultás los controles cuando el modal está abierto */}
+        <div style={{ display: episodesVisible ? 'none' : 'block' }}>
+          <ProgressBar />
+          <CurrentTimeDisplay />
+        </div>
+      </>
+    );
+  };  
   const hideControlsTimeout = useRef(null);
 
   const resetHideTimeout = () => {
