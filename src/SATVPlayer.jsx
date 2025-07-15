@@ -742,18 +742,12 @@ function VideoPlayer({ videoUrl }) {
           key={index}
           className="episode-item"
           onClick={() => {
-            const videoEl = document.querySelector('#player video');
-            if (videoEl) {
-              videoEl.src = ep.videoPath;
-              videoEl.play();
-            } else if (typeof window.SATVPlayerEmbed === 'function') {
-              // fallback solo si no hay video existente
+            if (typeof window.SATVPlayerEmbed === 'function') {
               window.SATVPlayerEmbed({
                 elementId: 'player',
                 videoUrl: ep.videoPath,
               });
-            }
-
+            }            
             const epnameEl = document.getElementById('epname');
             if (epnameEl) {
               epnameEl.textContent = `E${index + 1} ${ep.title}`;
