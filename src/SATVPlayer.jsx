@@ -683,7 +683,6 @@ function VideoPlayer({ videoUrl }) {
       src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
       alt="Captions"
       style={{
-        ...iconButtonStyle,
         width: 40,
         height: 40,
         marginLeft: '-7em',
@@ -699,15 +698,13 @@ function VideoPlayer({ videoUrl }) {
       ...iconButtonStyle,
       width: 40,
       height: 40,
-      marginLeft: '-9em',
-      marginTop: '0.16em',
     }}
     // Sin funcionalidad por ahora
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodes"
-      style={{ width: 40, height: 40 }}
+      style={{ width: 40, height: 40, }}
     />
   </button>
 </div>
