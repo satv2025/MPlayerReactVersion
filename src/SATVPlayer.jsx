@@ -196,7 +196,7 @@ function VideoPlayer({ videoUrl }) {
   // 🚪⬅️ HANDLE MOUSE LEAVE EPISODES
   const handleMouseLeaveEpisodes = () => {
     episodesTimeout.current = setTimeout(() => {
-      setShowEpisodesModal(true);
+      setShowEpisodesModal(false);
     }, 200);
   };
 
@@ -768,7 +768,7 @@ function VideoPlayer({ videoUrl }) {
     />
   </button>
 
-  {showEpisodesModal && (
+  
     <div
       className="episodes-modal"
       onMouseEnter={handleMouseEnterEpisodes}
@@ -811,7 +811,7 @@ function VideoPlayer({ videoUrl }) {
             if (epnameEl) {
               epnameEl.textContent = `E${index + 1} ${ep.title}`;
             }
-            setShowEpisodesModal(true);
+            setShowEpisodesModal(false);
           }}
           style={{
             display: 'flex',
@@ -843,7 +843,6 @@ function VideoPlayer({ videoUrl }) {
         </div>
       ))}
     </div>
-  )}
 </div>
         </div>
       </div>
