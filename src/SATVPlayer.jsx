@@ -687,56 +687,105 @@ function VideoPlayer({ videoUrl }) {
         style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
-      <button className="episodes-button"
-            onMouseEnter={() => setShowEpisodesModal(true)}
-            onMouseLeave={() => setShowEpisodesModal(false)}
-            >
-        <img
-          src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-          alt="Episodes"
-          style={{ width: 40, height: 40 }}
-        />
-      </button>
-
-      {showEpisodesModal && (
-  <div
-    className="episodes-modal"
+  </div>
+  {/* Control de episodios */}
+<div
+  style={{ position: 'relative', cursor: 'pointer', width: 40 }}
+  onMouseEnter={() => setShowEpisodesModal(true)}
+  onMouseLeave={() => setShowEpisodesModal(false)}
+>
+  <button
+    style={iconButtonStyle}
     onMouseEnter={() => setShowEpisodesModal(true)}
-    onMouseLeave={() => setShowEpisodesModal(false)}
-    style={{ visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible' }}
+    onMouseLeave={() => {
+      /* No cerramos inmediatamente para evitar parpadeo */
+    }}
   >
-          <div className="episodes-modal-title">Episodios</div>
+    <img
+      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+      alt="Episodios"
+      style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+    />
+  </button>
 
-          {episodes.map((ep, index) => (
-            <div
-              key={index}
-              className="episode-item"
-              onClick={() => {
-                if (typeof window.SATVPlayerEmbed === 'function') {
-                  window.SATVPlayerEmbed({
-                    elementId: 'player',
-                    videoUrl: ep.videoPath,
-                  });
-                }
-              
-                const epnameEl = document.getElementById('epname');
-                if (epnameEl) {
-                  epnameEl.textContent = `E${index + 1} ${ep.title}`;
-                }
-              
-                setShowEpisodesModal(false);
-              }}              
-            >
-              <img src={ep.image} alt={ep.title} />
-              <div className="episode-info">
-                <h4>{ep.title}</h4>
-                <p>{ep.description}</p>
-              </div>
-            </div>
-          ))}
+  {showEpisodesModal && (
+    <div
+      className="episodes-modal"
+      onMouseEnter={() => setShowEpisodesModal(true)}
+      onMouseLeave={() => setShowEpisodesModal(false)}
+      style={{
+        position: 'absolute',
+        bottom: '50px',
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        padding: '10px',
+        borderRadius: '5px',
+        zIndex: 100,
+        userSelect: 'none',
+        width: '300px', // ajusta según tu diseño
+        maxHeight: '400px',
+        overflowY: 'auto',
+      }}
+    >
+      <div style={{ marginBottom: 10 }}>
+        <div
+          style={{
+            fontWeight: 'bold',
+            fontSize: '24px',
+            marginLeft: '0.8em',
+            marginTop: '0.4em',
+            color: 'white',
+          }}
+        >
+          Episodios
         </div>
-      )}
+      </div>
+
+      {/* Aquí mapea tus episodios, ejemplo: */}
+      {episodes.map((ep, index) => (
+        <div
+          key={index}
+          className="episode-item"
+          onClick={() => {
+            if (typeof window.SATVPlayerEmbed === 'function') {
+              window.SATVPlayerEmbed({
+                elementId: 'player',
+                videoUrl: ep.videoPath,
+              });
+            }
+
+            const epnameEl = document.getElementById('epname');
+            if (epnameEl) {
+              epnameEl.textContent = `E${index + 1} ${ep.title}`;
+            }
+
+            setShowEpisodesModal(false);
+          }}
+          style={{
+            display: 'flex',
+            marginBottom: '10px',
+            cursor: 'pointer',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '5px',
+            borderRadius: '3px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <img
+            src={ep.image}
+            alt={ep.title}
+            style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
+          />
+          <div style={{ color: 'white' }}>
+            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
+          </div>
+        </div>
+      ))}
     </div>
+  )}
+</div>
         </div>
       </div>
     </div>
