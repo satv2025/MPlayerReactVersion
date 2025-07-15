@@ -3,6 +3,134 @@ import './css/SATVPlayer.css';
 import Hls from 'hls.js';
 import { createGlobalStyle } from 'styled-components';
 
+export function EpisodesControl() {
+  const [episodes, setEpisodes] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
+
+  useEffect(() => {
+    const epData = JSON.parse(document.getElementById("episodes-data").textContent);
+    setEpisodes(epData);
+  }, []);
+
+  function playEpisode(index) {
+    const ep = episodes[index];
+    if (typeof window.SATVPlayerEmbed === "function") {
+      window.SATVPlayerEmbed({
+        elementId: "player",
+        videoUrl: ep.videoPath,
+      });
+    }
+    setCurrentEpisodeIndex(index);
+    setShowModal(false);
+  }
+
+  if (episodes.length === 0) return null;
+
+  // Aquí sí debés retornar JSX
+  return (
+    <div
+      style={{ position: 'relative', cursor: 'pointer', width: 40 }}
+      onMouseEnter={() => setShowEpisodesModal(true)}
+      onMouseLeave={() => setShowEpisodesModal(false)}
+    >
+      <button
+        style={iconButtonStyle}
+        onMouseEnter={() => setShowEpisodesModal(true)}
+        onMouseLeave={() => {
+          /* No cerramos inmediatamente para evitar parpadeo */
+        }}
+      >
+        <img
+          src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+          alt="Episodios"
+          style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+        />
+      </button>
+  
+      {showEpisodesModal && (
+        <div
+          className="episodes-modal"
+          onMouseEnter={() => setShowEpisodesModal(true)}
+          onMouseLeave={() => setShowEpisodesModal(false)}
+          style={{
+            position: 'absolute',
+            bottom: '50px',
+            right: 0,
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: '10px',
+            borderRadius: '5px',
+            zIndex: 100,
+            userSelect: 'none',
+            width: '300px',
+            maxHeight: '400px',
+            overflowY: 'auto',
+          }}
+        >
+          <div style={{ marginBottom: 10 }}>
+            <div
+              style={{
+                fontWeight: 'bold',
+                fontSize: '24px',
+                marginLeft: '0.8em',
+                marginTop: '0.4em',
+                color: 'white',
+              }}
+            >
+              Episodios
+            </div>
+          </div>
+  
+          {episodes.map((ep, index) => (
+            <div
+              key={index}
+              className="episode-item"
+              onClick={() => {
+                if (typeof window.SATVPlayerEmbed === 'function') {
+                  window.SATVPlayerEmbed({
+                    elementId: 'player',
+                    videoUrl: ep.videoPath,
+                  });
+                }
+                const epnameEl = document.getElementById('epname');
+                if (epnameEl) {
+                  epnameEl.textContent = `E${index + 1} ${ep.title}`;
+                }
+                setShowEpisodesModal(false);
+              }}
+              style={{
+                display: 'flex',
+                marginBottom: '10px',
+                cursor: 'pointer',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '5px',
+                borderRadius: '3px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <img
+                src={ep.image}
+                alt={ep.title}
+                style={{
+                  width: '60px',
+                  height: '40px',
+                  objectFit: 'cover',
+                  borderRadius: '3px',
+                }}
+              />
+              <div style={{ color: 'white' }}>
+                <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+                <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );  
+}
+
 export const GlobalStyle = createGlobalStyle`
   @import url('https://fuentes.solargentinotv.com.ar/netflixsans.css');
   * {
@@ -169,6 +297,7 @@ function VideoPlayer({ videoUrl }) {
   const [dragging, setDragging] = useState(false);
   const [showSlider, setShowSlider] = useState(false);
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
+  const [showEpisodesModal, setShowEpisodesModal] = React.useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const hideControlsTimeout = useRef(null);
 
@@ -684,107 +813,6 @@ function VideoPlayer({ videoUrl }) {
       />
     </button>
   </div>
-{/* Control de episodios */}
-<div
-  style={{ position: 'relative', cursor: 'pointer', width: 40 }}
-  onMouseEnter={() => setShowEpisodesModal(true)}
-  onMouseLeave={() => setShowEpisodesModal(false)}
->
-  <button
-    style={iconButtonStyle}
-    onMouseEnter={() => setShowEpisodesModal(true)}
-    onMouseLeave={() => {
-      /* No cerramos inmediatamente para evitar parpadeo */
-    }}
-  >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodios"
-      style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
-    />
-  </button>
-
-  {showEpisodesModal && (
-    <div
-      className="episodes-modal"
-      onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(false)}
-      style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: 0,
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 100,
-        userSelect: 'none',
-        width: '300px',
-        maxHeight: '400px',
-        overflowY: 'auto',
-      }}
-    >
-      <div style={{ marginBottom: 10 }}>
-        <div
-          style={{
-            fontWeight: 'bold',
-            fontSize: '24px',
-            marginLeft: '0.8em',
-            marginTop: '0.4em',
-            color: 'white',
-          }}
-        >
-          Episodios
-        </div>
-      </div>
-
-      {episodes.map((ep, index) => (
-        <div
-          key={index}
-          className="episode-item"
-          onClick={() => {
-            if (typeof window.SATVPlayerEmbed === 'function') {
-              window.SATVPlayerEmbed({
-                elementId: 'player',
-                videoUrl: ep.videoPath,
-              });
-            }            
-            const epnameEl = document.getElementById('epname');
-            if (epnameEl) {
-              epnameEl.textContent = `E${index + 1} ${ep.title}`;
-            }
-
-            setShowEpisodesModal(false);
-          }}
-          style={{
-            display: 'flex',
-            marginBottom: '10px',
-            cursor: 'pointer',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '5px',
-            borderRadius: '3px',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          }}
-        >
-          <img
-            src={ep.image}
-            alt={ep.title}
-            style={{
-              width: '60px',
-              height: '40px',
-              objectFit: 'cover',
-              borderRadius: '3px',
-            }}
-          />
-          <div style={{ color: 'white' }}>
-            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
         </div>
       </div>
     </div>
