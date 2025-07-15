@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { createRoot } from 'react-dom/client';
 
-const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
+const EpisodesModal = () => {
   const [episodes, setEpisodes] = useState([]);
   const [visible, setVisible] = useState(false);
   const modalRef = useRef(null);
   const timeoutRef = useRef(null);
 
+  // Leer datos desde el DOM
   useEffect(() => {
     const dataEl = document.getElementById('episodes-data');
     if (dataEl) {
@@ -18,6 +20,7 @@ const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
     }
   }, []);
 
+  // Mostrar/Ocultar modal al pasar sobre botón
   useEffect(() => {
     const btn = document.getElementById('episodesButtonReact');
     if (!btn) return;
@@ -40,6 +43,7 @@ const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
     };
   }, []);
 
+  // Ocultar modal si el cursor sale de él
   useEffect(() => {
     const modal = modalRef.current;
     if (!modal) return;
@@ -75,9 +79,6 @@ const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
     <div
       ref={modalRef}
       className={`modal ${visible ? 'visible' : 'hidden'}`}
-      style={{
-        display: volumeSliderVisible || showSpeedModal ? 'none' : 'block',
-      }}
     >
       <div className="modal-content">
         <div className="modal-header">
@@ -104,5 +105,14 @@ const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
     </div>
   );
 };
+
+// 🔻 MONTAJE en #episodes-root
+document.addEventListener('DOMContentLoaded', () => {
+  const rootEl = document.getElementById('episodes-root');
+  if (rootEl) {
+    const root = createRoot(rootEl);
+    root.render(<EpisodesModal />);
+  }
+});
 
 export default EpisodesModal;

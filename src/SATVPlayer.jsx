@@ -693,26 +693,23 @@ function VideoPlayer({ videoUrl }) {
     </button>
 
     <button
-  className="episodesButtonReact"
-  id="episodesButtonReact"
-  style={{
-    width: '40px',
-    height: '40px',
-    ...iconButtonStyle
-  }}
->
-  <img
-    src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-    alt="Episodes"
-    style={{ width: 40, height: 40, marginLeft: '-17.3em' }}
-  />
-</button>
-
-{/* Montá el modal acá */}
-<EpisodesModal
-  volumeSliderVisible={volumeSliderVisible}
-  showSpeedModal={showSpeedModal}
-/>
+    className="episodesButtonReact"
+    id="episodesButtonReact"
+    style={{
+      ...iconButtonStyle,
+      width: '40px',
+      height: '40px',
+      display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
+    }}
+    
+    >
+    <img
+     src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+     alt="Episodes"
+     style={{ width: 40, height: 40, marginLeft: '-17.3em', }}
+     />
+     </button>
+     <EpisodesModal />
   </div>
         </div>
       </div>
