@@ -5,6 +5,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import Hls from 'hls.js';
 import { createGlobalStyle } from 'styled-components';
 
+// 3. Componentes internos
+import EpisodesModal from './EpisodesModal';
+
 // 4. Archivos de estilo (CSS, SCSS, etc.)
 import './css/SATVPlayer.css';
 
@@ -687,24 +690,25 @@ function VideoPlayer({ videoUrl }) {
         style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
-  </div>
-  {/* Control de episodios */}
+
+{/* Control de episodios */}
 <div
-  style={{ position: 'relative', cursor: 'pointer', width: 40 }}
+  style={{ position: 'relative', cursor: 'pointer', width: 24 }}
   onMouseEnter={() => setShowEpisodesModal(true)}
   onMouseLeave={() => setShowEpisodesModal(false)}
 >
   <button
-    style={iconButtonStyle}
-    onMouseEnter={() => setShowEpisodesModal(true)}
-    onMouseLeave={() => {
-      /* No cerramos inmediatamente para evitar parpadeo */
+    style={{
+      ...iconButtonStyle,
+      width: '40px',
+      height: '40px',
+      marginLeft: '-17.3em',
     }}
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodios"
-      style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+      alt="Episodes"
+      style={{ width: 40, height: 40 }}
     />
   </button>
 
@@ -717,78 +721,65 @@ function VideoPlayer({ videoUrl }) {
         position: 'absolute',
         bottom: '50px',
         right: 0,
-        backgroundColor: 'rgba(0,0,0,0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         padding: '10px',
         borderRadius: '5px',
         zIndex: 100,
         userSelect: 'none',
-        width: '300px', // ajusta según tu diseño
+        width: '300px',
         maxHeight: '400px',
         overflowY: 'auto',
       }}
     >
-      <div style={{ marginBottom: 10 }}>
-        <div
-          style={{
-            fontWeight: 'bold',
-            fontSize: '24px',
-            marginLeft: '0.8em',
-            marginTop: '0.4em',
-            color: 'white',
-          }}
-        >
-          Episodios
-        </div>
+      <div
+        style={{
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '20px',
+          marginBottom: '10px',
+        }}
+      >
+        Episodios
       </div>
 
-      {/* Aquí mapea tus episodios, ejemplo: */}
       {episodes.map((ep, index) => (
         <div
           key={index}
-          className="episode-item"
           onClick={() => {
-            if (typeof window.SATVPlayerEmbed === 'function') {
-              window.SATVPlayerEmbed({
+            if (typeof SATVPlayerEmbed === 'function') {
+              SATVPlayerEmbed({
                 elementId: 'player',
                 videoUrl: ep.videoPath,
               });
             }
-
-            const epnameEl = document.getElementById('epname');
-            if (epnameEl) {
-              epnameEl.textContent = `E${index + 1} ${ep.title}`;
-            }
-
             setShowEpisodesModal(false);
           }}
           style={{
             display: 'flex',
+            alignItems: 'center',
             marginBottom: '10px',
             cursor: 'pointer',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '5px',
-            borderRadius: '3px',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
           }}
         >
           <img
             src={ep.image}
             alt={ep.title}
-            style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
+            style={{ width: '60px', height: 'auto', marginRight: '10px' }}
           />
           <div style={{ color: 'white' }}>
-            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
+            <h4 style={{ margin: 0 }}>{ep.title}</h4>
+            <p style={{ margin: 0, fontSize: '0.8em' }}>{ep.description}</p>
           </div>
         </div>
       ))}
     </div>
   )}
 </div>
+  </div>
         </div>
       </div>
     </div>
   );
+  
 }
 export default VideoPlayer;
