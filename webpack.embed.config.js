@@ -1,17 +1,20 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/embed.js",
+  entry: {
+    SATVPlayer: "./src/SATVPlayer.jsx",
+    EpisodesButton: "./src/EpisodesButton.jsx", // el entry para solo el botón
+  },
   output: {
     path: path.resolve(__dirname, "public/build"),
-    filename: "SATVPlayer.js",
-    library: "SATVPlayer",
+    filename: "[name].js",          // genera SATVPlayer.js y EpisodesButton.js
+    library: "[name]",              // exporta como global con el mismo nombre
     libraryTarget: "umd",
     globalObject: "this",
   },
   externals: {
     react: "React",
-    "react-dom": "ReactDOM", // Usamos react-dom, no "react-dom/client"
+    "react-dom": "ReactDOM",
   },
   module: {
     rules: [

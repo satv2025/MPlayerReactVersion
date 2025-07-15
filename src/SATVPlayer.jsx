@@ -19,7 +19,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const speeds = [0.5, 0.75, 1, 1.25];
+const speeds = [0.5, 0.75, 1, 1.25, 1.5];
 
 
 function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
@@ -159,7 +159,7 @@ function VideoPlayer({ videoUrl }) {
   const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [buffering, setBuffering] = useState(false);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(false);  
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -171,7 +171,6 @@ function VideoPlayer({ videoUrl }) {
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const hideControlsTimeout = useRef(null);
-
   const resetHideTimeout = () => {
     // Mostrar controles inmediatamente cuando hay movimiento
     setShouldHideTimeAndBar(false);
@@ -194,23 +193,26 @@ function VideoPlayer({ videoUrl }) {
   
     let hls;
   
+    const handleAutoplay = () => {
+      video.play()
+        .then(() => {
+          setPlaying(true);  // <-- Actualiza el estado para que el ícono muestre "pause"
+        })
+        .catch(() => {});
+    };
+  
     if (Hls.isSupported()) {
       hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => {});
-      });
+      hls.on(Hls.Events.MANIFEST_PARSED, handleAutoplay);
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
-      video.addEventListener("loadedmetadata", () => {
-        video.play().catch(() => {});
-      });
+      video.addEventListener("loadedmetadata", handleAutoplay);
     } else {
-      // Si el video es mp4 normal
       video.src = videoUrl;
       video.load();
-      video.play().catch(() => {});
+      handleAutoplay();
     }
   
     return () => {
@@ -688,6 +690,5 @@ function VideoPlayer({ videoUrl }) {
       </div>
     </div>
   );
-  
 }
 export default VideoPlayer;
