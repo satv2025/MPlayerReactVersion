@@ -636,7 +636,7 @@ function VideoPlayer({ videoUrl }) {
                         setShowSpeedModal(false);
                       }}
                       style={{
-                        padding: '5px 10px',
+                        padding: '5px 8px',
                         backgroundColor: sp === speed ? 'transparent' : 'transparent',
                         border: 'none',
                         color: sp === speed ? 'white' : 'gray',
