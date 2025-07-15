@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 const EpisodesModal = () => {
   const [episodes, setEpisodes] = useState([]);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const modalRef = useRef(null);
   const timeoutRef = useRef(null);
 
