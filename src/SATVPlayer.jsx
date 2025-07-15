@@ -707,18 +707,11 @@ useEffect(() => {
 
 {/* Control de episodios */}
 <div
-  style={{ position: 'relative', cursor: 'pointer', width: 24 }}
+  className="episodes-button-container"
   onMouseEnter={() => setShowEpisodesModal(true)}
-  onMouseLeave={() => setShowEpisodesModal(false)}
+  onMouseLeave={() => setShowEpisodesModal(true)}
 >
-  <button
-    style={{
-      ...iconButtonStyle,
-      width: '40px',
-      height: '40px',
-      marginLeft: '-17.3em',
-    }}
-  >
+  <button className="episodes-button" style={iconButtonStyle}>
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodes"
@@ -730,35 +723,14 @@ useEffect(() => {
     <div
       className="episodes-modal"
       onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(false)}
-      style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 100,
-        userSelect: 'none',
-        width: '300px',
-        maxHeight: '400px',
-        overflowY: 'auto',
-      }}
+      onMouseLeave={() => setShowEpisodesModal(true)}
     >
-      <div
-        style={{
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: '20px',
-          marginBottom: '10px',
-        }}
-      >
-        Episodios
-      </div>
+      <div className="episodes-modal-title">Episodios</div>
 
       {episodes.map((ep, index) => (
         <div
           key={index}
+          className="episode-item"
           onClick={() => {
             if (typeof SATVPlayerEmbed === 'function') {
               SATVPlayerEmbed({
@@ -766,23 +738,13 @@ useEffect(() => {
                 videoUrl: ep.videoPath,
               });
             }
-            setShowEpisodesModal(false);
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '10px',
-            cursor: 'pointer',
+            setShowEpisodesModal(true);
           }}
         >
-          <img
-            src={ep.image}
-            alt={ep.title}
-            style={{ width: '60px', height: 'auto', marginRight: '10px' }}
-          />
-          <div style={{ color: 'white' }}>
-            <h4 style={{ margin: 0 }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '0.8em' }}>{ep.description}</p>
+          <img src={ep.image} alt={ep.title} />
+          <div className="episode-info">
+            <h4>{ep.title}</h4>
+            <p>{ep.description}</p>
           </div>
         </div>
       ))}
