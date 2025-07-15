@@ -3,6 +3,13 @@ import './css/SATVPlayer.css';
 import Hls from 'hls.js';
 import { createGlobalStyle } from 'styled-components';
 
+const iconButtonStyle = {
+  background: 'transparent',
+  border: 'none',
+  padding: 0,
+  cursor: 'pointer',
+};
+
 export function EpisodesControl() {
   const [episodes, setEpisodes] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -27,16 +34,15 @@ export function EpisodesControl() {
 
   if (episodes.length === 0) return null;
 
-  // Aquí sí debés retornar JSX
   return (
     <div
       style={{ position: 'relative', cursor: 'pointer', width: 40 }}
-      onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(false)}
+      onMouseEnter={() => setShowModal(true)}
+      onMouseLeave={() => setShowModal(false)}
     >
       <button
         style={iconButtonStyle}
-        onMouseEnter={() => setShowEpisodesModal(true)}
+        onMouseEnter={() => setShowModal(true)}
         onMouseLeave={() => {
           /* No cerramos inmediatamente para evitar parpadeo */
         }}
@@ -47,12 +53,12 @@ export function EpisodesControl() {
           style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
         />
       </button>
-  
-      {showEpisodesModal && (
+
+      {showModal && (
         <div
           className="episodes-modal"
-          onMouseEnter={() => setShowEpisodesModal(true)}
-          onMouseLeave={() => setShowEpisodesModal(false)}
+          onMouseEnter={() => setShowModal(true)}
+          onMouseLeave={() => setShowModal(false)}
           style={{
             position: 'absolute',
             bottom: '50px',
@@ -80,7 +86,7 @@ export function EpisodesControl() {
               Episodios
             </div>
           </div>
-  
+
           {episodes.map((ep, index) => (
             <div
               key={index}
@@ -96,7 +102,7 @@ export function EpisodesControl() {
                 if (epnameEl) {
                   epnameEl.textContent = `E${index + 1} ${ep.title}`;
                 }
-                setShowEpisodesModal(false);
+                setShowModal(false);
               }}
               style={{
                 display: 'flex',
@@ -128,7 +134,7 @@ export function EpisodesControl() {
         </div>
       )}
     </div>
-  );  
+  );
 }
 
 export const GlobalStyle = createGlobalStyle`
