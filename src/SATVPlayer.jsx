@@ -258,6 +258,18 @@ function VideoPlayer({ videoUrl }) {
   }, []);
 
   useEffect(() => {
+    const episodesDataScript = document.getElementById('episodes-data');
+    if (episodesDataScript) {
+      try {
+        const episodesJson = JSON.parse(episodesDataScript.textContent);
+        setEpisodes(episodesJson);
+      } catch (e) {
+        console.error('Error parsing episodes JSON', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
   
@@ -808,6 +820,7 @@ function VideoPlayer({ videoUrl }) {
             padding: '5px',
             borderRadius: '3px',
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
           }}
         >
           <img
