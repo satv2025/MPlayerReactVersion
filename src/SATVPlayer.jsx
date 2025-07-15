@@ -636,7 +636,7 @@ function VideoPlayer({ videoUrl }) {
                         setShowSpeedModal(false);
                       }}
                       style={{
-                        padding: '5px px',
+                        padding: '5px 10px',
                         backgroundColor: sp === speed ? 'transparent' : 'transparent',
                         border: 'none',
                         color: sp === speed ? 'white' : 'gray',
@@ -653,47 +653,37 @@ function VideoPlayer({ videoUrl }) {
             )}
           </div>
   
-{/* Contenedor de los 3 botones: Fullscreen, Captions, Episodes */}
-<div
-  style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: '0.5em', // espacio entre botones
-    width: '100%', // opcional, si querés que ocupen el ancho del contenedor padre
-  }}
->
-  {/* Botón Captions */}
-  <button style={iconButtonStyle} className="captionsButton">
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
-      alt="Captions"
-      style={{ width: 40, height: 40 }}
-    />
-  </button>
+  {/* Contenedor relativo para fullscreen y captions */}
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+    <button onClick={toggleFullscreen} style={iconButtonStyle}>
+      <img
+        src={
+          fullscreen
+            ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
+            : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
+        }
+        alt="Fullscreen toggle"
+        style={{ width: 40, height: 40, marginRight: '0.7em' }}
+      />
+    </button>
 
-  {/* Botón Fullscreen */}
-  <button onClick={toggleFullscreen} style={iconButtonStyle} className="fullscreenButton">
-    <img
-      src={
-        fullscreen
-          ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
-          : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
-      }
-      alt="Fullscreen toggle"
-      style={{ width: 40, height: 40 }}
-    />
-  </button>
-
-  {/* Botón Episodes */}
-  <button style={{ ...iconButtonStyle, marginLeft: 'auto' }} className="episodesButton">
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodes"
-      style={{ width: 40, height: 40 }}
-    />
-  </button>
-</div>
+    <button
+      style={{
+        ...iconButtonStyle,
+        position: 'absolute',
+        left: '-50px',  // ajusta este valor para separarlo hacia la izquierda del fullscreen
+        top: '50%',
+        transform: 'translateY(-50%)',
+      }}
+      // Sin funcionalidad por ahora
+    >
+      <img
+        src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
+        alt="Captions"
+        style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
+      />
+    </button>
+  </div>
         </div>
       </div>
     </div>
