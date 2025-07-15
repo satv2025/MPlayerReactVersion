@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import EpisodesButton from "./EpisodesButton";
+import EpisodesButton from "./EpisodesModal";
 
 function mountEpisodesButton() {
   // Seleccioná el contenedor exacto de controles donde quieras insertar el botón

@@ -1,7 +1,15 @@
+// 1. React y hooks
 import React, { useState, useRef, useEffect } from 'react';
-import './css/SATVPlayer.css';
+
+// 2. Librerías de terceros
 import Hls from 'hls.js';
 import { createGlobalStyle } from 'styled-components';
+
+// 3. Componentes internos
+import EpisodesModal from './EpisodesModal';
+
+// 4. Archivos de estilo (CSS, SCSS, etc.)
+import './css/SATVPlayer.css';
 
 export const GlobalStyle = createGlobalStyle`
   @import url('https://fuentes.solargentinotv.com.ar/netflixsans.css');
@@ -686,6 +694,8 @@ function VideoPlayer({ videoUrl }) {
 
     <button
     style={{
+      className: 'episodesButtonReact',
+      id: 'episodesButtonReact',
       ...iconButtonStyle,
       width: '40px',
       height: '40px',
@@ -698,6 +708,7 @@ function VideoPlayer({ videoUrl }) {
      style={{ width: 40, height: 40, marginLeft: '-17.3em', }}
      />
      </button>
+     <EpisodesModal />
   </div>
         </div>
       </div>
