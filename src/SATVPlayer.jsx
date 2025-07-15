@@ -14,18 +14,25 @@ export function EpisodesControl() {
   const [episodes, setEpisodes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
-  console.log('EpisodesControl renderizado', episodes);
 
   useEffect(() => {
-    const epData = JSON.parse(document.getElementById("episodes-data").textContent);
-    setEpisodes(epData);
+    // Simulo obtener datos desde el DOM para que funcione sin errores
+    const epDataElem = document.getElementById('episodes-data');
+    if (epDataElem) {
+      try {
+        const epData = JSON.parse(epDataElem.textContent);
+        setEpisodes(epData);
+      } catch (e) {
+        console.error('Error parseando episodios:', e);
+      }
+    }
   }, []);
 
   function playEpisode(index) {
     const ep = episodes[index];
-    if (typeof window.SATVPlayerEmbed === "function") {
+    if (typeof window.SATVPlayerEmbed === 'function') {
       window.SATVPlayerEmbed({
-        elementId: "player",
+        elementId: 'player',
         videoUrl: ep.videoPath,
       });
     }
@@ -44,14 +51,12 @@ export function EpisodesControl() {
       <button
         style={iconButtonStyle}
         onMouseEnter={() => setShowModal(true)}
-        onMouseLeave={() => {
-          /* No cerramos inmediatamente para evitar parpadeo */
-        }}
+        onMouseLeave={() => {}}
       >
         <img
           src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
           alt="Episodios"
-          style={{ width: 40, height: 40, marginLeft: '0' }}
+          style={{ width: 40, height: 40, marginLeft: 0 }}
         />
       </button>
 
@@ -93,17 +98,11 @@ export function EpisodesControl() {
               key={index}
               className="episode-item"
               onClick={() => {
-                if (typeof window.SATVPlayerEmbed === 'function') {
-                  window.SATVPlayerEmbed({
-                    elementId: 'player',
-                    videoUrl: ep.videoPath,
-                  });
-                }
+                playEpisode(index);
                 const epnameEl = document.getElementById('epname');
                 if (epnameEl) {
                   epnameEl.textContent = `E${index + 1} ${ep.title}`;
                 }
-                setShowModal(false);
               }}
               style={{
                 display: 'flex',
@@ -128,12 +127,41 @@ export function EpisodesControl() {
               />
               <div style={{ color: 'white' }}>
                 <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-                <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
+                  {ep.description}
+                </p>
               </div>
             </div>
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+export function SATVPlayer() {
+  return (
+    <div>
+      {/* Placeholder para player */}
+      <div id="player" style={{ width: '100%', height: '400px', background: '#000' }}>
+        {/* Aquí va el reproductor */}
+      </div>
+      {/* Mostrar nombre del episodio */}
+      <div
+        id="epname"
+        style={{
+          color: 'white',
+          marginTop: '10px',
+          fontSize: '18px',
+          fontWeight: 'bold',
+          paddingLeft: '10px',
+        }}
+      >
+        Episodio actual
+      </div>
+
+      {/* Acá insertás el control de episodios */}
+      <EpisodesControl />
     </div>
   );
 }
