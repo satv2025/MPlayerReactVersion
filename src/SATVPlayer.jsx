@@ -700,6 +700,7 @@ function VideoPlayer({ videoUrl }) {
       width: '40px',
       height: '40px',
       visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
+      pointerEvents: (volumeSliderVisible || showSpeedModal) ? 'none' : 'auto',
     }}
     
     >
