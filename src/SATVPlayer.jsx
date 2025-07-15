@@ -707,7 +707,7 @@ function VideoPlayer({ videoUrl }) {
   }}
 >
   <button
-    id="episodesButtonReact"
+    className="episodesButtonReact"
     style={{
       ...iconButtonStyle,
       width: 40,
