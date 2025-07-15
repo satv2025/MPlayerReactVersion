@@ -663,7 +663,7 @@ function VideoPlayer({ videoUrl }) {
             : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
         }
         alt="Fullscreen toggle"
-        style={{ width: 40, height: 40, marginRight: '0.7em' }}
+        style={{ width: 40, height: 40, marginRight: '-2.3em' }}
       />
     </button>
 
@@ -695,7 +695,7 @@ function VideoPlayer({ videoUrl }) {
     <img
      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
      alt="Episodes"
-     style={{ width: 40, height: 40, marginLeft: '-5em', }}
+     style={{ width: 40, height: 40, marginLeft: '-17.3em', }}
      />
      </button>
   </div>
