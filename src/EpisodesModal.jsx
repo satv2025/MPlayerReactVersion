@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
-const EpisodesModal = () => {
+const EpisodesModal = ({ volumeSliderVisible, showSpeedModal }) => {
   const [episodes, setEpisodes] = useState([]);
   const [visible, setVisible] = useState(false);
   const modalRef = useRef(null);
@@ -79,29 +79,11 @@ const EpisodesModal = () => {
     <div
       ref={modalRef}
       className={`modal ${visible ? 'visible' : 'hidden'}`}
+      style={{
+        display: (volumeSliderVisible || showSpeedModal) ? 'none' : 'block',
+      }}
     >
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2>Episodios</h2>
-          <span className="close-btn" onClick={() => setVisible(false)}>×</span>
-        </div>
-
-        <div className="selector-container">
-          {episodes.map((ep, index) => (
-            <div
-              key={index}
-              className={`episode ${index === 0 ? 'e1item' : ''}`}
-              onClick={() => handlePlay(ep)}
-            >
-              <img src={ep.image} alt={ep.title} />
-              <div className="episode-info">
-                <h4>{ep.title}</h4>
-                <p>{ep.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* contenido */}
     </div>
   );
 };

@@ -699,8 +699,6 @@ function VideoPlayer({ videoUrl }) {
       ...iconButtonStyle,
       width: '40px',
       height: '40px',
-      visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
-      pointerEvents: (volumeSliderVisible || showSpeedModal) ? 'none' : 'auto',
     }}
     
     >
@@ -710,7 +708,7 @@ function VideoPlayer({ videoUrl }) {
      style={{ width: 40, height: 40, marginLeft: '-17.3em', }}
      />
      </button>
-     <EpisodesModal />
+     <EpisodesModal volumeSliderVisible={volumeSliderVisible} showSpeedModal={showSpeedModal} />
   </div>
         </div>
       </div>
