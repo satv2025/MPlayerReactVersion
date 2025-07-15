@@ -687,12 +687,10 @@ function VideoPlayer({ videoUrl }) {
         style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
-    <div
-      className="episodes-button-container"
-      onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(false)}
-    >
-      <button className="episodes-button">
+      <button className="episodes-button"
+            onMouseEnter={() => setShowEpisodesModal(true)}
+            onMouseLeave={() => setShowEpisodesModal(false)}
+            >
         <img
           src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
           alt="Episodes"
@@ -739,7 +737,6 @@ function VideoPlayer({ videoUrl }) {
         </div>
       )}
     </div>
-  </div>
         </div>
       </div>
     </div>
