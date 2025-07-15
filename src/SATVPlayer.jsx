@@ -5,8 +5,77 @@ import React, { useState, useRef, useEffect } from 'react';
 import Hls from 'hls.js';
 import { createGlobalStyle } from 'styled-components';
 
-// 3. Componentes internos
-import EpisodesModal from './EpisodesModal';
+export function EpisodesButton({ volumeSliderVisible, showSpeedModal }) {
+  const [showEpisodesModal, setShowEpisodesModal] = useState(false);
+  const [episodes, setEpisodes] = useState([]);
+
+  useEffect(() => {
+    const dataEl = document.getElementById('episodes-data');
+    if (dataEl) {
+      try {
+        const data = JSON.parse(dataEl.textContent || '[]');
+        setEpisodes(data);
+      } catch (e) {
+        console.error('Error parsing episodes data:', e);
+      }
+    }
+  }, []);
+
+  return (
+    <div
+      className="episodes-button-container"
+      onMouseEnter={() => setShowEpisodesModal(true)}
+      onMouseLeave={() => setShowEpisodesModal(false)}
+    >
+      <button className="episodes-button">
+        <img
+          src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+          alt="Episodes"
+          style={{ width: 40, height: 40 }}
+        />
+      </button>
+
+      {showEpisodesModal && (
+  <div
+    className="episodes-modal"
+    onMouseEnter={() => setShowEpisodesModal(true)}
+    onMouseLeave={() => setShowEpisodesModal(false)}
+    style={{ visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible' }}
+  >
+          <div className="episodes-modal-title">Episodios</div>
+
+          {episodes.map((ep, index) => (
+            <div
+              key={index}
+              className="episode-item"
+              onClick={() => {
+                if (typeof window.SATVPlayerEmbed === 'function') {
+                  window.SATVPlayerEmbed({
+                    elementId: 'player',
+                    videoUrl: ep.videoPath,
+                  });
+                }
+
+                const epnameEl = document.getElementById('epname');
+                if (epnameEl) {
+                  epnameEl.textContent = `E${index + 1} ${ep.title}`;
+                }
+
+                setShowEpisodesModal(false);
+              }}
+            >
+              <img src={ep.image} alt={ep.title} />
+              <div className="episode-info">
+                <h4>{ep.title}</h4>
+                <p>{ep.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // 4. Archivos de estilo (CSS, SCSS, etc.)
 import './css/SATVPlayer.css';
@@ -178,20 +247,6 @@ function VideoPlayer({ videoUrl }) {
   const [showSlider, setShowSlider] = useState(false);
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [showEpisodesModal, setShowEpisodesModal] = useState(false);
-  const [episodes, setEpisodes] = useState([]);
-
-useEffect(() => {
-  const dataEl = document.getElementById('episodes-data');
-  if (dataEl) {
-    try {
-      const data = JSON.parse(dataEl.textContent || '[]');
-      setEpisodes(data);
-    } catch (e) {
-      console.error('Error parsing episodes data:', e);
-    }
-  }
-}, []);
   const hideControlsTimeout = useRef(null);
 
   const resetHideTimeout = () => {
@@ -704,58 +759,10 @@ useEffect(() => {
         style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
       />
     </button>
-
-{/* Control de episodios */}
-<div
-  className="episodes-button-container"
-  onMouseEnter={() => setShowEpisodesModal(true)}
-  onMouseLeave={() => setShowEpisodesModal(true)}
->
-  <button className="episodes-button" style={iconButtonStyle}>
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodes"
-      style={{ width: 40, height: 40 }}
-    />
-  </button>
-
-  {showEpisodesModal && (
-    <div
-      className="episodes-modal"
-      onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(true)}
-    >
-      <div className="episodes-modal-title">Episodios</div>
-
-      {episodes.map((ep, index) => (
-        <div
-          key={index}
-          className="episode-item"
-          onClick={() => {
-            if (typeof SATVPlayerEmbed === 'function') {
-              SATVPlayerEmbed({
-                elementId: 'player',
-                videoUrl: ep.videoPath,
-              });
-            }
-            setShowEpisodesModal(true);
-          }}
-        >
-          <img src={ep.image} alt={ep.title} />
-          <div className="episode-info">
-            <h4>{ep.title}</h4>
-            <p>{ep.description}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
   </div>
         </div>
       </div>
     </div>
   );
-  
 }
 export default VideoPlayer;
