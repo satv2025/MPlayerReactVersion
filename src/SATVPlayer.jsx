@@ -149,6 +149,7 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
 }
 
 function VideoPlayer({ videoUrl }) {
+  // 🎨✨ ICON BUTTON STYLE
   const iconButtonStyle = {
     background: 'none',
     border: 'none',
@@ -158,26 +159,17 @@ function VideoPlayer({ videoUrl }) {
     alignItems: 'center',
   };
 
-  // Afuera del componente (en el scope del componente):
-let episodesTimeout;
-
-const handleMouseEnterEpisodes = () => {
-  clearTimeout(episodesTimeout);
-  setShowEpisodesModal(true);
-};
-
-const handleMouseLeaveEpisodes = () => {
-  episodesTimeout = setTimeout(() => {
-    setShowEpisodesModal(false);
-  }, 200);
-};
-
+  // 🛠️🔧 REFS
+  const episodesTimeout = useRef(null);
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const progressRef = useRef(null);
   const sliderRef = useRef(null);
   const hideSpeedTimeout = useRef(null);
   const inactivityTimer = useRef(null);
+  const hideControlsTimeout = useRef(null);
+
+  // 📊📈 STATES
   const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [buffering, setBuffering] = useState(false);
@@ -191,22 +183,36 @@ const handleMouseLeaveEpisodes = () => {
   const [dragging, setDragging] = useState(false);
   const [showSlider, setShowSlider] = useState(false);
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
-  const [showEpisodesModal, setShowEpisodesModal] = React.useState(false);
+  const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const hideControlsTimeout = useRef(null);
+  const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
 
+  // 🚪➡️ HANDLE MOUSE ENTER EPISODES
+  const handleMouseEnterEpisodes = () => {
+    clearTimeout(episodesTimeout.current);
+    setShowEpisodesModal(true);
+  };
+
+  // 🚪⬅️ HANDLE MOUSE LEAVE EPISODES
+  const handleMouseLeaveEpisodes = () => {
+    episodesTimeout.current = setTimeout(() => {
+      setShowEpisodesModal(false);
+    }, 200);
+  };
+
+  // ⏳🕒 RESET HIDE TIMEOUT
   const resetHideTimeout = () => {
     // Mostrar controles inmediatamente cuando hay movimiento
     setShouldHideTimeAndBar(false);
-  
+
     // Limpiar timeout anterior
     clearTimeout(hideControlsTimeout.current);
-  
+
     // Programar ocultar controles después de 3 segundos sin movimiento
     hideControlsTimeout.current = setTimeout(() => {
       setShouldHideTimeAndBar(true);
     }, 3000);
-  };  
+  };
 
   useEffect(() => {
     const video = videoRef.current;
