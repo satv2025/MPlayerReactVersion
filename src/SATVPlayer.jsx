@@ -157,6 +157,21 @@ function VideoPlayer({ videoUrl }) {
     display: 'flex',
     alignItems: 'center',
   };
+
+  // Afuera del componente (en el scope del componente):
+let episodesTimeout;
+
+const handleMouseEnterEpisodes = () => {
+  clearTimeout(episodesTimeout);
+  setShowEpisodesModal(true);
+};
+
+const handleMouseLeaveEpisodes = () => {
+  episodesTimeout = setTimeout(() => {
+    setShowEpisodesModal(false);
+  }, 200);
+};
+
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const progressRef = useRef(null);
@@ -692,15 +707,15 @@ function VideoPlayer({ videoUrl }) {
       />
     </button>
   </div>
-  {/* Control de episodios */}
+{/* Control de episodios */}
 <div
   style={{ position: 'relative', cursor: 'pointer', width: 40 }}
-  onMouseEnter={() => setShowEpisodesModal(true)}
-  onMouseLeave={() => setShowEpisodesModal(false)}
+  onMouseEnter={handleMouseEnterEpisodes}
+  onMouseLeave={handleMouseLeaveEpisodes}
 >
   <button
     style={iconButtonStyle}
-    onMouseEnter={() => setShowEpisodesModal(true)}
+    onMouseEnter={handleMouseEnterEpisodes}
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
@@ -712,8 +727,8 @@ function VideoPlayer({ videoUrl }) {
   {showEpisodesModal && (
     <div
       className="episodes-modal"
-      onMouseEnter={() => setShowEpisodesModal(true)}
-      onMouseLeave={() => setShowEpisodesModal(false)}
+      onMouseEnter={handleMouseEnterEpisodes}
+      onMouseLeave={handleMouseLeaveEpisodes}
       style={{
         position: 'absolute',
         bottom: '50px',
