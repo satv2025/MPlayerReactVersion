@@ -14,6 +14,7 @@ export function EpisodesControl() {
   const [episodes, setEpisodes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
+  console.log('EpisodesControl renderizado', episodes);
 
   useEffect(() => {
     const epData = JSON.parse(document.getElementById("episodes-data").textContent);
