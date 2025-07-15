@@ -216,71 +216,81 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
   };
 
   useEffect(() => {
-    // Leer JSON embebido
-    const jsonData = document.getElementById("episodes-data")?.textContent;
-    if (jsonData) {
-      setEpisodes(JSON.parse(jsonData));
-      // Por defecto, cargo el primer episodio
-      const parsed = JSON.parse(jsonData);
-      if (parsed.length > 0) setVideoUrl(parsed[0].videoPath);
+    // ✅ Leer JSON embebido UNA SOLA VEZ
+    const episodesDataScript = document.getElementById("episodes-data");
+    if (episodesDataScript) {
+      try {
+        const parsed = JSON.parse(episodesDataScript.textContent);
+        setEpisodes(parsed);
+        // ✅ Cargar primer episodio
+        if (parsed.length > 0) {
+          setVideoUrl(parsed[0].videoPath);
+        }
+      } catch (e) {
+        console.error("Error parsing episodes JSON", e);
+      }
     }
   }, []);
-
+  
   useEffect(() => {
     const video = videoRef.current;
-    if (!videoUrl) return;
-
+    if (!video || !videoUrl) return;
+  
     let hls;
-
+  
     if (Hls.isSupported()) {
       hls = new Hls();
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => {});
+        video.play().catch((err) => {
+          console.warn("Error al reproducir (HLS):", err);
+        });
       });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
-      video.addEventListener("loadedmetadata", () => {
-        video.play().catch(() => {});
-      });
+  
+      const onLoadedMetadata = () => {
+        video.play().catch((err) => {
+          console.warn("Error al reproducir (nativo HLS):", err);
+        });
+      };
+  
+      video.addEventListener("loadedmetadata", onLoadedMetadata);
+  
+      return () => {
+        video.removeEventListener("loadedmetadata", onLoadedMetadata);
+        if (hls) hls.destroy();
+      };
     } else {
       video.src = videoUrl;
       video.load();
-      video.play().catch(() => {});
+      video.play().catch((err) => {
+        console.warn("Error al reproducir (formato básico):", err);
+      });
     }
-
+  
     return () => {
       if (hls) hls.destroy();
     };
   }, [videoUrl]);
-
-  // Función para cambiar episodio y reproducir
+  
+  // ✅ Función para cambiar de episodio
   const playEpisode = (index) => {
-    setVideoUrl(episodes[index].videoPath);
-    setShowEpisodesModal(false);
-    // Podés agregar más lógica, como cambiar texto de título si querés
+    if (episodes[index]) {
+      setVideoUrl(episodes[index].videoPath);
+      setShowEpisodesModal(false);
+    }
   };
-
+  
+  // ✅ Setear volumen inicial
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
       video.volume = 0.5;
       setVolume(0.5);
     }
-  }, []);
-
-  useEffect(() => {
-    const episodesDataScript = document.getElementById('episodes-data');
-    if (episodesDataScript) {
-      try {
-        const episodesJson = JSON.parse(episodesDataScript.textContent);
-        setEpisodes(episodesJson);
-      } catch (e) {
-        console.error('Error parsing episodes JSON', e);
-      }
-    }
-  }, []);
+  }, []);  
 
   useEffect(() => {
     const video = videoRef.current;
@@ -753,8 +763,8 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
   onMouseLeave={handleMouseLeaveEpisodes}
 >
   <button
-    className='episodesReactButton'
-    id='episodesReactButton'
+    className="episodesReactButton"
+    id="episodesReactButton"
     style={{
       ...iconButtonStyle,
       width: '40px',
