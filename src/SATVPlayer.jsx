@@ -610,7 +610,7 @@ function VideoPlayer({ videoUrl }) {
               marginTop: '-8.14em',
               position: 'relative',
               left: '54.8em',
-              visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
+              visibility: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'hidden' : 'visible',
             }}
           >
             {formatTime(duration - currentTime)}
