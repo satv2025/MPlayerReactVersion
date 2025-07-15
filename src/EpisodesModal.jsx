@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
+document.addEventListener('DOMContentLoaded', () => {
+  const rootEl = document.getElementById('episodes-root');
+  if (rootEl) {
+    const root = createRoot(rootEl);
+    root.render(<EpisodesModal />);
+  }
+});
 
 const EpisodesModal = ({ onVisibilityChange }) => {
   const [episodes, setEpisodes] = useState([]);

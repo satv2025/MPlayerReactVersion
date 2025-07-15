@@ -178,21 +178,20 @@ function VideoPlayer({ videoUrl }) {
   const [showSlider, setShowSlider] = useState(false);
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const SATVPlayer = () => {
-    const [episodesVisible, setEpisodesVisible] = useState(false);
-  
-    return (
-      <>
-        <EpisodesModal onVisibilityChange={setEpisodesVisible} />
-  
-        {/* Ocultás los controles cuando el modal está abierto */}
-        <div style={{ display: episodesVisible ? 'none' : 'block' }}>
-          <ProgressBar />
-          <CurrentTimeDisplay />
-        </div>
-      </>
-    );
-  };  
+  const [showEpisodesModal, setShowEpisodesModal] = useState(false);
+  const [episodes, setEpisodes] = useState([]);
+
+useEffect(() => {
+  const dataEl = document.getElementById('episodes-data');
+  if (dataEl) {
+    try {
+      const data = JSON.parse(dataEl.textContent || '[]');
+      setEpisodes(data);
+    } catch (e) {
+      console.error('Error parsing episodes data:', e);
+    }
+  }
+}, []);
   const hideControlsTimeout = useRef(null);
 
   const resetHideTimeout = () => {
@@ -698,7 +697,6 @@ function VideoPlayer({ videoUrl }) {
         top: '50%',
         transform: 'translateY(-50%)',
       }}
-      // Sin funcionalidad por ahora
     >
       <img
         src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
@@ -707,23 +705,90 @@ function VideoPlayer({ videoUrl }) {
       />
     </button>
 
-    <button
-    className="episodesButtonReact"
-    id="episodesButtonReact"
+{/* Control de episodios */}
+<div
+  style={{ position: 'relative', cursor: 'pointer', width: 24 }}
+  onMouseEnter={() => setShowEpisodesModal(true)}
+  onMouseLeave={() => setShowEpisodesModal(false)}
+>
+  <button
     style={{
       ...iconButtonStyle,
       width: '40px',
       height: '40px',
+      marginLeft: '-17.3em',
     }}
-    
-    >
+  >
     <img
-     src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-     alt="Episodes"
-     style={{ width: 40, height: 40, marginLeft: '-17.3em', }}
-     />
-     </button>
-     <EpisodesModal volumeSliderVisible={volumeSliderVisible} showSpeedModal={showSpeedModal} />
+      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+      alt="Episodes"
+      style={{ width: 40, height: 40 }}
+    />
+  </button>
+
+  {showEpisodesModal && (
+    <div
+      className="episodes-modal"
+      onMouseEnter={() => setShowEpisodesModal(true)}
+      onMouseLeave={() => setShowEpisodesModal(false)}
+      style={{
+        position: 'absolute',
+        bottom: '50px',
+        right: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: '10px',
+        borderRadius: '5px',
+        zIndex: 100,
+        userSelect: 'none',
+        width: '300px',
+        maxHeight: '400px',
+        overflowY: 'auto',
+      }}
+    >
+      <div
+        style={{
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '20px',
+          marginBottom: '10px',
+        }}
+      >
+        Episodios
+      </div>
+
+      {episodes.map((ep, index) => (
+        <div
+          key={index}
+          onClick={() => {
+            if (typeof SATVPlayerEmbed === 'function') {
+              SATVPlayerEmbed({
+                elementId: 'player',
+                videoUrl: ep.videoPath,
+              });
+            }
+            setShowEpisodesModal(false);
+          }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
+            cursor: 'pointer',
+          }}
+        >
+          <img
+            src={ep.image}
+            alt={ep.title}
+            style={{ width: '60px', height: 'auto', marginRight: '10px' }}
+          />
+          <div style={{ color: 'white' }}>
+            <h4 style={{ margin: 0 }}>{ep.title}</h4>
+            <p style={{ margin: 0, fontSize: '0.8em' }}>{ep.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
   </div>
         </div>
       </div>
