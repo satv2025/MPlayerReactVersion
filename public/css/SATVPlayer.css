@@ -154,7 +154,7 @@
 }
 
 img {
-  transition: transform 0.3s ease; /* transición suave */
+  transition: transform 0.3s ease;
   width: 46px !important;
   height: 46px !important;
 }
