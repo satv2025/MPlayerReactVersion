@@ -511,7 +511,7 @@ function VideoPlayer({ videoUrl }) {
           onMouseLeave={() => setProgressHover(false)}
           style={{
             height: progressHover ? 6 : 4,
-            width: '95.4%',
+            width: '95%',
             backgroundColor: 'rgb(139 139 139 / 72%)',
             cursor: 'pointer',
             position: 'relative',
@@ -597,7 +597,7 @@ function VideoPlayer({ videoUrl }) {
               fontSize: '15px',
               marginTop: '-8.14em',
               position: 'relative',
-              left: '55.1em',
+              left: '54.8em',
               visibility: (volumeSliderVisible || showSpeedModal) ? 'hidden' : 'visible',
             }}
           >
@@ -692,7 +692,7 @@ function VideoPlayer({ videoUrl }) {
             : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
         }
         alt="Fullscreen toggle"
-        style={{ width: 40, height: 40, marginRight: '0.7em' }}
+        style={{ width: 40, height: 40, marginRight: '-6.3em' }}
       />
     </button>
 
@@ -748,6 +748,8 @@ function VideoPlayer({ videoUrl }) {
         height: '32px',
         objectFit: 'contain',
         display: 'block',
+        position: 'relative',
+        left: '-18em',
       }}
     />
   </button>
