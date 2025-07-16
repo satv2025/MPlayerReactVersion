@@ -217,20 +217,33 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
 
   useEffect(() => {
     const episodesDataScript = document.getElementById("episodes-data");
+  
     if (episodesDataScript) {
       try {
         const parsed = JSON.parse(episodesDataScript.textContent);
         setEpisodes(parsed);
+  
         if (parsed.length > 0) {
           setVideoUrl(parsed[0].videoPath);
+          if (onEpisodeChange) {
+            onEpisodeChange(parsed[0]);
+          }
         }
       } catch (e) {
         console.error("Error parsing episodes JSON", e);
       }
     } else if (propVideoUrl) {
-      setVideoUrl(propVideoUrl); // <- fallback si no hay JSON
+      setEpisodes([]); // importante: para evitar renders erróneos si hay UI de episodios
+      setVideoUrl(propVideoUrl);
+      if (onEpisodeChange) {
+        onEpisodeChange({
+          videoPath: propVideoUrl,
+          title: "",
+          description: ""
+        });
+      }
     }
-  }, [propVideoUrl]);  
+  }, [propVideoUrl, onEpisodeChange]);  
   
   useEffect(() => {
     const video = videoRef.current;
