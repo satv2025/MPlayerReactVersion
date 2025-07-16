@@ -216,21 +216,21 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
   };
 
   useEffect(() => {
-    // ✅ Leer JSON embebido UNA SOLA VEZ
     const episodesDataScript = document.getElementById("episodes-data");
     if (episodesDataScript) {
       try {
         const parsed = JSON.parse(episodesDataScript.textContent);
         setEpisodes(parsed);
-        // ✅ Cargar primer episodio
         if (parsed.length > 0) {
           setVideoUrl(parsed[0].videoPath);
         }
       } catch (e) {
         console.error("Error parsing episodes JSON", e);
       }
+    } else if (propVideoUrl) {
+      setVideoUrl(propVideoUrl); // <- fallback si no hay JSON
     }
-  }, []);
+  }, [propVideoUrl]);  
   
   useEffect(() => {
     const video = videoRef.current;
