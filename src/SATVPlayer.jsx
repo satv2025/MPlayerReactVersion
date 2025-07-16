@@ -216,10 +216,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   };
 
   useEffect(() => {
-    const video = videoRef.current;
     const episodesDataScript = document.getElementById("episodes-data");
   
-    // Manejo episodios o video único
     if (episodesDataScript) {
       try {
         const parsed = JSON.parse(episodesDataScript.textContent);
@@ -227,7 +225,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   
         if (parsed.length > 0) {
           setVideoUrl(parsed[0].videoPath);
-          if (typeof onEpisodeChange === "function") {
+          if (onEpisodeChange) {
             onEpisodeChange(parsed[0]);
           }
         }
@@ -235,9 +233,9 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
         console.error("Error parsing episodes JSON", e);
       }
     } else if (propVideoUrl) {
-      setEpisodes([]); // evita renders erróneos si hay UI episodios
+      setEpisodes([]); // importante: para evitar renders erróneos si hay UI de episodios
       setVideoUrl(propVideoUrl);
-      if (typeof onEpisodeChange === "function") {
+      if (onEpisodeChange) {
         onEpisodeChange({
           videoPath: propVideoUrl,
           title: "",
@@ -245,14 +243,10 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
         });
       }
     }
+  }, [propVideoUrl, onEpisodeChange]);  
   
-    // Setear volumen inicial
-    if (video) {
-      video.volume = 0.5;
-      setVolume(0.5);
-    }
-  
-    // Reproducir video con HLS o nativo
+  useEffect(() => {
+    const video = videoRef.current;
     if (!video || !videoUrl) return;
   
     let hls;
@@ -292,7 +286,24 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     return () => {
       if (hls) hls.destroy();
     };
-  }, [propVideoUrl, videoUrl, onEpisodeChange]);
+  }, [videoUrl]);
+  
+  // ✅ Función para cambiar de episodio
+  const playEpisode = (index) => {
+    if (episodes[index]) {
+      setVideoUrl(episodes[index].videoPath);
+      setShowEpisodesModal(false);
+    }
+  };
+  
+  // ✅ Setear volumen inicial
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.volume = 0.5;
+      setVolume(0.5);
+    }
+  }, []);  
 
   useEffect(() => {
     const video = videoRef.current;
