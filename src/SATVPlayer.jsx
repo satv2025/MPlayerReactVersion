@@ -148,7 +148,7 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
   );
 }
 
-function VideoPlayer({ videoUrl: propVideoUrl }) {
+function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   // 🎨✨ ICON BUTTON STYLE
   const iconButtonStyle = {
     background: 'none',
@@ -216,8 +216,10 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
   };
 
   useEffect(() => {
+    const video = videoRef.current;
     const episodesDataScript = document.getElementById("episodes-data");
   
+    // Manejo episodios o video único
     if (episodesDataScript) {
       try {
         const parsed = JSON.parse(episodesDataScript.textContent);
@@ -225,7 +227,7 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
   
         if (parsed.length > 0) {
           setVideoUrl(parsed[0].videoPath);
-          if (onEpisodeChange) {
+          if (typeof onEpisodeChange === "function") {
             onEpisodeChange(parsed[0]);
           }
         }
@@ -233,9 +235,9 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
         console.error("Error parsing episodes JSON", e);
       }
     } else if (propVideoUrl) {
-      setEpisodes([]); // importante: para evitar renders erróneos si hay UI de episodios
+      setEpisodes([]); // evita renders erróneos si hay UI episodios
       setVideoUrl(propVideoUrl);
-      if (onEpisodeChange) {
+      if (typeof onEpisodeChange === "function") {
         onEpisodeChange({
           videoPath: propVideoUrl,
           title: "",
@@ -243,10 +245,14 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
         });
       }
     }
-  }, [propVideoUrl, onEpisodeChange]);  
   
-  useEffect(() => {
-    const video = videoRef.current;
+    // Setear volumen inicial
+    if (video) {
+      video.volume = 0.5;
+      setVolume(0.5);
+    }
+  
+    // Reproducir video con HLS o nativo
     if (!video || !videoUrl) return;
   
     let hls;
@@ -286,24 +292,7 @@ function VideoPlayer({ videoUrl: propVideoUrl }) {
     return () => {
       if (hls) hls.destroy();
     };
-  }, [videoUrl]);
-  
-  // ✅ Función para cambiar de episodio
-  const playEpisode = (index) => {
-    if (episodes[index]) {
-      setVideoUrl(episodes[index].videoPath);
-      setShowEpisodesModal(false);
-    }
-  };
-  
-  // ✅ Setear volumen inicial
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.volume = 0.5;
-      setVolume(0.5);
-    }
-  }, []);  
+  }, [propVideoUrl, videoUrl, onEpisodeChange]);
 
   useEffect(() => {
     const video = videoRef.current;
