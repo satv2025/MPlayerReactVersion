@@ -525,26 +525,15 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     >
       <GlobalStyle />
       {!shouldHideTimeAndBar && (
-  <div
-    className='title-styles'
-    style={{
-      position: 'absolute',
-      top: 20,
-      left: 20,
-      zIndex: 50,
-      marginTop: '37.4em',
-      marginLeft: '39em',
-      color: 'white',
-    }}
-  >
+  <div className="title-styles">
     {videoType === 'Movie' && (
-      <div id="title-movie-type" style={{ fontWeight: 400, fontSize: '22px' }}>
+      <div id="title-movie-type" style={{ fontWeight: 400 }}>
         {videoTitle}
       </div>
     )}
 
     {videoType === 'Series' && (
-      <div id="title-serie-type" style={{ fontSize: '22px' }}>
+      <div id="title-serie-type">
         <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
         <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
       </div>
