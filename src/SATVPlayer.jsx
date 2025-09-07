@@ -159,50 +159,15 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     alignItems: 'center',
   };
 
-  function VideoTitle({ currentEpisode }) {
-    if (!currentEpisode) return null;
-  
-    if (currentEpisode.titleType === "Movie") {
-      return (
-        <div
-          className="title-movie-type"
-          style={{
-            fontWeight: 400,
-            color: 'white',
-            textAlign: 'center',
-            marginBottom: '0.5em',
-            userSelect: 'text',
-          }}
-        >
-          {currentEpisode.title}
-        </div>
-      );
-    } else if (currentEpisode.titleType === "Serie") {
-      return (
-        <div
-          className="title-serie-type"
-          style={{
-            color: 'white',
-            textAlign: 'center',
-            marginBottom: '0.5em',
-            userSelect: 'text',
-          }}
-        >
-          <span style={{ fontWeight: 500 }}>{currentEpisode.seriesName}</span>{' '}
-          <span style={{ fontWeight: 400 }}>
-            E{currentEpisode.episodeNumber} {currentEpisode.episodeTitle}
-          </span>
-        </div>
-      );
-    }
-  
-    return null;
-  }  
-
   // 🛠️🔧 REFS
   const episodesTimeout = useRef(null);
   const videoRef = useRef(null);
   const [videoUrl, setVideoUrl] = useState("");
+  // TÍTULO DINÁMICO
+  const [videoType, setVideoType] = useState('Movie'); // 'Movie' o 'Series'
+  const [videoTitle, setVideoTitle] = useState('');
+  const [episodeNumber, setEpisodeNumber] = useState(1);
+  const [seriesName, setSeriesName] = useState('');
   const containerRef = useRef(null);
   const progressRef = useRef(null);
   const sliderRef = useRef(null);
@@ -257,31 +222,28 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
 
   useEffect(() => {
     const episodesDataScript = document.getElementById("episodes-data");
-  
     if (episodesDataScript) {
       try {
         const parsed = JSON.parse(episodesDataScript.textContent);
         setEpisodes(parsed);
   
         if (parsed.length > 0) {
-          setVideoUrl(parsed[0].videoPath);
-          if (onEpisodeChange) {
-            onEpisodeChange(parsed[0]);
-          }
+          const first = parsed[0];
+          setVideoUrl(first.videoPath);
+  
+          setVideoType(first.titleType); // Movie o Series
+          setVideoTitle(first.title);
+          setEpisodeNumber(1);
+          setSeriesName(first.seriesName || ''); // si es Movie, queda vacío
+          onEpisodeChange(first);
         }
       } catch (e) {
         console.error("Error parsing episodes JSON", e);
       }
     } else if (propVideoUrl) {
-      setEpisodes([]); // importante: para evitar renders erróneos si hay UI de episodios
       setVideoUrl(propVideoUrl);
-      if (onEpisodeChange) {
-        onEpisodeChange({
-          videoPath: propVideoUrl,
-          title: "",
-          description: ""
-        });
-      }
+      setVideoType('Movie');
+      setVideoTitle(''); 
     }
   }, [propVideoUrl, onEpisodeChange]);  
   
@@ -331,7 +293,11 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   // ✅ Función para cambiar de episodio
   const playEpisode = (index) => {
     if (episodes[index]) {
-      setVideoUrl(episodes[index].videoPath);
+      const ep = episodes[index];
+      setVideoUrl(ep.videoPath);
+      setVideoTitle(ep.title);
+      setEpisodeNumber(index + 1);
+      setSeriesName(ep.seriesName || '');
       setShowEpisodesModal(false);
     }
   };
@@ -558,6 +524,20 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
+      <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 50 }}>
+  {videoType === 'Movie' && (
+    <div id="title-movie-type" style={{ fontWeight: 400, color: 'white', fontSize: '22px' }}>
+      {videoTitle}
+    </div>
+  )}
+
+  {videoType === 'Series' && (
+    <div id="title-serie-type" style={{ color: 'white', fontSize: '22px' }}>
+      <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
+      <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
+    </div>
+  )}
+</div>
       <video
         ref={videoRef}
         style={{
@@ -676,15 +656,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
             onVolumeChange={changeVolume}
             onSliderVisibilityChange={setVolumeSliderVisible}
           />
-<div className="film-title" style={{
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '0.5em',
-  color: 'white',
-}}>
-  <VideoTitle currentEpisode={currentVideo} />
-</div>
+  
   <div
             className="countdown-current-time"
             style={{
