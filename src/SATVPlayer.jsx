@@ -526,6 +526,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       <GlobalStyle />
       {!shouldHideTimeAndBar && (
   <div
+    className='title-styles'
     style={{
       position: 'absolute',
       top: 20,
