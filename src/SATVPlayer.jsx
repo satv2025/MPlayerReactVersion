@@ -531,18 +531,11 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         zIndex: 1000,
-        display: shouldHideTimeAndBar ? 'none' : 'block', // se oculta junto a los controles
+        display: shouldHideTimeAndBar ? 'none' : 'block',
      }}>
-  {videoType === 'Movie' ? (
-    <div style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
-      {videoTitle}
-    </div>
-  ) : (
-    <div style={{ fontSize: '22px', color: 'white' }}>
-      <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
-      <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
-    </div>
-  )}
+  <div style={{ fontWeight: 500, fontSize: '22px', color: 'white' }}>
+    {seriesName} E{episodeNumber} {videoTitle}
+  </div>
 </div>
       <video
         ref={videoRef}
