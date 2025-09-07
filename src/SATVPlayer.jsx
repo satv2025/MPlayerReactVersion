@@ -528,19 +528,6 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   ref={containerRef}
   style={{ position: 'relative', width: '100%', height: '100%' }}
 >
-<video
-        ref={videoRef}
-        style={{
-          maxWidth: '100%',
-          maxHeight: '100%',
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-          backgroundColor: 'black',
-          display: 'block',
-        }}
-        onClick={togglePlay}
-      />
 
   <div
     className={`title-styles ${fullscreen ? 'fullscreen' : 'windowed'}`}
@@ -565,6 +552,19 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     )}
   </div>
 </div>
+      <video
+        ref={videoRef}
+        style={{
+          maxWidth: '100%',
+          maxHeight: '100%',
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          backgroundColor: 'black',
+          display: 'block',
+        }}
+        onClick={togglePlay}
+      />
       {/* Controles */}
       <div
         style={{
