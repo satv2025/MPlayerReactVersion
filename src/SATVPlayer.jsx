@@ -551,51 +551,19 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
         {/* Barra de progreso */}
         <div
   ref={progressRef}
+  className="progress-container"
   onPointerDown={handleProgressPointerDown}
   onPointerMove={handleProgressPointerMove}
   onPointerUp={handleProgressPointerUp}
   onPointerCancel={handleProgressPointerUp}
   onMouseEnter={() => setProgressHover(true)}
   onMouseLeave={() => setProgressHover(false)}
-  style={{
-    height: progressHover ? 6 : 4,
-    width: '100%',
-    backgroundColor: 'rgb(139 139 139 / 72%)',
-    cursor: 'pointer',
-    position: 'relative',
-    borderRadius: 0,
-    marginBottom: 10,
-    transition: 'height 0.2s ease',
-    display: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'none' : 'block',
-    pointerEvents: 'auto', // asegurar que capture todos los eventos
-  }}
 >
   <div
-    style={{
-      width: (currentTime / duration) * 100 + '%',
-      backgroundColor: '#e50914',
-      height: '100%',
-      borderRadius: 0,
-      position: 'absolute',  // cambiar de relative a absolute
-      top: 0,
-      left: 0,
-      pointerEvents: 'none', // los hijos no bloquean hover
-    }}
+    className="progress-filled"
+    style={{ width: (currentTime / duration) * 100 + '%' }}
   >
-    <div
-      style={{
-        position: 'absolute',
-        right: 0,
-        top: '50%',
-        transform: 'translate(50%, -50%)',
-        width: '1rem',
-        height: '1rem',
-        borderRadius: '50%',
-        backgroundColor: '#e50914',
-        cursor: 'pointer',
-        pointerEvents: 'auto', // solo el scrubber capta eventos
-      }}
-    />
+    <div className="progress-thumb" />
   </div>
 </div>
   
