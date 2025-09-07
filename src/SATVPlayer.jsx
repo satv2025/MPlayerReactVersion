@@ -526,20 +526,11 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       <GlobalStyle />
       <div
   ref={containerRef}
-  style={{
-    position: 'relative',    // crucial para que los hijos absolutos se posicionen sobre el video
-    width: '100%',
-    height: '100%',
-  }}
+  style={{ position: 'relative', width: '100%', height: '100%' }}
 >
   <video
     ref={videoRef}
-    style={{
-      width: '100%',
-      height: '100%',
-      objectFit: 'contain',   // mantiene aspecto sin distorsionar
-      display: 'block',
-    }}
+    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
   />
 
   {!shouldHideTimeAndBar && (
@@ -547,8 +538,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       className="title-styles"
       style={{
         position: 'absolute',
-        top: '90%',        // ajustar según tu posición deseada dentro del video
-        left: '50%',       // centrado horizontal sobre el video
+        top: '85%',       // 85% desde el top del video
+        left: '50%',
         transform: 'translate(-50%, -50%)',
         zIndex: 1000,
       }}
