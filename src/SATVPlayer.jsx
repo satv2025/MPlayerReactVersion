@@ -297,8 +297,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   
     setVideoUrl(ep.videoPath);
     setSeriesName(ep.seriesName || '');
-    setEpisodeNumber(index + 1);   // para que sea E1, E2, etc.
-    setVideoTitle(ep.title);       // "Episodio 1", "Episodio 2"
+    setEpisodeNumber(ep.episodeNumber);
+    setVideoTitle(ep.title); // solo "Episodio 1", "Episodio 2", etc.
     setShowEpisodesModal(false);
   };  
   
@@ -528,6 +528,10 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   ref={containerRef}
   style={{ position: 'relative', width: '100%', height: '100%' }}
 >
+  <video
+    ref={videoRef}
+    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+  />
 
   <div
     className={`title-styles ${fullscreen ? 'fullscreen' : 'windowed'}`}
@@ -877,7 +881,14 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
         <div
           key={index}
           className="episode-item"
-          onClick={() => playEpisode(index)}
+          onClick={() => {
+            playEpisode(index);
+            const epnameEl = document.getElementById('epname');
+            if (epnameEl) {
+              epnameEl.textContent = `E${index + 1} ${ep.title}`;
+            }
+            setShowEpisodesModal(false);
+          }}
           style={{
             display: 'flex',
             marginBottom: '10px',
