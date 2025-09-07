@@ -159,6 +159,46 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     alignItems: 'center',
   };
 
+  function VideoTitle({ currentEpisode }) {
+    if (!currentEpisode) return null;
+  
+    if (currentEpisode.titleType === "Movie") {
+      return (
+        <div
+          className="title-movie-type"
+          style={{
+            fontWeight: 400,
+            color: 'white',
+            textAlign: 'center',
+            marginBottom: '0.5em',
+            userSelect: 'text',
+          }}
+        >
+          {currentEpisode.title}
+        </div>
+      );
+    } else if (currentEpisode.titleType === "Serie") {
+      return (
+        <div
+          className="title-serie-type"
+          style={{
+            color: 'white',
+            textAlign: 'center',
+            marginBottom: '0.5em',
+            userSelect: 'text',
+          }}
+        >
+          <span style={{ fontWeight: 500 }}>{currentEpisode.seriesName}</span>{' '}
+          <span style={{ fontWeight: 400 }}>
+            E{currentEpisode.episodeNumber} {currentEpisode.episodeTitle}
+          </span>
+        </div>
+      );
+    }
+  
+    return null;
+  }  
+
   // 🛠️🔧 REFS
   const episodesTimeout = useRef(null);
   const videoRef = useRef(null);
@@ -636,7 +676,15 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
             onVolumeChange={changeVolume}
             onSliderVisibilityChange={setVolumeSliderVisible}
           />
-  
+<div className="film-title" style={{
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '0.5em',
+  color: 'white',
+}}>
+  <VideoTitle currentEpisode={currentVideo} />
+</div>
   <div
             className="countdown-current-time"
             style={{
