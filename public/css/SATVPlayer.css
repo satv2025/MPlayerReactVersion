@@ -1,4 +1,3 @@
-/* Global / Speed modal */
 .speed-modal {
   position: absolute !important;
   bottom: 130% !important;
@@ -28,6 +27,7 @@
   margin-top: 20px;
 }
 
+/* Solo texto, sin fondo */
 .speed-option {
   cursor: pointer !important;
   font-size: 60px !important;
@@ -53,6 +53,7 @@
   background: #ffffff00 !important;
 }
 
+/* Ocultar círculos y etiquetas viejas */
 .speed-option-circle,
 .speed-option-circle-inner,
 .speed-option-label,
@@ -60,7 +61,6 @@
   display: none !important;
 }
 
-/* Volume slider */
 .ltr-121xt6i {
   background-color: rgb(38,38,38);
   border-radius: 0.3rem;
@@ -161,39 +161,4 @@ img {
 
 img:hover {
   transform: scale(1.2);
-}
-
-/* NUEVO: Barra de progreso */
-.progress-bar {
-  width: 100%;
-  height: 6px;
-  background-color: rgba(139,139,139,0.72);
-  position: relative;
-  cursor: pointer;
-}
-
-.progress-bar:hover {
-  height: 6px;
-}
-
-.progress-fill {
-  width: 0%;
-  height: 100%;
-  background-color: #e50914;
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none; /* que el hover llegue al contenedor */
-}
-
-.progress-scrubber {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background-color: #e50914;
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
 }

@@ -551,21 +551,48 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
         {/* Barra de progreso */}
         <div
   ref={progressRef}
-  className="progress-container"
   onPointerDown={handleProgressPointerDown}
   onPointerMove={handleProgressPointerMove}
   onPointerUp={handleProgressPointerUp}
   onPointerCancel={handleProgressPointerUp}
   onMouseEnter={() => setProgressHover(true)}
   onMouseLeave={() => setProgressHover(false)}
+  style={{
+    height: progressHover ? 6 : 4,
+    width: '100%',          // ocupa todo el ancho
+    backgroundColor: 'rgb(139 139 139 / 72%)',
+    cursor: 'pointer',
+    position: 'relative',
+    borderRadius: 0,
+    marginBottom: 10,
+    transition: 'height 0.2s ease',
+    display: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'none' : 'block',
+  }}
 >
-  <div
-    className="progress-filled"
-    style={{ width: (currentTime / duration) * 100 + '%' }}
-  >
-    <div className="progress-thumb" />
-  </div>
-</div>
+          <div
+            style={{
+              width: (currentTime / duration) * 100 + '%',
+              backgroundColor: '#e50914',
+              height: '100%',
+              borderRadius: 0,
+              position: 'relative',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '50%',
+                transform: 'translate(50%, -50%)',
+                width: '1rem',
+                height: '1rem',
+                borderRadius: '50%',
+                backgroundColor: '#e50914',
+                cursor: 'pointer',
+              }}
+            />
+          </div>
+        </div>
   
         {/* Controles inferiores (botones y demás) */}
         <div
@@ -610,6 +637,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
           />
   
           <div
+            className="countdown-current-time"
             style={{
               flexGrow: 1,
               textAlign: 'center',
@@ -618,6 +646,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
               marginTop: '-8.14em',
               position: 'relative',
               left: '54.8em',
+              pointerEvents: 'none',
               visibility: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'hidden' : 'visible',
             }}
           >
