@@ -524,22 +524,48 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
-      {!shouldHideTimeAndBar && (
-  <div className="title-styles">
-    {videoType === 'Movie' && (
-      <div id="title-movie-type" style={{ fontWeight: 400 }}>
-        {videoTitle}
-      </div>
-    )}
+      <div
+  ref={containerRef}
+  style={{
+    position: 'relative',    // crucial para que los hijos absolutos se posicionen sobre el video
+    width: '100%',
+    height: '100%',
+  }}
+>
+  <video
+    ref={videoRef}
+    style={{
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain',   // mantiene aspecto sin distorsionar
+      display: 'block',
+    }}
+  />
 
-    {videoType === 'Series' && (
-      <div id="title-serie-type">
-        <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
-        <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
-      </div>
-    )}
-  </div>
-)}
+  {!shouldHideTimeAndBar && (
+    <div
+      className="title-styles"
+      style={{
+        position: 'absolute',
+        top: '90%',        // ajustar según tu posición deseada dentro del video
+        left: '50%',       // centrado horizontal sobre el video
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1000,
+      }}
+    >
+      {videoType === 'Movie' ? (
+        <div id="title-movie-type" style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
+          {videoTitle}
+        </div>
+      ) : (
+        <div id="title-serie-type" style={{ fontSize: '22px', color: 'white' }}>
+          <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
+          <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
+        </div>
+      )}
+    </div>
+  )}
+</div>
       <video
         ref={videoRef}
         style={{
