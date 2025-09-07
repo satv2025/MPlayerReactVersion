@@ -163,11 +163,6 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const episodesTimeout = useRef(null);
   const videoRef = useRef(null);
   const [videoUrl, setVideoUrl] = useState("");
-  // TÍTULO DINÁMICO
-  const [videoType, setVideoType] = useState('Movie'); // 'Movie' o 'Series'
-  const [videoTitle, setVideoTitle] = useState('');
-  const [episodeNumber, setEpisodeNumber] = useState(1);
-  const [seriesName, setSeriesName] = useState('');
   const containerRef = useRef(null);
   const progressRef = useRef(null);
   const sliderRef = useRef(null);
@@ -222,28 +217,31 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
 
   useEffect(() => {
     const episodesDataScript = document.getElementById("episodes-data");
+  
     if (episodesDataScript) {
       try {
         const parsed = JSON.parse(episodesDataScript.textContent);
         setEpisodes(parsed);
   
         if (parsed.length > 0) {
-          const first = parsed[0];
-          setVideoUrl(first.videoPath);
-  
-          setVideoType(first.titleType); // Movie o Series
-          setVideoTitle(first.title);
-          setEpisodeNumber(1);
-          setSeriesName(first.seriesName || ''); // si es Movie, queda vacío
-          onEpisodeChange(first);
+          setVideoUrl(parsed[0].videoPath);
+          if (onEpisodeChange) {
+            onEpisodeChange(parsed[0]);
+          }
         }
       } catch (e) {
         console.error("Error parsing episodes JSON", e);
       }
     } else if (propVideoUrl) {
+      setEpisodes([]); // importante: para evitar renders erróneos si hay UI de episodios
       setVideoUrl(propVideoUrl);
-      setVideoType('Movie');
-      setVideoTitle(''); 
+      if (onEpisodeChange) {
+        onEpisodeChange({
+          videoPath: propVideoUrl,
+          title: "",
+          description: ""
+        });
+      }
     }
   }, [propVideoUrl, onEpisodeChange]);  
   
@@ -293,11 +291,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   // ✅ Función para cambiar de episodio
   const playEpisode = (index) => {
     if (episodes[index]) {
-      const ep = episodes[index];
-      setVideoUrl(ep.videoPath);
-      setVideoTitle(ep.title);
-      setEpisodeNumber(index + 1);
-      setSeriesName(ep.seriesName || '');
+      setVideoUrl(episodes[index].videoPath);
       setShowEpisodesModal(false);
     }
   };
@@ -524,38 +518,6 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
-      <div
-  ref={containerRef}
-  style={{ position: 'relative', width: '100%', height: '100%' }}
->
-  <video
-    ref={videoRef}
-    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-  />
-
-  <div
-    className={`title-styles ${fullscreen ? 'fullscreen' : 'windowed'}`}
-    style={{
-      position: 'absolute',
-      top: '85%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 1000,
-      display: shouldHideTimeAndBar ? 'none' : 'block', // se oculta junto a los controles
-    }}
-  >
-    {videoType === 'Movie' ? (
-      <div id="title-movie-type" style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
-        {videoTitle}
-      </div>
-    ) : (
-      <div id="title-serie-type" style={{ fontSize: '22px', color: 'white' }}>
-        <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
-        <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
-      </div>
-    )}
-  </div>
-</div>
       <video
         ref={videoRef}
         style={{
@@ -675,8 +637,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
             onSliderVisibilityChange={setVolumeSliderVisible}
           />
   
-  <div
-            className="countdown-current-time"
+          <div
             style={{
               flexGrow: 1,
               textAlign: 'center',
@@ -685,7 +646,6 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
               marginTop: '-8.14em',
               position: 'relative',
               left: '54.8em',
-              pointerEvents: 'none',
               visibility: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'hidden' : 'visible',
             }}
           >
