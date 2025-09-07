@@ -292,15 +292,15 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   
   // ✅ Función para cambiar de episodio
   const playEpisode = (index) => {
-    if (episodes[index]) {
-      const ep = episodes[index];
-      setVideoUrl(ep.videoPath);
-      setVideoTitle(ep.title);
-      setEpisodeNumber(index + 1);
-      setSeriesName(ep.seriesName || '');
-      setShowEpisodesModal(false);
-    }
-  };
+    const ep = episodes[index];
+    if (!ep) return;
+  
+    setVideoUrl(ep.videoPath);
+    setSeriesName(ep.seriesName || '');
+    setEpisodeNumber(ep.episodeNumber);
+    setVideoTitle(ep.title); // solo "Episodio 1", "Episodio 2", etc.
+    setShowEpisodesModal(false);
+  };  
   
   // ✅ Setear volumen inicial
   useEffect(() => {
@@ -549,10 +549,10 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
         {videoTitle}
       </div>
     ) : (
-      <div id="title-serie-type" style={{ fontSize: '22px', color: 'white' }}>
-        <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
-        <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
-      </div>
+<div id="title-serie-type" style={{ fontSize: '22px', color: 'white' }}>
+  <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
+  <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
+</div>
     )}
   </div>
 </div>
