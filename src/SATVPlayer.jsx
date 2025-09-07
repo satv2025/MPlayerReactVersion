@@ -524,20 +524,32 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
-      <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 50 }}>
-  {videoType === 'Movie' && (
-    <div id="title-movie-type" style={{ fontWeight: 400, color: 'white', fontSize: '22px' }}>
-      {videoTitle}
-    </div>
-  )}
+      {!shouldHideTimeAndBar && (
+  <div
+    style={{
+      position: 'absolute',
+      top: 20,
+      left: 20,
+      zIndex: 50,
+      marginTop: '37.4em',
+      marginLeft: '39em',
+      color: 'white',
+    }}
+  >
+    {videoType === 'Movie' && (
+      <div id="title-movie-type" style={{ fontWeight: 400, fontSize: '22px' }}>
+        {videoTitle}
+      </div>
+    )}
 
-  {videoType === 'Series' && (
-    <div id="title-serie-type" style={{ color: 'white', fontSize: '22px' }}>
-      <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
-      <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
-    </div>
-  )}
-</div>
+    {videoType === 'Series' && (
+      <div id="title-serie-type" style={{ fontSize: '22px' }}>
+        <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
+        <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
+      </div>
+    )}
+  </div>
+)}
       <video
         ref={videoRef}
         style={{
