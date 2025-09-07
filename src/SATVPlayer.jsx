@@ -550,26 +550,25 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       >
         {/* Barra de progreso */}
         <div
-          ref={progressRef}
-          onPointerDown={handleProgressPointerDown}
-          onPointerMove={handleProgressPointerMove}
-          onPointerUp={handleProgressPointerUp}
-          onPointerCancel={handleProgressPointerUp}
-          onMouseEnter={() => setProgressHover(true)}
-          onMouseLeave={() => setProgressHover(false)}
-          style={{
-            height: progressHover ? 6 : 4,
-            width: '95%',
-            backgroundColor: 'rgb(139 139 139 / 72%)',
-            cursor: 'pointer',
-            position: 'relative',
-            borderRadius: 0,
-            marginBottom: 10,
-            marginLeft: '0.7em',
-            transition: 'height 0.2s ease',
-            display: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'none' : 'block',
-          }}
-        >
+  ref={progressRef}
+  onPointerDown={handleProgressPointerDown}
+  onPointerMove={handleProgressPointerMove}
+  onPointerUp={handleProgressPointerUp}
+  onPointerCancel={handleProgressPointerUp}
+  onMouseEnter={() => setProgressHover(true)}
+  onMouseLeave={() => setProgressHover(false)}
+  style={{
+    height: progressHover ? 6 : 4,
+    width: '100%',          // ocupa todo el ancho
+    backgroundColor: 'rgb(139 139 139 / 72%)',
+    cursor: 'pointer',
+    position: 'relative',
+    borderRadius: 0,
+    marginBottom: 10,
+    transition: 'height 0.2s ease',
+    display: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'none' : 'block',
+  }}
+>
           <div
             style={{
               width: (currentTime / duration) * 100 + '%',
