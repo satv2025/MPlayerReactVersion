@@ -533,29 +533,28 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
   />
 
-  {!shouldHideTimeAndBar && (
-    <div
-      className="title-styles"
-      style={{
-        position: 'absolute',
-        top: '85%',       // 85% desde el top del video
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 1000,
-      }}
-    >
-      {videoType === 'Movie' ? (
-        <div id="title-movie-type" style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
-          {videoTitle}
-        </div>
-      ) : (
-        <div id="title-serie-type" style={{ fontSize: '22px', color: 'white' }}>
-          <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
-          <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
-        </div>
-      )}
-    </div>
-  )}
+  <div
+    className={`title-styles ${fullscreen ? 'fullscreen' : 'windowed'}`}
+    style={{
+      position: 'absolute',
+      top: '85%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: 1000,
+      display: shouldHideTimeAndBar ? 'none' : 'block', // se oculta junto a los controles
+    }}
+  >
+    {videoType === 'Movie' ? (
+      <div id="title-movie-type" style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
+        {videoTitle}
+      </div>
+    ) : (
+      <div id="title-serie-type" style={{ fontSize: '22px', color: 'white' }}>
+        <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
+        <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
+      </div>
+    )}
+  </div>
 </div>
       <video
         ref={videoRef}
