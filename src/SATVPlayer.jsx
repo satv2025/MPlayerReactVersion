@@ -568,14 +568,19 @@ const playEpisode = (index, list = episodes) => {
       display: shouldHideTimeAndBar ? 'none' : 'block', // ⬅ ocultar junto a los controles
     }}
   >
-    {videoType === 'Movie' ? (
-      <div
-        className="MovieTitleType"
-        id="MovieTitleType"
-        style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}
-      >
-        {videoTitle}
-      </div>
+{videoType === 'Movie' ? (
+  <div
+    className="MovieTitleType"
+    id="MovieTitleType"
+    style={{
+      fontWeight: 400,
+      fontSize: '22px',
+      color: 'white',
+      display: shouldHideTimeAndBar ? 'none' : 'block', // 🔹 aquí
+    }}
+  >
+    {videoTitle}
+  </div>
     ) : (
       <div
         className="SeriesTitleType"
@@ -908,12 +913,22 @@ const playEpisode = (index, list = episodes) => {
       <div
         className="next-episode-overlay"
         style={{
-          display: nextOverlayVisible ? 'block' : 'none', // control por estado
+          display: nextOverlayVisible ? 'block' : 'none',
         }}
       >
         <img src={nextEp.image} alt={nextEp.title} />
         <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '3px' }}>{nextEp.title}</div>
         <div style={{ fontSize: '12px', color: '#ccc' }}>{nextEp.description}</div>
+
+        {/* Ocultar barra de progreso y countdown mientras el overlay está activo */}
+        <style>{`
+          .countdown-current-time {
+            visibility: ${nextOverlayVisible ? 'hidden' : 'visible'};
+          }
+          .watch-video--scrubber-volume-container {
+            display: ${nextOverlayVisible ? 'none' : 'block'};
+          }
+        `}</style>
       </div>
     );
   })()}
