@@ -180,7 +180,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [buffering, setBuffering] = useState(false);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
