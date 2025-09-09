@@ -871,15 +871,7 @@ const playEpisode = (index, list = episodes) => {
   </button>
 {/* NUEVO BOTÓN NextEpisode */}
 <div
-  style={{
-    position: 'relative',
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: '8px', // separación respecto al botón Episodes
-  }}
+  style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
   onMouseEnter={() => setNextOverlayVisible(true)}
   onMouseLeave={() => setNextOverlayVisible(false)}
 >
@@ -887,30 +879,19 @@ const playEpisode = (index, list = episodes) => {
     className="nextEpisodeButton"
     style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
     onClick={() => {
-      // reproducir el siguiente episodio si existe
-      if (episodes.length > 0) {
-        const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
-        const nextIndex = currentIndex + 1;
-        if (nextIndex < episodes.length) {
-          playEpisode(nextIndex);
-        }
-      }
+      const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+      const nextIndex = currentIndex + 1;
+      if (nextIndex < episodes.length) playEpisode(nextIndex);
     }}
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
       alt="Next Episode"
-      className="next-episode-icon"
-      style={{
-        width: '32px',
-        height: '32px',
-        objectFit: 'contain',
-        display: 'block',
-      }}
+      style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block' }}
     />
   </button>
 
-  {/* Overlay controlado por estado */}
+  {/* Overlay */}
   {episodes.length > 0 && (() => {
     const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
     const nextIndex = currentIndex + 1;
@@ -919,7 +900,6 @@ const playEpisode = (index, list = episodes) => {
 
     return (
       <div
-        className="next-episode-overlay"
         style={{
           position: 'absolute',
           bottom: '50px',
@@ -929,21 +909,14 @@ const playEpisode = (index, list = episodes) => {
           padding: '10px',
           borderRadius: '5px',
           color: 'white',
-          display: nextOverlayVisible ? 'block' : 'none', // ✅ usa estado
+          display: nextOverlayVisible ? 'block' : 'none', // ✅ control por estado
           zIndex: 200,
+          pointerEvents: 'auto', // importante para que el overlay reciba hover
         }}
       >
-        <img
-          src={nextEp.image}
-          alt={nextEp.title}
-          style={{ width: '100%', borderRadius: '3px', marginBottom: '5px' }}
-        />
-        <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '3px' }}>
-          {nextEp.title}
-        </div>
-        <div style={{ fontSize: '12px', color: '#ccc' }}>
-          {nextEp.description}
-        </div>
+        <img src={nextEp.image} alt={nextEp.title} style={{ width: '100%', borderRadius: '3px', marginBottom: '5px' }} />
+        <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '3px' }}>{nextEp.title}</div>
+        <div style={{ fontSize: '12px', color: '#ccc' }}>{nextEp.description}</div>
       </div>
     );
   })()}
