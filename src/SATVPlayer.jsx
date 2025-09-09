@@ -652,7 +652,7 @@ const playEpisode = (index, list = episodes) => {
             marginBottom: 10,
             marginLeft: '0.7em',
             transition: 'height 0.2s ease',
-            display: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'none' : 'block',
+            display: (volumeSliderVisible || showSpeedModal || showEpisodesModal || nextOverlayVisible) ? 'none' : 'block',
           }}
         >
           <div
@@ -733,7 +733,7 @@ const playEpisode = (index, list = episodes) => {
               position: 'relative',
               left: '54.8em',
               pointerEvents: 'none',
-              visibility: (volumeSliderVisible || showSpeedModal || showEpisodesModal) ? 'hidden' : 'visible',
+              visibility: (volumeSliderVisible || showSpeedModal || showEpisodesModal || nextOverlayVisible) ? 'hidden' : 'visible',
             }}
           >
             {formatTime(duration - currentTime)}
@@ -916,9 +916,38 @@ const playEpisode = (index, list = episodes) => {
           display: nextOverlayVisible ? 'block' : 'none',
         }}
       >
-        <img src={nextEp.image} alt={nextEp.title} />
-        <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '3px' }}>{nextEp.title}</div>
-        <div style={{ fontSize: '12px', color: '#ccc' }}>{nextEp.description}</div>
+<img 
+  src={nextEp.image} 
+  alt={nextEp.title} 
+  className="next-episode-image" 
+  style={{}} 
+/>
+
+<div 
+  className="next-episode-title" 
+  style={{
+    fontWeight: '500',
+    fontSize: '26px',
+    marginBottom: '3px',
+    paddingLeft: '9em',
+    marginTop: '-5em',
+  }}  
+>
+  {nextEp.title}
+</div>
+
+<div 
+  className="next-episode-description" 
+  style={{
+    fontSize: '19px',
+    color: 'rgb(204, 204, 204)',
+    fontWeight: '300',
+    paddingLeft: '12.4em',
+  }}
+>
+  {nextEp.description}
+</div>
+
 
         {/* Ocultar barra de progreso y countdown mientras el overlay está activo */}
         <style>{`
