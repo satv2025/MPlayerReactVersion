@@ -310,6 +310,13 @@ const playEpisode = (index, list = episodes) => {
     }
   }, []);  
 
+  const episodesRef = useRef(episodes);
+  const videoUrlRef = useRef(videoUrl);
+  
+  // Mantener referencias actualizadas
+  useEffect(() => { episodesRef.current = episodes; }, [episodes]);
+  useEffect(() => { videoUrlRef.current = videoUrl; }, [videoUrl]);
+  
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -321,16 +328,18 @@ const playEpisode = (index, list = episodes) => {
     const onCanPlay = () => setBuffering(false);
     const onEnded = () => {
       setBuffering(false);
-    
-      // Si hay episodios en la lista
-      if (episodes.length > 0) {
-        const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+  
+      // Playlist automático
+      const eps = episodesRef.current;
+      const current = videoUrlRef.current;
+      if (eps.length > 0) {
+        const currentIndex = eps.findIndex(ep => ep.videoPath === current);
         const nextIndex = currentIndex + 1;
-        if (nextIndex < episodes.length) {
-          playEpisode(nextIndex);
+        if (nextIndex < eps.length) {
+          playEpisode(nextIndex, eps);
         }
       }
-    };    
+    };
   
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
