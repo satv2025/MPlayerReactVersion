@@ -861,9 +861,18 @@ const playEpisode = (index, list = episodes) => {
       }}
     >
       <div style={{ marginBottom: 10 }}>
-        <div style={{ fontWeight: 'bold', fontSize: '24px', marginLeft: '0.8em', marginTop: '0.14em', color: 'white' }}>
-          Episodios
-        </div>
+      <div
+  className="episodelist-title"
+  style={{
+    fontWeight: 'bold',
+    fontSize: '24px',
+    marginLeft: '0.8em',
+    marginTop: '0.14em',
+    color: 'white',
+  }}
+>
+  Episodios
+</div>
       </div>
 
       {episodes.map((ep, index) => (
