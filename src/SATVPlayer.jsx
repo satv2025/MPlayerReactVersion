@@ -767,9 +767,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
             )}
           </div>
   
-{/* Controles: Fullscreen, Captions y Episodios */}
+{/* Contenedor relativo para fullscreen y captions */}
 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-  {/* Botón Fullscreen */}
   <button onClick={toggleFullscreen} style={iconButtonStyle}>
     <img
       src={
@@ -778,141 +777,151 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
           : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
       }
       alt="Fullscreen toggle"
-      style={{ width: 40, height: 40 }}
+      style={{ width: 40, height: 40, marginRight: '-6.3em' }}
     />
   </button>
 
-  {/* Botón Captions */}
-  <button style={iconButtonStyle}>
+  <button
+    style={{
+      ...iconButtonStyle,
+      position: 'absolute',
+      left: '-50px', // ajusta este valor para separarlo hacia la izquierda del fullscreen
+      top: '50%',
+      transform: 'translateY(-50%)',
+    }}
+    // Sin funcionalidad por ahora
+  >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
       alt="Captions"
-      style={{ width: 40, height: 40 }}
+      style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em' }}
     />
   </button>
+</div>
 
-  {/* Botón Episodios */}
-  <div
+{/* Control de episodios */}
+<div
+  style={{
+    position: 'relative',
+    cursor: 'pointer',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}
+  onMouseLeave={handleMouseLeaveEpisodes} // cierre general
+>
+  <button
+    className="episodesReactButton"
+    id="episodesReactButton"
     style={{
-      position: 'relative',
-      cursor: 'pointer',
+      ...iconButtonStyle,
       width: '40px',
       height: '40px',
+      padding: 0,
+      margin: 0,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
     }}
-    onMouseLeave={handleMouseLeaveEpisodes} // cierre cuando salís de todo el contenedor
+    onMouseEnter={handleMouseEnterEpisodes} // SOLO abre desde el botón
   >
-    <button
-      className="episodesReactButton"
-      id="episodesReactButton"
+    <img
+      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+      alt="Episodios"
       style={{
-        ...iconButtonStyle,
-        width: '40px',
-        height: '40px',
-        padding: 0,
-        margin: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: '32px',
+        height: '32px',
+        objectFit: 'contain',
+        display: 'block',
+        position: 'relative',
+        left: '-18em',
       }}
-      onMouseEnter={handleMouseEnterEpisodes} // SOLO abre desde el botón
+    />
+  </button>
+
+  {showEpisodesModal && (
+    <div
+      className="episodes-modal"
+      onMouseEnter={handleMouseEnterEpisodes} // mantiene abierto si entras al modal
+      onMouseLeave={handleMouseLeaveEpisodes} // cierra si sales del modal
+      style={{
+        position: 'absolute',
+        bottom: '50px',
+        right: 0,
+        backgroundColor: '#181818',
+        padding: '10px',
+        borderRadius: '5px',
+        zIndex: 100,
+        userSelect: 'none',
+        width: '300px',
+        maxHeight: '400px',
+        overflowY: 'auto',
+      }}
     >
-      <img
-        src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-        alt="Episodios"
-        style={{
-          width: '32px',
-          height: '32px',
-          objectFit: 'contain',
-          display: 'block',
-        }}
-      />
-    </button>
-
-    {showEpisodesModal && (
-      <div
-        className="episodes-modal"
-        onMouseEnter={handleMouseEnterEpisodes}  // mantiene abierto si el mouse entra al modal
-        onMouseLeave={handleMouseLeaveEpisodes} // cierra al salir del modal
-        style={{
-          position: 'absolute',
-          bottom: '50px',
-          right: 0,
-          backgroundColor: '#181818',
-          padding: '10px',
-          borderRadius: '5px',
-          zIndex: 100,
-          userSelect: 'none',
-          width: '300px',
-          maxHeight: '400px',
-          overflowY: 'auto',
-        }}
-      >
-        <div style={{ marginBottom: 10 }}>
-          <div
-            style={{
-              fontWeight: 'bold',
-              fontSize: '24px',
-              marginLeft: '0.8em',
-              marginTop: '0.14em',
-              color: 'white',
-            }}
-          >
-            Episodios
-          </div>
+      <div style={{ marginBottom: 10 }}>
+        <div
+          style={{
+            fontWeight: 'bold',
+            fontSize: '24px',
+            marginLeft: '0.8em',
+            marginTop: '0.14em',
+            color: 'white',
+          }}
+        >
+          Episodios
         </div>
+      </div>
 
-        {episodes.map((ep, index) => (
-          <div
-            key={index}
-            className="episode-item"
-            onClick={() => {
-              playEpisode(index);
-              const epnameEl = document.getElementById('epname');
-              if (epnameEl) {
-                epnameEl.textContent = `E${index + 1} ${ep.title}`;
-              }
-              setShowEpisodesModal(false);
-            }}
+      {episodes.map((ep, index) => (
+        <div
+          key={index}
+          className="episode-item"
+          onClick={() => {
+            playEpisode(index);
+            const epnameEl = document.getElementById('epname');
+            if (epnameEl) {
+              epnameEl.textContent = `E${index + 1} ${ep.title}`;
+            }
+            setShowEpisodesModal(false);
+          }}
+          style={{
+            display: 'flex',
+            marginBottom: '10px',
+            cursor: 'pointer',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '5px',
+            borderRadius: '3px',
+          }}
+        >
+          <img
+            src={ep.image}
+            alt={ep.title}
+            id="epImage"
+            className="epImage"
             style={{
-              display: 'flex',
-              marginBottom: '10px',
-              cursor: 'pointer',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '5px',
+              width: '60px',
+              height: '40px',
+              objectFit: 'cover',
               borderRadius: '3px',
             }}
-          >
-            <img
-              src={ep.image}
-              alt={ep.title}
-              id="epImage"
-              className="epImage"
-              style={{
-                width: '60px',
-                height: '40px',
-                objectFit: 'cover',
-                borderRadius: '3px',
-              }}
-            />
+          />
 
-            <div style={{ color: 'white' }}>
-              <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-              <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
-                {ep.description}
-              </p>
-            </div>
+          <div style={{ color: 'white' }}>
+            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
+              {ep.description}
+            </p>
           </div>
-        ))}
-      </div>
-    )}
-  </div>
-</div>
+        </div>
+      ))}
     </div>
-  </div>
+  )}
+</div>
+</div>
+</div>
 </div>
   );
 }
