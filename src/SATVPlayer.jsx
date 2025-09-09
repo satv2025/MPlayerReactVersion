@@ -868,7 +868,83 @@ const playEpisode = (index, list = episodes) => {
   style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
 />
   </button>
+{/* NUEVO BOTÓN NextEpisode */}
+<div
+  style={{
+    position: 'relative',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: '8px', // separación respecto al botón Episodes
+  }}
+>
+  <button
+    className="nextEpisodeButton"
+    style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
+    onClick={() => {
+      // reproducir el siguiente episodio si existe
+      if (episodes.length > 0) {
+        const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < episodes.length) {
+          playEpisode(nextIndex);
+        }
+      }
+    }}
+  >
+    <img
+      src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
+      alt="Next Episode"
+      className="next-episode-icon" // aquí puedes usar tu CSS para hover y scale
+      style={{
+        width: '32px',
+        height: '32px',
+        objectFit: 'contain',
+        display: 'block',
+      }}
+    />
+  </button>
 
+  {/* Micromodal overlay al hacer hover */}
+  {episodes.length > 0 && (() => {
+    const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= episodes.length) return null;
+    const nextEp = episodes[nextIndex];
+
+    return (
+      <div
+        className="next-episode-overlay"
+        style={{
+          position: 'absolute',
+          bottom: '50px',
+          left: '-100px', // ajustar para que no se solape con otros controles
+          width: '220px',
+          backgroundColor: 'rgba(0,0,0,0.85)',
+          padding: '10px',
+          borderRadius: '5px',
+          color: 'white',
+          display: 'none', // se activa con hover via CSS
+          zIndex: 200,
+        }}
+      >
+        <img
+          src={nextEp.image}
+          alt={nextEp.title}
+          style={{ width: '100%', borderRadius: '3px', marginBottom: '5px' }}
+        />
+        <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '3px' }}>
+          {nextEp.title}
+        </div>
+        <div style={{ fontSize: '12px', color: '#ccc' }}>
+          {nextEp.description}
+        </div>
+      </div>
+    );
+  })()}
+</div>
   {showEpisodesModal && (
     <div
       className="episodes-modal"
