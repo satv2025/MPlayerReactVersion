@@ -535,17 +535,34 @@ const playEpisode = (index, list = episodes) => {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       zIndex: 1000,
-      display: shouldHideTimeAndBar ? 'none' : 'block',
+      display: shouldHideTimeAndBar ? 'none' : 'block', // ⬅ ocultar junto a los controles
     }}
   >
     {videoType === 'Movie' ? (
-      <div className="MovieTitleType" id="MovieTitleType" style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
+      <div
+        className="MovieTitleType"
+        id="MovieTitleType"
+        style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}
+      >
         {videoTitle}
       </div>
     ) : (
-      <div className="SeriesTitleType" id="SeriesTitleType">
-        <strong style={{ fontWeight: 500 }}>{seriesName}</strong>
-        <p style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</p>
+      <div
+        className="SeriesTitleType"
+        id="SeriesTitleType"
+        style={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          fontSize: '22px',
+          color: 'white',
+          display: shouldHideTimeAndBar ? 'none' : 'inline', // ⬅ ocultar junto a los controles
+        }}
+      >
+        <strong style={{ fontWeight: 500 }}>{seriesName}</strong>{' '}
+        <span style={{ fontWeight: 400 }}>
+          E{episodeNumber} {videoTitle}
+        </span>
       </div>
     )}
   </div>
