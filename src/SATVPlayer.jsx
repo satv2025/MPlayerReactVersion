@@ -857,7 +857,6 @@ const playEpisode = (index, list = episodes) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      left: '-16em',
     }}
     onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
@@ -904,7 +903,6 @@ const playEpisode = (index, list = episodes) => {
         height: '32px',
         objectFit: 'contain',
         display: 'block',
-        marginLeft: '23em',
       }}
     />
   </button>
