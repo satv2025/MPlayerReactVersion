@@ -178,6 +178,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
 
   // 📊📈 STATES
   const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
+  const [nextOverlayVisible, setNextOverlayVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [buffering, setBuffering] = useState(false);
   const [playing, setPlaying] = useState(true);
@@ -879,6 +880,8 @@ const playEpisode = (index, list = episodes) => {
     justifyContent: 'center',
     marginLeft: '8px', // separación respecto al botón Episodes
   }}
+  onMouseEnter={() => setNextOverlayVisible(true)}
+  onMouseLeave={() => setNextOverlayVisible(false)}
 >
   <button
     className="nextEpisodeButton"
@@ -897,7 +900,7 @@ const playEpisode = (index, list = episodes) => {
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
       alt="Next Episode"
-      className="next-episode-icon" // aquí puedes usar tu CSS para hover y scale
+      className="next-episode-icon"
       style={{
         width: '32px',
         height: '32px',
@@ -907,7 +910,7 @@ const playEpisode = (index, list = episodes) => {
     />
   </button>
 
-  {/* Micromodal overlay al hacer hover */}
+  {/* Overlay controlado por estado */}
   {episodes.length > 0 && (() => {
     const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
     const nextIndex = currentIndex + 1;
@@ -920,13 +923,13 @@ const playEpisode = (index, list = episodes) => {
         style={{
           position: 'absolute',
           bottom: '50px',
-          left: '-100px', // ajustar para que no se solape con otros controles
+          left: '-100px',
           width: '220px',
           backgroundColor: 'rgba(0,0,0,0.85)',
           padding: '10px',
           borderRadius: '5px',
           color: 'white',
-          display: 'none', // se activa con hover via CSS
+          display: nextOverlayVisible ? 'block' : 'none', // ✅ usa estado
           zIndex: 200,
         }}
       >
