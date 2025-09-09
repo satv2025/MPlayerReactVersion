@@ -876,34 +876,26 @@ const playEpisode = (index, list = episodes) => {
       </div>
 
       {episodes.map((ep, index) => (
-  <div
-    key={index}
-    className="episode-item"
-    onClick={() => {
-      playEpisode(index);
-      const epnameEl = document.getElementById('epname');
-      if (epnameEl) {
-        epnameEl.textContent = `E${index + 1} ${ep.title}`;
-      }
-      setShowEpisodesModal(false);
-    }}
-    style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
-  >
-    <img
-      src={ep.image}
-      alt={ep.title}
-      id="epImage"
-      className="epImage"
-      style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
-    />
-    <div style={{ color: 'white' }}>
-      <strong style={{ display: 'block', margin: 0, fontSize: '16px' }}>{ep.title}</strong>
-      <ul style={{ margin: 0, paddingLeft: '15px' }}>
-        <li style={{ fontSize: '12px', color: '#ccc' }}>{ep.description}</li>
-      </ul>
-    </div>
-  </div>
-))}
+        <div
+          key={index}
+          className="episode-item"
+          onClick={() => {
+            playEpisode(index);
+            const epnameEl = document.getElementById('epname');
+            if (epnameEl) {
+              epnameEl.textContent = `E${index + 1} ${ep.title}`;
+            }
+            setShowEpisodesModal(false);
+          }}
+          style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
+        >
+          <img src={ep.image} alt={ep.title} id="epImage" className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
+          <div style={{ color: 'white' }}>
+            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
+          </div>
+        </div>
+      ))}
     </div>
   )}
 </div>
