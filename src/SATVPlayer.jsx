@@ -220,87 +220,85 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     }, 3000);
   };
 
-  useEffect(() => {
-    const episodesDataScript = document.getElementById("episodes-data");
-    if (episodesDataScript) {
-      try {
-        const parsed = JSON.parse(episodesDataScript.textContent);
-        setEpisodes(parsed);
-  
-        if (parsed.length > 0) {
-          const first = parsed[0];
-          setVideoUrl(first.videoPath);
-  
-          setVideoType(first.titleType); // Movie o Series
-          setVideoTitle(first.title);
-          setEpisodeNumber(1);
-          setSeriesName(first.seriesName || ''); // si es Movie, queda vacío
-          onEpisodeChange(first);
-        }
-      } catch (e) {
-        console.error("Error parsing episodes JSON", e);
-      }
-    } else if (propVideoUrl) {
+// Cargar episodios y primer episodio
+useEffect(() => {
+  const episodesDataScript = document.getElementById("episodes-data");
+  if (!episodesDataScript) {
+    if (propVideoUrl) {
       setVideoUrl(propVideoUrl);
-      setVideoType('Movie');
-      setVideoTitle(''); 
+      setVideoType("Movie");
+      setVideoTitle("");
     }
-  }, [propVideoUrl, onEpisodeChange]);  
-  
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !videoUrl) return;
-  
-    let hls;
-  
-    if (Hls.isSupported()) {
-      hls = new Hls();
-      hls.loadSource(videoUrl);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch((err) => {
-          console.warn("Error al reproducir (HLS):", err);
-        });
-      });
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = videoUrl;
-  
-      const onLoadedMetadata = () => {
-        video.play().catch((err) => {
-          console.warn("Error al reproducir (nativo HLS):", err);
-        });
-      };
-  
-      video.addEventListener("loadedmetadata", onLoadedMetadata);
-  
-      return () => {
-        video.removeEventListener("loadedmetadata", onLoadedMetadata);
-        if (hls) hls.destroy();
-      };
-    } else {
-      video.src = videoUrl;
-      video.load();
-      video.play().catch((err) => {
-        console.warn("Error al reproducir (formato básico):", err);
-      });
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(episodesDataScript.textContent);
+    setEpisodes(parsed);
+
+    if (parsed.length > 0) {
+      // 🔹 Usar playEpisode para inicializar el primer episodio
+      playEpisode(0, parsed);
     }
-  
+  } catch (e) {
+    console.error("Error parsing episodes JSON", e);
+  }
+}, [propVideoUrl]);
+
+// Función para reproducir video (HLS / nativo)
+useEffect(() => {
+  const video = videoRef.current;
+  if (!video || !videoUrl) return;
+
+  let hls;
+
+  if (Hls.isSupported()) {
+    hls = new Hls();
+    hls.loadSource(videoUrl);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.play().catch((err) => console.warn("Error al reproducir (HLS):", err));
+    });
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = videoUrl;
+
+    const onLoadedMetadata = () => {
+      video.play().catch((err) => console.warn("Error al reproducir (nativo HLS):", err));
+    };
+    video.addEventListener("loadedmetadata", onLoadedMetadata);
+
     return () => {
+      video.removeEventListener("loadedmetadata", onLoadedMetadata);
       if (hls) hls.destroy();
     };
-  }, [videoUrl]);
-  
-  // ✅ Función para cambiar de episodio
-  const playEpisode = (index) => {
-    if (episodes[index]) {
-      const ep = episodes[index];
-      setVideoUrl(ep.videoPath);
-      setVideoTitle(ep.title);
-      setEpisodeNumber(index + 1);
-      setSeriesName(ep.seriesName || '');
-      setShowEpisodesModal(false);
-    }
+  } else {
+    video.src = videoUrl;
+    video.load();
+    video.play().catch((err) => console.warn("Error al reproducir (formato básico):", err));
+  }
+
+  return () => {
+    if (hls) hls.destroy();
   };
+}, [videoUrl]);
+
+// ✅ Función para cambiar de episodio
+const playEpisode = (index, list = episodes) => {
+  if (!list[index]) return;
+
+  const ep = list[index];
+
+  setVideoUrl(ep.videoPath);
+  setVideoType(ep.titleType);          // "Movie" o "Series"
+  setVideoTitle(ep.title);
+  setEpisodeNumber(ep.episodeNumber);  // usar el número real del JSON
+  setSeriesName(ep.seriesName || '');
+  setShowEpisodesModal(false);
+
+  // Mostrar título y controles inmediatamente
+  setShouldHideTimeAndBar(false);
+  resetHideTimeout();
+};
   
   // ✅ Setear volumen inicial
   useEffect(() => {
@@ -524,11 +522,11 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
-<div
+      
+      <div
   ref={containerRef}
   style={{ position: 'relative', width: '100%', height: '100%' }}
 >
-
   <div
     className={`title-styles ${fullscreen ? 'fullscreen' : 'windowed'}`}
     style={{
@@ -537,17 +535,17 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       zIndex: 1000,
-      display: shouldHideTimeAndBar ? 'none' : 'block', // se oculta junto a los controles
+      display: shouldHideTimeAndBar ? 'none' : 'block',
     }}
   >
     {videoType === 'Movie' ? (
-      <div id="title-movie-type" style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
+      <div className="MovieTitleType" id="MovieTitleType" style={{ fontWeight: 400, fontSize: '22px', color: 'white' }}>
         {videoTitle}
       </div>
     ) : (
-      <div id="title-serie-type" style={{ fontSize: '22px', color: 'white' }}>
-        <span style={{ fontWeight: 500 }}>{seriesName}</span>{' '}
-        <span style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</span>
+      <div className="SeriesTitleType" id="SeriesTitleType">
+        <strong style={{ fontWeight: 500 }}>{seriesName}</strong>
+        <p style={{ fontWeight: 400 }}>E{episodeNumber} {videoTitle}</p>
       </div>
     )}
   </div>
