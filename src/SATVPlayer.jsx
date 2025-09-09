@@ -785,11 +785,10 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     style={{
       ...iconButtonStyle,
       position: 'absolute',
-      left: '-50px', // ajusta este valor para separarlo hacia la izquierda del fullscreen
+      left: '-50px',
       top: '50%',
       transform: 'translateY(-50%)',
     }}
-    // Sin funcionalidad por ahora
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
@@ -800,18 +799,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
 </div>
 
 {/* Control de episodios */}
-<div
-  style={{
-    position: 'relative',
-    cursor: 'pointer',
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }}
-  onMouseLeave={handleMouseLeaveEpisodes} // cierre general
->
+<div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
   <button
     className="episodesReactButton"
     id="episodesReactButton"
@@ -825,27 +813,21 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       alignItems: 'center',
       justifyContent: 'center',
     }}
-    onMouseEnter={handleMouseEnterEpisodes} // SOLO abre desde el botón
+    onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
+    onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodios"
-      style={{
-        width: '32px',
-        height: '32px',
-        objectFit: 'contain',
-        display: 'block',
-        position: 'relative',
-        left: '-18em',
-      }}
+      style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
     />
   </button>
 
   {showEpisodesModal && (
     <div
       className="episodes-modal"
-      onMouseEnter={handleMouseEnterEpisodes} // mantiene abierto si entras al modal
-      onMouseLeave={handleMouseLeaveEpisodes} // cierra si sales del modal
+      onMouseEnter={handleMouseEnterEpisodes}  // mantiene abierto si estás en el modal
+      onMouseLeave={handleMouseLeaveEpisodes}  // cierra si salís del modal
       style={{
         position: 'absolute',
         bottom: '50px',
@@ -861,15 +843,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       }}
     >
       <div style={{ marginBottom: 10 }}>
-        <div
-          style={{
-            fontWeight: 'bold',
-            fontSize: '24px',
-            marginLeft: '0.8em',
-            marginTop: '0.14em',
-            color: 'white',
-          }}
-        >
+        <div style={{ fontWeight: 'bold', fontSize: '24px', marginLeft: '0.8em', marginTop: '0.14em', color: 'white' }}>
           Episodios
         </div>
       </div>
@@ -886,34 +860,12 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
             }
             setShowEpisodesModal(false);
           }}
-          style={{
-            display: 'flex',
-            marginBottom: '10px',
-            cursor: 'pointer',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '5px',
-            borderRadius: '3px',
-          }}
+          style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
         >
-          <img
-            src={ep.image}
-            alt={ep.title}
-            id="epImage"
-            className="epImage"
-            style={{
-              width: '60px',
-              height: '40px',
-              objectFit: 'cover',
-              borderRadius: '3px',
-            }}
-          />
-
+          <img src={ep.image} alt={ep.title} id="epImage" className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
           <div style={{ color: 'white' }}>
             <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
-              {ep.description}
-            </p>
+            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
           </div>
         </div>
       ))}
