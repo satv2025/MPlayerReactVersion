@@ -272,3 +272,19 @@ img:hover {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
+
+/* Escala al hover o cuando esté activo */
+.episodesReactButton:hover,
+.episodesReactButton.active {
+  transform: scale(1.2);
+}
+
+.volume-icon:hover,
+.volume-icon.active {
+  transform: scale(1.2);
+}
+
+.speed-icon:hover,
+.speed-icon.active {
+  transform: scale(1.2);
+}

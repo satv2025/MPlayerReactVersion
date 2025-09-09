@@ -817,7 +817,7 @@ const playEpisode = (index, list = episodes) => {
 {/* Control de episodios */}
 <div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
   <button
-    className="episodesReactButton"
+    className={`episodesReactButton ${showEpisodesModal ? 'active' : ''}`}
     id="episodesReactButton"
     style={{
       ...iconButtonStyle,
@@ -833,7 +833,6 @@ const playEpisode = (index, list = episodes) => {
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
     <img
-      className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodios"
       style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}

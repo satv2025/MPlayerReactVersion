@@ -162,3 +162,19 @@ img {
 img:hover {
   transform: scale(1.2);
 }
+
+/* Escala al hover o cuando esté activo */
+.episodesReactButton:hover,
+.episodesReactButton.active {
+  transform: scale(1.2);
+}
+
+.volume-icon:hover,
+.volume-icon.active {
+  transform: scale(1.2);
+}
+
+.speed-icon:hover,
+.speed-icon.active {
+  transform: scale(1.2);
+}
