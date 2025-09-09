@@ -319,7 +319,18 @@ const playEpisode = (index, list = episodes) => {
     const onWaiting = () => setBuffering(true);
     const onPlaying = () => setBuffering(false);
     const onCanPlay = () => setBuffering(false);
-    const onEnded = () => setBuffering(false);
+    const onEnded = () => {
+      setBuffering(false);
+    
+      // Si hay episodios en la lista
+      if (episodes.length > 0) {
+        const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < episodes.length) {
+          playEpisode(nextIndex);
+        }
+      }
+    };    
   
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
