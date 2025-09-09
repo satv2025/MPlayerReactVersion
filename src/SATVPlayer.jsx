@@ -194,6 +194,15 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [controlsVisible, setControlsVisible] = useState(true);
   const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
 
+// Calculado dinámicamente según videoUrl y episodes
+const nextEpisode = React.useMemo(() => {
+  const index = episodes.findIndex(ep => ep.videoPath === videoUrl);
+  if (index !== -1 && index + 1 < episodes.length) {
+    return episodes[index + 1];
+  }
+  return null;
+}, [videoUrl, episodes]);
+
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
     clearTimeout(episodesTimeout.current);
@@ -857,6 +866,7 @@ const playEpisode = (index, list = episodes) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      left: '-16em',
     }}
     onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
@@ -868,82 +878,40 @@ const playEpisode = (index, list = episodes) => {
   style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
 />
   </button>
-{/* NUEVO BOTÓN NextEpisode */}
-<div
-  style={{
-    position: 'relative',
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: '8px', // separación respecto al botón Episodes
-  }}
->
+  <div style={{ position: 'relative', width: '40px', height: '40px' }}>
   <button
-    className="nextEpisodeButton"
-    style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
-    onClick={() => {
-      // reproducir el siguiente episodio si existe
-      if (episodes.length > 0) {
-        const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
-        const nextIndex = currentIndex + 1;
-        if (nextIndex < episodes.length) {
-          playEpisode(nextIndex);
-        }
-      }
-    }}
+    onMouseEnter={() => setNextHover(true)}
+    onMouseLeave={() => setNextHover(false)}
+    style={iconButtonStyle}
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
       alt="Next Episode"
-      className="next-episode-icon" // aquí puedes usar tu CSS para hover y scale
-      style={{
-        width: '32px',
-        height: '32px',
-        objectFit: 'contain',
-        display: 'block',
-      }}
+      className="next-episodes-button"
     />
   </button>
 
-  {/* Micromodal overlay al hacer hover */}
-  {episodes.length > 0 && (() => {
-    const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
-    const nextIndex = currentIndex + 1;
-    if (nextIndex >= episodes.length) return null;
-    const nextEp = episodes[nextIndex];
-
-    return (
-      <div
-        className="next-episode-overlay"
-        style={{
-          position: 'absolute',
-          bottom: '50px',
-          left: '-100px', // ajustar para que no se solape con otros controles
-          width: '220px',
-          backgroundColor: 'rgba(0,0,0,0.85)',
-          padding: '10px',
-          borderRadius: '5px',
-          color: 'white',
-          display: 'none', // se activa con hover via CSS
-          zIndex: 200,
-        }}
-      >
-        <img
-          src={nextEp.image}
-          alt={nextEp.title}
-          style={{ width: '100%', borderRadius: '3px', marginBottom: '5px' }}
-        />
-        <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '3px' }}>
-          {nextEp.title}
-        </div>
-        <div style={{ fontSize: '12px', color: '#ccc' }}>
-          {nextEp.description}
-        </div>
-      </div>
-    );
-  })()}
+  {nextHover && nextEpisode && (
+    <div
+      style={{
+        position: 'absolute',
+        bottom: '50px',
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        padding: '10px',
+        borderRadius: '5px',
+        color: 'white',
+        width: '200px',
+        zIndex: 100,
+      }}
+      onMouseEnter={() => setNextHover(true)}
+      onMouseLeave={() => setNextHover(false)}
+    >
+      <img src={nextEpisode.image} alt={nextEpisode.title} style={{ width: '100%', borderRadius: '3px' }} />
+      <h4>{nextEpisode.title}</h4>
+      <p style={{ fontSize: '12px', color: '#ccc' }}>{nextEpisode.description}</p>
+    </div>
+  )}
 </div>
   {showEpisodesModal && (
     <div
