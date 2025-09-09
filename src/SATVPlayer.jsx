@@ -916,48 +916,42 @@ const playEpisode = (index, list = episodes) => {
           display: nextOverlayVisible ? 'block' : 'none',
         }}
       >
-<img 
-  src={nextEp.image} 
-  alt={nextEp.title} 
-  className="next-episode-image" 
-  style={{}} 
-/>
-
-<div 
-  className="next-episode-title" 
-  style={{
-    fontWeight: '500',
-    fontSize: '26px',
-    marginBottom: '3px',
-    paddingLeft: '9em',
-    marginTop: '-5em',
-  }}  
->
-  {nextEp.title}
+        {/* Nuevo encabezado */}
+        <div className="next-episode-header">
+  Siguiente episodio
 </div>
 
-<div 
-  className="next-episode-description" 
-  style={{
-    fontSize: '19px',
-    color: 'rgb(204, 204, 204)',
-    fontWeight: '300',
-    paddingLeft: '12.4em',
-  }}
->
-  {nextEp.description}
-</div>
+        <img 
+          src={nextEp.image} 
+          alt={nextEp.title} 
+          className="next-episode-image" 
+          style={{}} 
+        />
 
+        <div 
+          className="next-episode-title" 
+          style={{
+            fontWeight: '500',
+            fontSize: '26px',
+            marginBottom: '3px',
+            paddingLeft: '9em',
+            marginTop: '-5em',
+          }}  
+        >
+          {nextEp.title}
+        </div>
 
-        {/* Ocultar barra de progreso y countdown mientras el overlay está activo */}
-        <style>{`
-          .countdown-current-time {
-            visibility: ${nextOverlayVisible ? 'hidden' : 'visible'};
-          }
-          .watch-video--scrubber-volume-container {
-            display: ${nextOverlayVisible ? 'none' : 'block'};
-          }
-        `}</style>
+        <div 
+          className="next-episode-description" 
+          style={{
+            fontSize: '19px',
+            color: 'rgb(204, 204, 204)',
+            fontWeight: '300',
+            paddingLeft: '12.4em',
+          }}
+        >
+          {nextEp.description}
+        </div>
       </div>
     );
   })()}
