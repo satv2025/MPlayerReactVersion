@@ -887,7 +887,13 @@ const playEpisode = (index, list = episodes) => {
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
       alt="Next Episode"
-      style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block' }}
+      className="next-episode-icon"
+      style={{
+        width: '32px',
+        height: '32px',
+        objectFit: 'contain',
+        display: 'block',
+      }}
     />
   </button>
 
@@ -900,21 +906,12 @@ const playEpisode = (index, list = episodes) => {
 
     return (
       <div
+        className="next-episode-overlay"
         style={{
-          position: 'absolute',
-          bottom: '50px',
-          left: '-100px',
-          width: '220px',
-          backgroundColor: 'rgba(0,0,0,0.85)',
-          padding: '10px',
-          borderRadius: '5px',
-          color: 'white',
-          display: nextOverlayVisible ? 'block' : 'none', // ✅ control por estado
-          zIndex: 200,
-          pointerEvents: 'auto', // importante para que el overlay reciba hover
+          display: nextOverlayVisible ? 'block' : 'none', // control por estado
         }}
       >
-        <img src={nextEp.image} alt={nextEp.title} style={{ width: '100%', borderRadius: '3px', marginBottom: '5px' }} />
+        <img src={nextEp.image} alt={nextEp.title} />
         <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '3px' }}>{nextEp.title}</div>
         <div style={{ fontSize: '12px', color: '#ccc' }}>{nextEp.description}</div>
       </div>
