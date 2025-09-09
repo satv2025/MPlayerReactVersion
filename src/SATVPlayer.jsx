@@ -878,35 +878,27 @@ const playEpisode = (index, list = episodes) => {
   style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
 />
   </button>
-  <div style={{ position: 'relative', width: '40px', height: '40px' }}>
-  <button
-    onMouseEnter={() => setNextHover(true)}
-    onMouseLeave={() => setNextHover(false)}
-    style={iconButtonStyle}
-  >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
-      alt="Next Episode"
-      className="next-episodes-button"
-    />
+  <div
+  style={{ position: 'relative', display: 'inline-block' }}
+  onMouseEnter={() => setNextHover(true)}
+  onMouseLeave={() => setNextHover(false)}
+>
+  <button style={iconButtonStyle}>
+    <img src="https://static.solargentinotv.com.ar/controls/icons/png/next.png" className="next-episodes-button" />
   </button>
 
   {nextHover && nextEpisode && (
-    <div
-      style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: 0,
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        padding: '10px',
-        borderRadius: '5px',
-        color: 'white',
-        width: '200px',
-        zIndex: 100,
-      }}
-      onMouseEnter={() => setNextHover(true)}
-      onMouseLeave={() => setNextHover(false)}
-    >
+    <div style={{
+      position: 'absolute',
+      bottom: '50px',
+      right: 0,
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      padding: '10px',
+      borderRadius: '5px',
+      color: 'white',
+      width: '200px',
+      zIndex: 100,
+    }}>
       <img src={nextEpisode.image} alt={nextEpisode.title} style={{ width: '100%', borderRadius: '3px' }} />
       <h4>{nextEpisode.title}</h4>
       <p style={{ fontSize: '12px', color: '#ccc' }}>{nextEpisode.description}</p>
