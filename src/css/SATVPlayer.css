@@ -272,27 +272,3 @@ img:hover {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
-
-/* Iconos comunes */
-.volume-icon,
-.speed-icon,
-.episodesReactButton img {
-  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
-  cursor: pointer;
-}
-
-/* Efecto activo */
-.volume-icon.active,
-.speed-icon.active,
-.episodesReactButton img.active {
-  transform: scale(1.1);           /* Pequeño zoom al estar activo */
-  filter: brightness(1.2);          /* Más brillante */
-  opacity: 1;                       /* Asegura visibilidad completa */
-}
-
-/* Efecto normal */
-.volume-icon,
-.speed-icon,
-.episodesReactButton img {
-  opacity: 0.8;                     /* Ligeramente transparente cuando no está activo */
-}

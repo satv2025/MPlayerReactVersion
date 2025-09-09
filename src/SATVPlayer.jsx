@@ -114,13 +114,14 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
       onMouseLeave={handleMouseLeave}
       style={{ position: 'relative' }}
     >
-      <img
-        src={volumeIcon}
-        alt="Volume"
-        className="volume-icon"
-        onClick={() => onVolumeChange(isMute ? 1 : 0)}
-        onMouseEnter={handleMouseEnter}
-      />
+<img
+  src={volumeIcon}
+  alt="Volume"
+  className={`volume-icon ${showSlider ? 'active' : ''}`}
+  onClick={() => onVolumeChange(isMute ? 1 : 0)}
+  onMouseEnter={handleMouseEnter}
+  style={{ width: 40, height: 40 }} // mantener tamaño
+/>
 
       <div
         ref={sliderRef}
@@ -682,18 +683,10 @@ const playEpisode = (index, list = episodes) => {
           </button>
   
           <VolumeControl
-  volume={volume}
-  onVolumeChange={changeVolume}
-  onSliderVisibilityChange={setVolumeSliderVisible}
->
-  <img
-    src={volumeIcon}
-    alt="Volume"
-    className={`volume-icon ${volumeSliderVisible ? 'active' : ''}`}
-    onClick={() => changeVolume(volume === 0 ? 1 : 0)}
-    style={{ width: 40, height: 40 }}
-  />
-</VolumeControl>
+            volume={volume}
+            onVolumeChange={changeVolume}
+            onSliderVisibilityChange={setVolumeSliderVisible}
+          />
   
   <div
             className="countdown-current-time"
@@ -840,14 +833,11 @@ const playEpisode = (index, list = episodes) => {
     onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
-  <img
-    src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-    className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
-    alt="Episodios"
-    style={{ width: '32px', height: '32px', objectFit: 'contain' }}
-    onMouseEnter={handleMouseEnterEpisodes}
-    onMouseLeave={handleMouseLeaveEpisodes}
-  />
+    <img
+      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+      alt="Episodios"
+      style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
+    />
   </button>
 
   {showEpisodesModal && (
