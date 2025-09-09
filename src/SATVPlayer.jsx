@@ -354,17 +354,25 @@ const playEpisode = (index, list = episodes) => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Evitar que actúe cuando el foco está en un input
+      const tag = (e.target && e.target.tagName) || '';
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+  
       if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
       } else if (e.code === 'Space') {
-        e.preventDefault();  // para que no haga scroll
+        e.preventDefault(); // para que no haga scroll
         togglePlay();
+      } else if (e.key === 'ArrowLeft') {
+        rewind(); // retrocede 10s
+      } else if (e.key === 'ArrowRight') {
+        forward(); // avanza 10s
       }
     };
   
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleFullscreen, togglePlay]);  
+  }, []); // 👈 ya no necesita dependencias  
 
   // Detectar cambios de fullscreen para actualizar estado
   useEffect(() => {
