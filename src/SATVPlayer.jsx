@@ -767,163 +767,154 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
             )}
           </div>
   
-  {/* Contenedor relativo para fullscreen y captions */}
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-    <button onClick={toggleFullscreen} style={iconButtonStyle}>
-      <img
-        src={
-          fullscreen
-            ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
-            : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
-        }
-        alt="Fullscreen toggle"
-        style={{ width: 40, height: 40, marginRight: '-6.3em' }}
-      />
-    </button>
+{/* Controles: Fullscreen, Captions y Episodios */}
+<div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+  {/* Botón Fullscreen */}
+  <button onClick={toggleFullscreen} style={iconButtonStyle}>
+    <img
+      src={
+        fullscreen
+          ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
+          : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
+      }
+      alt="Fullscreen toggle"
+      style={{ width: 40, height: 40 }}
+    />
+  </button>
 
-    <button
-      style={{
-        ...iconButtonStyle,
-        position: 'absolute',
-        left: '-50px',  // ajusta este valor para separarlo hacia la izquierda del fullscreen
-        top: '50%',
-        transform: 'translateY(-50%)',
-      }}
-      // Sin funcionalidad por ahora
-    >
-      <img
-        src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
-        alt="Captions"
-        style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em', }}
-      />
-    </button>
-  </div>
-{/* Control de episodios */}
-<div
-  style={{
-    position: 'relative',
-    cursor: 'pointer',
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }}
-  onMouseEnter={handleMouseEnterEpisodes}
-  onMouseLeave={handleMouseLeaveEpisodes}
->
-  <button
-    className="episodesReactButton"
-    id="episodesReactButton"
+  {/* Botón Captions */}
+  <button style={iconButtonStyle}>
+    <img
+      src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
+      alt="Captions"
+      style={{ width: 40, height: 40 }}
+    />
+  </button>
+
+  {/* Botón Episodios */}
+  <div
     style={{
-      ...iconButtonStyle,
+      position: 'relative',
+      cursor: 'pointer',
       width: '40px',
       height: '40px',
-      padding: 0,
-      margin: 0,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
     }}
-    onMouseEnter={handleMouseEnterEpisodes}
+    onMouseLeave={handleMouseLeaveEpisodes} // cierre cuando salís de todo el contenedor
   >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodios"
+    <button
+      className="episodesReactButton"
+      id="episodesReactButton"
       style={{
-        width: '32px',
-        height: '32px',
-        objectFit: 'contain',
-        display: 'block',
-        position: 'relative',
-        left: '-18em',
+        ...iconButtonStyle,
+        width: '40px',
+        height: '40px',
+        padding: 0,
+        margin: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
-    />
-  </button>
-
-  {showEpisodesModal && (
-    <div
-      className="episodes-modal"
-      onMouseEnter={handleMouseEnterEpisodes}
-      onMouseLeave={handleMouseLeaveEpisodes}
-      style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: 0,
-        backgroundColor: '#181818',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 100,
-        userSelect: 'none',
-        width: '300px',
-        maxHeight: '400px',
-        overflowY: 'auto',
-      }}
+      onMouseEnter={handleMouseEnterEpisodes} // SOLO abre desde el botón
     >
-      <div style={{ marginBottom: 10 }}>
-        <div
-          style={{
-            fontWeight: 'bold',
-            fontSize: '24px',
-            marginLeft: '0.8em',
-            marginTop: '0.14em',
-            color: 'white',
-          }}
-        >
-          Episodios
-        </div>
-      </div>
+      <img
+        src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+        alt="Episodios"
+        style={{
+          width: '32px',
+          height: '32px',
+          objectFit: 'contain',
+          display: 'block',
+        }}
+      />
+    </button>
 
-      {episodes.map((ep, index) => (
-        <div
-          key={index}
-          className="episode-item"
-          onClick={() => {
-            playEpisode(index);
-            const epnameEl = document.getElementById('epname');
-            if (epnameEl) {
-              epnameEl.textContent = `E${index + 1} ${ep.title}`;
-            }
-            setShowEpisodesModal(false);
-          }}
-          style={{
-            display: 'flex',
-            marginBottom: '10px',
-            cursor: 'pointer',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '5px',
-            borderRadius: '3px',
-          }}
-        >
-<img
-  src={ep.image}
-  alt={ep.title}
-  id="epImage"
-  className="epImage"
-  style={{
-    width: '60px',
-    height: '40px',
-    objectFit: 'cover',
-    borderRadius: '3px',
-  }}
-/>
-
-          <div style={{ color: 'white' }}>
-            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
-              {ep.description}
-            </p>
+    {showEpisodesModal && (
+      <div
+        className="episodes-modal"
+        onMouseEnter={handleMouseEnterEpisodes}  // mantiene abierto si el mouse entra al modal
+        onMouseLeave={handleMouseLeaveEpisodes} // cierra al salir del modal
+        style={{
+          position: 'absolute',
+          bottom: '50px',
+          right: 0,
+          backgroundColor: '#181818',
+          padding: '10px',
+          borderRadius: '5px',
+          zIndex: 100,
+          userSelect: 'none',
+          width: '300px',
+          maxHeight: '400px',
+          overflowY: 'auto',
+        }}
+      >
+        <div style={{ marginBottom: 10 }}>
+          <div
+            style={{
+              fontWeight: 'bold',
+              fontSize: '24px',
+              marginLeft: '0.8em',
+              marginTop: '0.14em',
+              color: 'white',
+            }}
+          >
+            Episodios
           </div>
         </div>
-      ))}
-    </div>
-  )}
-</div>
-        </div>
+
+        {episodes.map((ep, index) => (
+          <div
+            key={index}
+            className="episode-item"
+            onClick={() => {
+              playEpisode(index);
+              const epnameEl = document.getElementById('epname');
+              if (epnameEl) {
+                epnameEl.textContent = `E${index + 1} ${ep.title}`;
+              }
+              setShowEpisodesModal(false);
+            }}
+            style={{
+              display: 'flex',
+              marginBottom: '10px',
+              cursor: 'pointer',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '5px',
+              borderRadius: '3px',
+            }}
+          >
+            <img
+              src={ep.image}
+              alt={ep.title}
+              id="epImage"
+              className="epImage"
+              style={{
+                width: '60px',
+                height: '40px',
+                objectFit: 'cover',
+                borderRadius: '3px',
+              }}
+            />
+
+            <div style={{ color: 'white' }}>
+              <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+              <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
+                {ep.description}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
+    )}
+  </div>
+</div>
     </div>
+  </div>
+</div>
   );
-  
 }
+
 export default VideoPlayer;
