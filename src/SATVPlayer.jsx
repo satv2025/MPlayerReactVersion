@@ -117,7 +117,7 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
       <img
         src={volumeIcon}
         alt="Volume"
-        className="volume-icon"
+        className={`volume-icon ${volumeSliderVisible ? 'active' : ''}`}
         onClick={() => onVolumeChange(isMute ? 1 : 0)}
         onMouseEnter={handleMouseEnter}
       />
@@ -718,6 +718,7 @@ const playEpisode = (index, list = episodes) => {
               }}
             >
               <img
+                className={`speed-icon ${showSpeedModal ? 'active' : ''}`}
                 src="https://static.solargentinotv.com.ar/controls/icons/png/velocidad.png"
                 alt="Speed"
                 style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
@@ -832,6 +833,7 @@ const playEpisode = (index, list = episodes) => {
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
     <img
+      className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
       alt="Episodios"
       style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
