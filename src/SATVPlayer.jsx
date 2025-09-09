@@ -117,7 +117,7 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
       <img
         src={volumeIcon}
         alt="Volume"
-        className={`volume-icon ${volumeSliderVisible ? 'active' : ''}`}
+        className="volume-icon"
         onClick={() => onVolumeChange(isMute ? 1 : 0)}
         onMouseEnter={handleMouseEnter}
       />
@@ -682,10 +682,18 @@ const playEpisode = (index, list = episodes) => {
           </button>
   
           <VolumeControl
-            volume={volume}
-            onVolumeChange={changeVolume}
-            onSliderVisibilityChange={setVolumeSliderVisible}
-          />
+  volume={volume}
+  onVolumeChange={changeVolume}
+  onSliderVisibilityChange={setVolumeSliderVisible}
+>
+  <img
+    src={volumeIcon}
+    alt="Volume"
+    className={`volume-icon ${volumeSliderVisible ? 'active' : ''}`}
+    onClick={() => changeVolume(volume === 0 ? 1 : 0)}
+    style={{ width: 40, height: 40 }}
+  />
+</VolumeControl>
   
   <div
             className="countdown-current-time"
@@ -717,12 +725,12 @@ const playEpisode = (index, list = episodes) => {
                 /* No cerramos inmediatamente para evitar parpadeo */
               }}
             >
-              <img
-                className={`speed-icon ${showSpeedModal ? 'active' : ''}`}
-                src="https://static.solargentinotv.com.ar/controls/icons/png/velocidad.png"
-                alt="Speed"
-                style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
-              />
+<img
+  className={`speed-icon ${showSpeedModal ? 'active' : ''}`}
+  src="https://static.solargentinotv.com.ar/controls/icons/png/velocidad.png"
+  alt="Speed"
+  style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+/>
             </button>
   
             {showSpeedModal && (
@@ -817,7 +825,7 @@ const playEpisode = (index, list = episodes) => {
 {/* Control de episodios */}
 <div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
   <button
-    className={`episodesReactButton ${showEpisodesModal ? 'active' : ''}`}
+    className="episodesReactButton"
     id="episodesReactButton"
     style={{
       ...iconButtonStyle,
@@ -832,11 +840,14 @@ const playEpisode = (index, list = episodes) => {
     onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodios"
-      style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
-    />
+  <img
+    src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+    className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
+    alt="Episodios"
+    style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+    onMouseEnter={handleMouseEnterEpisodes}
+    onMouseLeave={handleMouseLeaveEpisodes}
+  />
   </button>
 
   {showEpisodesModal && (
