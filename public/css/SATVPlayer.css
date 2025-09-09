@@ -163,20 +163,62 @@ img:hover {
   transform: scale(1.2);
 }
 
-/* Iconos comunes */
-.volume-icon,
-.speed-icon,
-.episodesReactButton img {
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
+    /* Escala al hover o cuando esté activo */
+    .episodes-icon:hover,
+    .episodes-icon.active {
+      transform: scale(1.2);
+    }
 
-/* Hover o activo */
-.volume-icon:hover,
-.speed-icon:hover,
-.episodesReactButton img:hover,
-.volume-icon.active,
-.speed-icon.active,
-.episodesReactButton img.active {
-  transform: scale(1.2);
-}
+    .volume-icon:hover,
+    .volume-icon.active {
+      transform: scale(1.2);
+    }
+
+    .speed-icon:hover,
+    .speed-icon.active {
+      transform: scale(1.2);
+    }
+
+    .speed-modal {
+      top: -13.8em !important;
+    }
+
+    .watch-video--scrubber-volume-container {
+      box-sizing: border-box;
+      height: 2em;
+      max-height: 20rem;
+      min-height: 11.4rem;
+      padding-bottom: 1rem;
+      padding-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 2.4em;
+      margin-left: -0.4em;
+      border-radius: 0.2em !important;
+    }
+
+    .title-styles {
+      position: absolute !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      z-index: 1000 !important;
+      font-size: 22px !important;
+      color: white !important;
+
+      /* Evitar salto de línea y cortar texto largo */
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      max-width: 100% !important;
+      /* Ajusta según prefieras */
+      display: inline !important;
+    }
+
+    .title-styles.fullscreen {
+      top: 46.2em !important;
+    }
+
+    .title-styles.windowed {
+      top: 39em !important;
+    }

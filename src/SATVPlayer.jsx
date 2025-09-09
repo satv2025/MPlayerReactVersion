@@ -833,11 +833,12 @@ const playEpisode = (index, list = episodes) => {
     onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodios"
-      style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
-    />
+<img
+  src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+  alt="Episodios"
+  className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
+  style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
+/>
   </button>
 
   {showEpisodesModal && (
