@@ -194,6 +194,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
+  const [episodesBySeason, setEpisodesBySeason] = useState({}); // Para guardar episodios por temporada
+  const [currentSeason, setCurrentSeason] = useState(1);        // Para controlar la temporada actual
   const [selectedSeries, setSelectedSeries] = useState("episodiosApp"); // ⚡ variable que puede cambiar según el JSON
   const [showSeasonDropdown, setShowSeasonDropdown] = useState(false); // ⚡ solo mostrar si hay >1 temporada
   
@@ -572,7 +574,6 @@ const playEpisode = (index, list = episodes) => {
       <GlobalStyle />
       
       <div
-  ref={containerRef}
   style={{ position: 'relative', width: '100%', height: '100%' }}
 >
   <div
