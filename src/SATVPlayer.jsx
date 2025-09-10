@@ -1019,7 +1019,7 @@ const playEpisode = (index, list = episodes) => {
     {/* Dropdown personalizado para temporadas */}
     <div className={`season-dropdown ${showSeasonDropdown ? 'show' : ''}`} onClick={() => setShowSeasonDropdown(!showSeasonDropdown)}>
       <div className="dropdown-button">Temporada {currentSeason}</div>
-      <ul id="seasonMenu" className={showSeasonDropdown ? 'show' : ''} className="dropdown-content">
+      <ul id="seasonMenu" className={`dropdown-content ${showSeasonDropdown ? 'show' : ''}`}>
         {Object.keys(episodesBySeason).map(season => (
           <li key={season} className="season-option">
             <button
