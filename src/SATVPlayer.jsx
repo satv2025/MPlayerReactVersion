@@ -196,6 +196,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [seasons, setSeasons] = useState({}); // { t1: [...], t2: [...] }
   const [currentSeason, setCurrentSeason] = useState("t1");
   const [episodes, setEpisodes] = useState([]); // episodios de la temporada seleccionada
+  // 👇 nuevo estado para abrir/cerrar el dropdown
+  const [showSeasonsDropdown, setShowSeasonsDropdown] = useState(false);
 
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
@@ -983,8 +985,8 @@ const playEpisode = (index, list = episodes) => {
 {showEpisodesModal && (
   <div
     className="episodes-modal"
-    onMouseEnter={handleMouseEnterEpisodes} // mantiene abierto si estás en el modal
-    onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del modal
+    onMouseEnter={handleMouseEnterEpisodes}
+    onMouseLeave={handleMouseLeaveEpisodes}
     style={{
       position: 'absolute',
       bottom: '50px',
@@ -1014,32 +1016,64 @@ const playEpisode = (index, list = episodes) => {
       </div>
     </div>
 
-    {/* Dropdown de temporadas (solo si hay más de una) */}
+    {/* Dropdown custom de temporadas */}
     {Object.keys(seasons).length > 1 && (
-      <div style={{ marginBottom: '10px', color: 'white' }}>
-        <select
-          value={currentSeason}
-          onChange={(e) => setCurrentSeason(e.target.value)}
+      <div
+        className="season-dropdown"
+        style={{ marginBottom: '10px', position: 'relative' }}
+      >
+        <div
+          className="season-selected"
+          onClick={() => setShowSeasonsDropdown(!showSeasonsDropdown)}
           style={{
-            width: '100%',
-            padding: '5px',
             backgroundColor: '#222',
             color: 'white',
-            border: 'none',
+            padding: '8px',
             borderRadius: '3px',
+            cursor: 'pointer',
             fontSize: '16px',
           }}
         >
-          {Object.entries(seasons).map(([seasonKey, eps]) => (
-            <option key={seasonKey} value={seasonKey}>
-              Temporada {seasonKey.replace('t', '')} ({eps.length} episodios)
-            </option>
-          ))}
-        </select>
+          Temporada {currentSeason.replace('t', '')} ({episodes.length} episodios)
+        </div>
+
+        {showSeasonsDropdown && (
+          <div
+            className="season-options"
+            style={{
+              position: 'absolute',
+              top: '110%',
+              left: 0,
+              right: 0,
+              backgroundColor: '#222',
+              borderRadius: '3px',
+              zIndex: 200,
+            }}
+          >
+            {Object.entries(seasons).map(([seasonKey, eps]) => (
+              <div
+                key={seasonKey}
+                onClick={() => {
+                  setCurrentSeason(seasonKey);
+                  setEpisodes(eps);
+                  setShowSeasonsDropdown(false);
+                }}
+                style={{
+                  padding: '8px',
+                  cursor: 'pointer',
+                  color: 'white',
+                  borderBottom: '1px solid #333',
+                }}
+              >
+                Temporada {seasonKey.replace('t', '')} ({eps.length} episodios)
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     )}
 
-    {/* Lista de episodios de la temporada actual */}
+    {/* Lista de episodios */}
     {episodes.map((ep, index) => (
       <div
         key={index}
