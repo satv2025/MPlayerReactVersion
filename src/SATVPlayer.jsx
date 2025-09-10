@@ -881,6 +881,7 @@ const playEpisode = (index, list = episodes) => {
   onMouseEnter={() => setNextOverlayVisible(true)}
   onMouseLeave={() => setNextOverlayVisible(false)}
 >
+  {/* Botón Next Episode */}
   <button
     className="nextEpisodeButton"
     style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
@@ -893,7 +894,7 @@ const playEpisode = (index, list = episodes) => {
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
       alt="Next Episode"
-      className="next-episode-icon"
+      className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`} // Hover activo mientras overlay visible
       style={{
         width: '32px',
         height: '32px',
@@ -903,7 +904,7 @@ const playEpisode = (index, list = episodes) => {
     />
   </button>
 
-  {/* Overlay */}
+  {/* Overlay Next Episode */}
   {episodes.length > 0 && (() => {
     const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
     const nextIndex = currentIndex + 1;
@@ -915,20 +916,23 @@ const playEpisode = (index, list = episodes) => {
         className="next-episode-overlay"
         style={{
           display: nextOverlayVisible ? 'block' : 'none',
+          cursor: 'pointer',
         }}
+        onClick={() => playEpisode(nextIndex)} // Reproduce el siguiente episodio al clickear overlay
       >
-        {/* Nuevo encabezado */}
+        {/* Encabezado */}
         <div className="next-episode-header">
-  Siguiente episodio
-</div>
+          Siguiente episodio
+        </div>
 
+        {/* Imagen */}
         <img 
           src={nextEp.image} 
           alt={nextEp.title} 
           className="next-episode-image" 
-          style={{}} 
         />
 
+        {/* Título */}
         <div 
           className="next-episode-title" 
           style={{
@@ -942,6 +946,7 @@ const playEpisode = (index, list = episodes) => {
           {nextEp.title}
         </div>
 
+        {/* Descripción */}
         <div 
           className="next-episode-description" 
           style={{
