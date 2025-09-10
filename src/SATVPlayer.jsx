@@ -364,25 +364,33 @@ const playEpisode = (index, list = episodes || []) => {
       // Obtener todas las temporadas en orden
       const allSeasons = Object.keys(episodesBySeason).sort((a, b) => a - b);
     
-      let playlist = episodesRef.current; // por defecto, la playlist actual
+      // Construir la playlist global concatenando todas las temporadas
+      const globalPlaylist = allSeasons.flatMap(season => episodesBySeason[season] || []);
     
-      // Solo unir todas las temporadas si hay más de 1
-      if (allSeasons.length > 1 && episodesRef.current.length === (episodesBySeason[currentSeason]?.length || 0)) {
-        playlist = allSeasons.flatMap(season => episodesBySeason[season] || []);
-        episodesRef.current = playlist; // actualizar referencia para todo el player
-      }
+      // Guardar playlist global para uso futuro
+      episodesRef.current = globalPlaylist;
     
-      const current = videoUrlRef.current;
-      const currentIndex = playlist.findIndex(ep => ep.videoPath === current);
+      const currentVideo = videoUrlRef.current;
+      const currentIndex = globalPlaylist.findIndex(ep => ep.videoPath === currentVideo);
     
       const nextIndex = currentIndex + 1;
-      if (nextIndex < playlist.length) {
-        // Reproducir siguiente episodio de la playlist
-        playEpisode(nextIndex, playlist);
+    
+      if (nextIndex < globalPlaylist.length) {
+        // Reproducir siguiente episodio
+        playEpisode(nextIndex, globalPlaylist);
+    
+        // Actualizar currentSeason automáticamente si cambia de temporada
+        for (let season of allSeasons) {
+          const seasonEpisodes = episodesBySeason[season] || [];
+          if (seasonEpisodes.includes(globalPlaylist[nextIndex])) {
+            setCurrentSeason(season);
+            break;
+          }
+        }
       } else {
-        console.log("Se terminó la playlist completa");
+        console.log("Se terminó toda la serie");
       }
-    };      
+    };    
   
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
