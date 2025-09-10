@@ -364,14 +364,12 @@ const playEpisode = (index, list = episodes || []) => {
       // Obtener todas las temporadas en orden
       const allSeasons = Object.keys(episodesBySeason).sort((a, b) => a - b);
     
-      let playlist = [];
+      let playlist = episodesRef.current; // por defecto, la playlist actual
     
-      if (allSeasons.length === 1) {
-        // Solo una temporada: playlist = episodios de esa temporada
-        playlist = episodesBySeason[allSeasons[0]] || [];
-      } else {
-        // Dos o más temporadas: concatenar todas las temporadas para playlist global
+      // Solo unir todas las temporadas si hay más de 1
+      if (allSeasons.length > 1 && episodesRef.current.length === (episodesBySeason[currentSeason]?.length || 0)) {
         playlist = allSeasons.flatMap(season => episodesBySeason[season] || []);
+        episodesRef.current = playlist; // actualizar referencia para todo el player
       }
     
       const current = videoUrlRef.current;
@@ -384,7 +382,7 @@ const playEpisode = (index, list = episodes || []) => {
       } else {
         console.log("Se terminó la playlist completa");
       }
-    };    
+    };      
   
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
