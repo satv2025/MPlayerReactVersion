@@ -876,6 +876,7 @@ const playEpisode = (index, list = episodes) => {
   </button>
 {/* NUEVO BOTÓN NextEpisode */}
 <div
+  className="div-position-next"
   style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
   onMouseEnter={() => setNextOverlayVisible(true)}
   onMouseLeave={() => setNextOverlayVisible(false)}
