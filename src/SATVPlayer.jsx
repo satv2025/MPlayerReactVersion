@@ -203,6 +203,11 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
     clearTimeout(episodesTimeout.current);
+  
+    // asegurar que el dropdown de temporadas esté cerrado
+    setShowSeasonDropdown(false);
+  
+    // ahora abrimos el modal
     setShowEpisodesModal(true);
   };
 
