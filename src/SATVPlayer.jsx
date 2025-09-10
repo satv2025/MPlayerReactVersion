@@ -894,7 +894,7 @@ const playEpisode = (index, list = episodes) => {
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
       alt="Next Episode"
-      className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`} // Hover activo mientras overlay visible
+      className={`next-episode-icon ${nextOverlayVisible ? 'active' : 'hover'}`} // Hover activo mientras overlay visible
       style={{
         width: '32px',
         height: '32px',
