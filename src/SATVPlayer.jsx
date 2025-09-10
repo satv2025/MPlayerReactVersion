@@ -193,7 +193,9 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
+  const [seasons, setSeasons] = useState({}); // { t1: [...], t2: [...] }
+  const [currentSeason, setCurrentSeason] = useState("t1");
+  const [episodes, setEpisodes] = useState([]); // episodios de la temporada seleccionada
 
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
@@ -235,17 +237,31 @@ useEffect(() => {
   }
 
   try {
-    const parsed = JSON.parse(episodesDataScript.textContent);
-    setEpisodes(parsed);
+    const parsed = JSON.parse(episodesDataScript.textContent); // objeto {t1:[], t2:[]}
+    setSeasons(parsed);
 
-    if (parsed.length > 0) {
-      // 🔹 Usar playEpisode para inicializar el primer episodio
-      playEpisode(0, parsed);
+    const firstSeasonKey = Object.keys(parsed)[0]; // ejemplo: "t1"
+    if (firstSeasonKey && parsed[firstSeasonKey].length > 0) {
+      setCurrentSeason(firstSeasonKey);
+      setEpisodes(parsed[firstSeasonKey]);
+
+      // 🔹 Inicializar primer episodio de esa temporada
+      playEpisode(0, parsed[firstSeasonKey]);
     }
   } catch (e) {
     console.error("Error parsing episodes JSON", e);
   }
 }, [propVideoUrl]);
+
+// Cambiar de temporada → actualiza episodios
+useEffect(() => {
+  if (currentSeason && seasons[currentSeason]) {
+    setEpisodes(seasons[currentSeason]);
+
+    // Opcional: al cambiar de temporada, reproducir el 1er episodio
+    playEpisode(0, seasons[currentSeason]);
+  }
+}, [currentSeason, seasons]);
 
 // Función para reproducir video (HLS / nativo)
 useEffect(() => {
@@ -964,63 +980,110 @@ const playEpisode = (index, list = episodes) => {
     );
   })()}
 </div>
-  {showEpisodesModal && (
-    <div
-      className="episodes-modal"
-      onMouseEnter={handleMouseEnterEpisodes}  // mantiene abierto si estás en el modal
-      onMouseLeave={handleMouseLeaveEpisodes}  // cierra si salís del modal
-      style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: 0,
-        backgroundColor: '#181818',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 100,
-        userSelect: 'none',
-        width: '300px',
-        maxHeight: '400px',
-        overflowY: 'auto',
-      }}
-    >
-      <div style={{ marginBottom: 10 }}>
+{showEpisodesModal && (
+  <div
+    className="episodes-modal"
+    onMouseEnter={handleMouseEnterEpisodes} // mantiene abierto si estás en el modal
+    onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del modal
+    style={{
+      position: 'absolute',
+      bottom: '50px',
+      right: 0,
+      backgroundColor: '#181818',
+      padding: '10px',
+      borderRadius: '5px',
+      zIndex: 100,
+      userSelect: 'none',
+      width: '300px',
+      maxHeight: '400px',
+      overflowY: 'auto',
+    }}
+  >
+    <div style={{ marginBottom: 10 }}>
       <div
-  className="episodelist-title"
-  style={{
-    fontWeight: 'bold',
-    fontSize: '24px',
-    marginLeft: '0.8em',
-    marginTop: '0.14em',
-    color: 'white',
-  }}
->
-  Episodios
-</div>
+        className="episodelist-title"
+        style={{
+          fontWeight: 'bold',
+          fontSize: '24px',
+          marginLeft: '0.8em',
+          marginTop: '0.14em',
+          color: 'white',
+        }}
+      >
+        Episodios
       </div>
-
-      {episodes.map((ep, index) => (
-        <div
-          key={index}
-          className="episode-item"
-          onClick={() => {
-            playEpisode(index);
-            const epnameEl = document.getElementById('epname');
-            if (epnameEl) {
-              epnameEl.textContent = `E${index + 1} ${ep.title}`;
-            }
-            setShowEpisodesModal(false);
-          }}
-          style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
-        >
-          <img src={ep.image} alt={ep.title} id="epImage" className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
-          <div style={{ color: 'white' }}>
-            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
-          </div>
-        </div>
-      ))}
     </div>
-  )}
+
+    {/* Dropdown de temporadas (solo si hay más de una) */}
+    {Object.keys(seasons).length > 1 && (
+      <div style={{ marginBottom: '10px', color: 'white' }}>
+        <select
+          value={currentSeason}
+          onChange={(e) => setCurrentSeason(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '5px',
+            backgroundColor: '#222',
+            color: 'white',
+            border: 'none',
+            borderRadius: '3px',
+            fontSize: '16px',
+          }}
+        >
+          {Object.entries(seasons).map(([seasonKey, eps]) => (
+            <option key={seasonKey} value={seasonKey}>
+              Temporada {seasonKey.replace('t', '')} ({eps.length} episodios)
+            </option>
+          ))}
+        </select>
+      </div>
+    )}
+
+    {/* Lista de episodios de la temporada actual */}
+    {episodes.map((ep, index) => (
+      <div
+        key={index}
+        className="episode-item"
+        onClick={() => {
+          playEpisode(index, episodes);
+          const epnameEl = document.getElementById('epname');
+          if (epnameEl) {
+            epnameEl.textContent = `E${index + 1} ${ep.title}`;
+          }
+          setShowEpisodesModal(false);
+        }}
+        style={{
+          display: 'flex',
+          marginBottom: '10px',
+          cursor: 'pointer',
+          alignItems: 'center',
+          gap: '10px',
+          padding: '5px',
+          borderRadius: '3px',
+        }}
+      >
+        <img
+          src={ep.image}
+          alt={ep.title}
+          id="epImage"
+          className="epImage"
+          style={{
+            width: '60px',
+            height: '40px',
+            objectFit: 'cover',
+            borderRadius: '3px',
+          }}
+        />
+        <div style={{ color: 'white' }}>
+          <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+          <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>
+            {ep.description}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
 </div>
 </div>
 </div>
