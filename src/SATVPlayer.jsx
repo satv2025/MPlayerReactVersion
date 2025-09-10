@@ -194,16 +194,40 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
-  const [selectedSeason, setSelectedSeason] = useState(1); // temporada seleccionada
-  const [seasonDropdownVisible, setSeasonDropdownVisible] = useState(false); // control del dropdown
-  const handleSeasonSelect = (seasonNumber) => {
-    setSelectedSeason(seasonNumber);
-    setSeasonDropdownVisible(false);
-    // Aquí actualizás los episodios según la temporada
-    const newEpisodes = allEpisodesData.filter(ep => ep.season === seasonNumber);
-    setEpisodes(newEpisodes);
-  };
+  // Dropdown de temporadas
+  const [seasons, setSeasons] = useState([]); // temporadas disponibles
+  const [selectedSeason, setSelectedSeason] = useState(1); // temporada activa
+  const [showSeasonOptions, setShowSeasonOptions] = useState(false);
+  // Episodios organizados por temporada
+  const [episodesBySeason, setEpisodesBySeason] = useState({});
+
+  useEffect(() => {
+    const script = document.getElementById("episodes-data");
+    if (!script) return;
   
+    const text = script.textContent;
+  
+    const regex = /const\s+TEMPORADA_(\d+)\s*=\s*(\[.*?\]);/gs;
+    const matches = [...text.matchAll(regex)];
+  
+    const parsed = matches.map(match => {
+      const seasonNumber = parseInt(match[1], 10);
+      try {
+        const episodesArray = JSON.parse(match[2]);
+        return { seasonNumber, episodes: episodesArray };
+      } catch (e) {
+        console.error("Error parseando temporada", seasonNumber, e);
+        return null;
+      }
+    }).filter(Boolean);
+  
+    const episodesMap = {};
+    parsed.forEach(p => { episodesMap[p.seasonNumber] = p.episodes; });
+  
+    setEpisodesBySeason(episodesMap);
+    setSeasons(parsed.map(p => p.seasonNumber));
+    setSelectedSeason(parsed[0]?.seasonNumber || 1);
+  }, []);  
 
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
@@ -861,52 +885,6 @@ const playEpisode = (index, list = episodes) => {
 
 {/* Control de episodios */}
 <div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-  
-  {/* Dropdown de temporadas */}
-  <div style={{ position: 'relative', marginRight: '10px' }}>
-    <button
-      onClick={() => setSeasonDropdownVisible(!seasonDropdownVisible)}
-      style={{ ...iconButtonStyle, width: '120px', height: '40px' }}
-    >
-      Temporada {selectedSeason} ▼
-    </button>
-
-    {seasonDropdownVisible && (
-      <div
-        style={{
-          position: 'absolute',
-          top: '45px',
-          left: 0,
-          backgroundColor: '#181818',
-          borderRadius: '5px',
-          overflow: 'hidden',
-          zIndex: 200,
-        }}
-      >
-        {[1, 2, 3, 4].map(season => ( // Ajustá según la cantidad de temporadas
-          <div
-            key={season}
-            onClick={() => {
-              setSelectedSeason(season);
-              setSeasonDropdownVisible(false);
-              const newEpisodes = allEpisodesData.filter(ep => ep.season === season);
-              setEpisodes(newEpisodes);
-            }}
-            style={{
-              padding: '8px 12px',
-              cursor: 'pointer',
-              backgroundColor: season === selectedSeason ? '#333' : '#181818',
-              color: 'white'
-            }}
-          >
-            Temporada {season}
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-
-  {/* Botón Episodios */}
   <button
     className="episodesReactButton"
     id="episodesReactButton"
@@ -920,8 +898,8 @@ const playEpisode = (index, list = episodes) => {
       alignItems: 'center',
       justifyContent: 'center',
     }}
-    onMouseEnter={handleMouseEnterEpisodes}
-    onMouseLeave={handleMouseLeaveEpisodes}
+    onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
+    onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
@@ -977,14 +955,31 @@ const playEpisode = (index, list = episodes) => {
             display: nextOverlayVisible ? 'block' : 'none',
             cursor: 'pointer',
           }}
-          onClick={() => playEpisode(nextIndex)}
+          onClick={() => playEpisode(nextIndex)} // reproduce el episodio al clickear overlay
         >
           <div className="next-episode-header">Siguiente episodio</div>
           <img src={nextEp.image} alt={nextEp.title} className="next-episode-image" />
-          <div className="next-episode-title" style={{ fontWeight: '500', fontSize: '26px', marginBottom: '3px', paddingLeft: '9em', marginTop: '-5em' }}>
+          <div
+            className="next-episode-title"
+            style={{
+              fontWeight: '500',
+              fontSize: '26px',
+              marginBottom: '3px',
+              paddingLeft: '9em',
+              marginTop: '-5em',
+            }}
+          >
             {nextEp.title}
           </div>
-          <div className="next-episode-description" style={{ fontSize: '19px', color: 'rgb(204, 204, 204)', fontWeight: '300', paddingLeft: '12.4em' }}>
+          <div
+            className="next-episode-description"
+            style={{
+              fontSize: '19px',
+              color: 'rgb(204, 204, 204)',
+              fontWeight: '300',
+              paddingLeft: '12.4em',
+            }}
+          >
             {nextEp.description}
           </div>
         </div>
@@ -992,12 +987,11 @@ const playEpisode = (index, list = episodes) => {
     })()}
   </div>
 
-  {/* Modal de episodios */}
   {showEpisodesModal && (
     <div
       className="episodes-modal"
-      onMouseEnter={handleMouseEnterEpisodes}
-      onMouseLeave={handleMouseLeaveEpisodes}
+      onMouseEnter={handleMouseEnterEpisodes}  // mantiene abierto si estás en el modal
+      onMouseLeave={handleMouseLeaveEpisodes}  // cierra si salís del modal
       style={{
         position: 'absolute',
         bottom: '50px',
@@ -1013,26 +1007,92 @@ const playEpisode = (index, list = episodes) => {
       }}
     >
       <div style={{ marginBottom: 10 }}>
-        <div className="episodelist-title" style={{ fontWeight: 'bold', fontSize: '24px', marginLeft: '0.8em', marginTop: '0.14em', color: 'white' }}>
+        <div
+          className="episodelist-title"
+          style={{
+            fontWeight: 'bold',
+            fontSize: '24px',
+            marginLeft: '0.8em',
+            marginTop: '0.14em',
+            color: 'white',
+          }}
+        >
           Episodios
         </div>
       </div>
 
-      {episodes.map((ep, index) => (
+      {/* Dropdown de temporadas */}
+      {seasons.length > 1 && (
+        <div className="season-dropdown" style={{ marginBottom: '10px', color: 'white' }}>
+          <div
+            style={{
+              backgroundColor: '#333',
+              padding: '5px 10px',
+              borderRadius: '3px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+            onClick={() => setShowSeasonOptions(prev => !prev)}
+          >
+            Temporada {selectedSeason}
+          </div>
+
+          {showSeasonOptions && (
+            <div style={{ marginTop: 2, backgroundColor: '#222', borderRadius: '3px' }}>
+              {seasons.map(season => {
+                const count = episodesBySeason[season]?.length || 0;
+                return (
+                  <div
+                    key={season}
+                    style={{
+                      padding: '3px 10px',
+                      fontSize: '10px',
+                      cursor: 'pointer',
+                      color: season === selectedSeason ? 'white' : 'gray',
+                    }}
+                    onClick={() => {
+                      setSelectedSeason(season);
+                      setShowSeasonOptions(false);
+                    }}
+                  >
+                    Temporada {season} ({count} episodios)
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Episodios filtrados por temporada */}
+      {episodesBySeason[selectedSeason]?.map((ep, index) => (
         <div
           key={index}
           className="episode-item"
           onClick={() => {
-            playEpisode(index);
+            playEpisode(index, episodesBySeason[selectedSeason]);
             const epnameEl = document.getElementById('epname');
             if (epnameEl) {
               epnameEl.textContent = `E${index + 1} ${ep.title}`;
             }
             setShowEpisodesModal(false);
           }}
-          style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
+          style={{
+            display: 'flex',
+            marginBottom: '10px',
+            cursor: 'pointer',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '5px',
+            borderRadius: '3px',
+          }}
         >
-          <img src={ep.image} alt={ep.title} id="epImage" className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
+          <img
+            src={ep.image}
+            alt={ep.title}
+            className="epImage"
+            style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
+          />
           <div style={{ color: 'white' }}>
             <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
             <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
