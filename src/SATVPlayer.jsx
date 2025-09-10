@@ -194,6 +194,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
+  const [episodesBySeason, setEpisodesBySeason] = useState({}); // Para guardar episodios por temporada
+  const [currentSeason, setCurrentSeason] = useState("1");     // Para controlar la temporada actual  
   const [selectedSeries, setSelectedSeries] = useState("episodiosApp"); // ⚡ variable que puede cambiar según el JSON
   const [showSeasonDropdown, setShowSeasonDropdown] = useState(false); // ⚡ solo mostrar si hay >1 temporada
   
@@ -303,15 +305,21 @@ useEffect(() => {
 }, [videoUrl]);
 
 // ✅ Función para cambiar de episodio
+// ✅ Función para cambiar de episodio (robusta)
+// ✅ Función para cambiar de episodio (robusta)
 const playEpisode = (index, list = episodes || []) => {
-  if (!list || !list[index]) return; // ⬅ previene errores si list es undefined o vacío
+  if (!list || !list[index]) return;
 
   const ep = list[index];
 
-  setVideoUrl(ep.videoPath || "");        // ⬅ fallback por si no hay videoPath
-  setVideoType(ep.titleType || "Movie");  // ⬅ fallback por si no hay titleType
-  setVideoTitle(ep.title || "");          // ⬅ fallback por si no hay title
-  setEpisodeNumber(ep.episodeNumber || 1);// ⬅ fallback por si no hay episodeNumber
+  // videoPath puede llamarse videoPath o link en algunos JSON -> fallback
+  const src = ep.videoPath || ep.link || "";
+
+  setVideoUrl(src);
+  setVideoType(ep.titleType || "Series");
+  setVideoTitle(ep.title || "");
+  // episodeNumber puede venir como episodeNumber o number
+  setEpisodeNumber(ep.episodeNumber ?? ep.number ?? 1);
   setSeriesName(ep.seriesName || '');
   setShowEpisodesModal(false);
 
@@ -1038,40 +1046,44 @@ const playEpisode = (index, list = episodes || []) => {
     </div>
 
     {/* Lista de episodios */}
-    {episodes.map((ep, index) => (
-      <div
-        key={index}
-        className="episode-item"
-        onClick={() => {
-          playEpisode(index);
-          const epnameEl = document.getElementById('epname');
-          if (epnameEl) {
-            epnameEl.textContent = `E${ep.number} ${ep.title}`;
-          }
-          setShowEpisodesModal(false);
-        }}
-        style={{
-          display: 'flex',
-          marginBottom: '10px',
-          cursor: 'pointer',
-          alignItems: 'center',
-          gap: '10px',
-          padding: '5px',
-          borderRadius: '3px',
-        }}
-      >
-        <img
-          src={ep.image}
-          alt={ep.title}
-          className="epImage"
-          style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
-        />
-        <div style={{ color: 'white' }}>
-          <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-          <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
-        </div>
+    {episodes.map((ep, index) => {
+  const displayNumber = ep.episodeNumber ?? ep.number ?? (index + 1);
+
+  return (
+    <div
+      key={index}
+      className="episode-item"
+      onClick={() => {
+        playEpisode(index);
+        const epnameEl = document.getElementById('epname');
+        if (epnameEl) {
+          epnameEl.textContent = `E${displayNumber} ${ep.title || ''}`;
+        }
+        setShowEpisodesModal(false);
+      }}
+      style={{
+        display: 'flex',
+        marginBottom: '10px',
+        cursor: 'pointer',
+        alignItems: 'center',
+        gap: '10px',
+        padding: '5px',
+        borderRadius: '3px',
+      }}
+    >
+      <img
+        src={ep.image}
+        alt={ep.title}
+        className="epImage"
+        style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
+      />
+      <div style={{ color: 'white' }}>
+        <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+        <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
       </div>
-    ))}
+    </div>
+  );
+})}
   </div>
 )}
 </div>
