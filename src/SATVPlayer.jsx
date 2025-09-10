@@ -1012,7 +1012,7 @@ const playEpisode = (index, list = episodes) => {
           }}
           style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
         >
-          <img src={ep.image} alt={ep.title} id="epImage" className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
+          <img src={ep.image} alt={ep.title} id="epImage" className="epImage imagetest" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
           <div style={{ color: 'white' }}>
             <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
             <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
