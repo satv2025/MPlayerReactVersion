@@ -919,7 +919,7 @@ const playEpisode = (index, list = episodes || []) => {
     className="nextEpisodeButton"
     style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
     onClick={() => {
-      const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+      const currentIndex = episodes.findIndex(ep => ep.link === videoUrl);
       const nextIndex = currentIndex + 1;
       if (nextIndex < episodes.length) playEpisode(nextIndex);
     }}
