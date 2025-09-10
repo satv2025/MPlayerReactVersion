@@ -193,45 +193,8 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [episodesBySeason, setEpisodesBySeason] = useState({});
-  const [episodes, setEpisodes] = useState([]);
-  const [seasons, setSeasons] = useState([]);
-  const [selectedSeason, setSelectedSeason] = useState(1);
-  const [showSeasonOptions, setShowSeasonOptions] = useState(false);
-  
-  useEffect(() => {
-    const script = document.getElementById("episodes-data");
-    if (!script) return;
-  
-    const text = script.textContent;
-  
-    const regex = /const\s+TEMPORADA_(\d+)\s*=\s*(\[.*?\]);/gs;
-    const matches = [...text.matchAll(regex)];
-  
-    const parsedSeasons = matches.map(match => {
-      const seasonNumber = parseInt(match[1], 10);
-      try {
-        const episodesArray = JSON.parse(match[2]);
-        return { seasonNumber, episodes: episodesArray };
-      } catch (e) {
-        console.error("Error parseando temporada", seasonNumber, e);
-        return null;
-      }
-    }).filter(Boolean);
-  
-    const episodesMap = {};
-    let allEpisodes = [];
-  
-    parsedSeasons.forEach(p => {
-      episodesMap[p.seasonNumber] = p.episodes;
-      allEpisodes = allEpisodes.concat(p.episodes);
-    });
-  
-    setEpisodesBySeason(episodesMap);
-    setSeasons(parsedSeasons.map(p => p.seasonNumber));
-    setSelectedSeason(parsedSeasons[0]?.seasonNumber || 1);
-    setEpisodes(allEpisodes); // 🔹 todos los episodios planos para "next episode"
-  }, []);  
+  const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
+
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
     clearTimeout(episodesTimeout.current);
@@ -904,92 +867,103 @@ const playEpisode = (index, list = episodes) => {
     onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
     onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
   >
+<img
+  src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+  alt="Episodios"
+  className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
+  style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
+/>
+  </button>
+{/* NUEVO BOTÓN NextEpisode */}
+<div
+  className="div-position-next"
+  style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
+  onMouseEnter={() => setNextOverlayVisible(true)}
+  onMouseLeave={() => setNextOverlayVisible(false)}
+>
+  {/* Botón Next Episode */}
+  <button
+    className="nextEpisodeButton"
+    style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
+    onClick={() => {
+      const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+      const nextIndex = currentIndex + 1;
+      if (nextIndex < episodes.length) playEpisode(nextIndex);
+    }}
+  >
     <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-      alt="Episodios"
-      className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
-      style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
+      src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
+      alt="Next Episode"
+      className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`}
+      style={{
+        width: '32px',
+        height: '32px',
+        objectFit: 'contain',
+        display: 'block',
+        transform: nextOverlayVisible ? 'scale(1.2)' : 'scale(1)',
+        transition: 'transform 0.2s ease',
+      }}
     />
   </button>
 
-  {/* NUEVO BOTÓN NextEpisode */}
-  <div
-    className="div-position-next"
-    style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
-    onMouseEnter={() => setNextOverlayVisible(true)}
-    onMouseLeave={() => setNextOverlayVisible(false)}
-  >
-    {/* Botón Next Episode */}
-    <button
-      className="nextEpisodeButton"
-      style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
-      onClick={() => {
-        const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
-        const nextIndex = currentIndex + 1;
-        if (nextIndex < episodes.length) playEpisode(nextIndex);
-      }}
-    >
-      <img
-        src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
-        alt="Next Episode"
-        className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`}
+  {/* Overlay Next Episode */}
+  {episodes.length > 0 && (() => {
+    const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= episodes.length) return null;
+    const nextEp = episodes[nextIndex];
+
+    return (
+      <div
+        className="next-episode-overlay"
         style={{
-          width: '32px',
-          height: '32px',
-          objectFit: 'contain',
-          display: 'block',
-          transform: nextOverlayVisible ? 'scale(1.2)' : 'scale(1)',
-          transition: 'transform 0.2s ease',
+          display: nextOverlayVisible ? 'block' : 'none',
+          cursor: 'pointer',
         }}
-      />
-    </button>
-
-    {/* Overlay Next Episode */}
-    {episodes.length > 0 && (() => {
-      const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
-      const nextIndex = currentIndex + 1;
-      if (nextIndex >= episodes.length) return null;
-      const nextEp = episodes[nextIndex];
-
-      return (
-        <div
-          className="next-episode-overlay"
-          style={{
-            display: nextOverlayVisible ? 'block' : 'none',
-            cursor: 'pointer',
-          }}
-          onClick={() => playEpisode(nextIndex)} // reproduce el episodio al clickear overlay
-        >
-          <div className="next-episode-header">Siguiente episodio</div>
-          <img src={nextEp.image} alt={nextEp.title} className="next-episode-image" />
-          <div
-            className="next-episode-title"
-            style={{
-              fontWeight: '500',
-              fontSize: '26px',
-              marginBottom: '3px',
-              paddingLeft: '9em',
-              marginTop: '-5em',
-            }}
-          >
-            {nextEp.title}
-          </div>
-          <div
-            className="next-episode-description"
-            style={{
-              fontSize: '19px',
-              color: 'rgb(204, 204, 204)',
-              fontWeight: '300',
-              paddingLeft: '12.4em',
-            }}
-          >
-            {nextEp.description}
-          </div>
+        onClick={() => playEpisode(nextIndex)} // reproduce el episodio al clickear overlay
+      >
+        {/* Encabezado */}
+        <div className="next-episode-header">
+          Siguiente episodio
         </div>
-      );
-    })()}
-  </div>
 
+        {/* Imagen */}
+        <img 
+          src={nextEp.image} 
+          alt={nextEp.title} 
+          className="next-episode-image" 
+        />
+
+        {/* Título */}
+        <div 
+          className="next-episode-title" 
+          style={{
+            fontWeight: '500',
+            fontSize: '26px',
+            marginBottom: '3px',
+            paddingLeft: '9em',
+            marginTop: '-5em',
+          }}  
+        >
+          {nextEp.title}
+        </div>
+
+        {/* Descripción */}
+        <div 
+          className="next-episode-description" 
+          style={{
+            fontSize: '19px',
+            color: 'rgb(204, 204, 204)',
+            fontWeight: '300',
+            paddingLeft: '12.4em',
+          }}
+        >
+          {nextEp.description}
+        </div>
+      </div>
+    );
+  })()}
+</div>
   {showEpisodesModal && (
     <div
       className="episodes-modal"
@@ -1010,92 +984,35 @@ const playEpisode = (index, list = episodes) => {
       }}
     >
       <div style={{ marginBottom: 10 }}>
-        <div
-          className="episodelist-title"
-          style={{
-            fontWeight: 'bold',
-            fontSize: '24px',
-            marginLeft: '0.8em',
-            marginTop: '0.14em',
-            color: 'white',
-          }}
-        >
-          Episodios
-        </div>
+      <div
+  className="episodelist-title"
+  style={{
+    fontWeight: 'bold',
+    fontSize: '24px',
+    marginLeft: '0.8em',
+    marginTop: '0.14em',
+    color: 'white',
+  }}
+>
+  Episodios
+</div>
       </div>
 
-      {/* Dropdown de temporadas */}
-      {seasons.length > 1 && (
-        <div className="season-dropdown" style={{ marginBottom: '10px', color: 'white' }}>
-          <div
-            style={{
-              backgroundColor: '#333',
-              padding: '5px 10px',
-              borderRadius: '3px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-            }}
-            onClick={() => setShowSeasonOptions(prev => !prev)}
-          >
-            Temporada {selectedSeason}
-          </div>
-
-          {showSeasonOptions && (
-            <div style={{ marginTop: 2, backgroundColor: '#222', borderRadius: '3px' }}>
-              {seasons.map(season => {
-                const count = episodesBySeason[season]?.length || 0;
-                return (
-                  <div
-                    key={season}
-                    style={{
-                      padding: '3px 10px',
-                      fontSize: '10px',
-                      cursor: 'pointer',
-                      color: season === selectedSeason ? 'white' : 'gray',
-                    }}
-                    onClick={() => {
-                      setSelectedSeason(season);
-                      setShowSeasonOptions(false);
-                    }}
-                  >
-                    Temporada {season} ({count} episodios)
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Episodios filtrados por temporada */}
-      {episodesBySeason[selectedSeason]?.map((ep, index) => (
+      {episodes.map((ep, index) => (
         <div
           key={index}
           className="episode-item"
           onClick={() => {
-            playEpisode(index, episodesBySeason[selectedSeason]);
+            playEpisode(index);
             const epnameEl = document.getElementById('epname');
             if (epnameEl) {
               epnameEl.textContent = `E${index + 1} ${ep.title}`;
             }
             setShowEpisodesModal(false);
           }}
-          style={{
-            display: 'flex',
-            marginBottom: '10px',
-            cursor: 'pointer',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '5px',
-            borderRadius: '3px',
-          }}
+          style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
         >
-          <img
-            src={ep.image}
-            alt={ep.title}
-            className="epImage"
-            style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
-          />
+          <img src={ep.image} alt={ep.title} id="epImage" className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
           <div style={{ color: 'white' }}>
             <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
             <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
