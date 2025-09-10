@@ -941,9 +941,10 @@ const playEpisode = (index, list = episodes || []) => {
 
   {/* Overlay Next Episode */}
   {episodes.length > 0 && (() => {
-    const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+    const currentIndex = episodes.findIndex(ep => ep.link === videoUrl);
     const nextIndex = currentIndex + 1;
     if (nextIndex >= episodes.length) return null;
+
     const nextEp = episodes[nextIndex];
 
     return (
@@ -953,7 +954,7 @@ const playEpisode = (index, list = episodes || []) => {
           display: nextOverlayVisible ? 'block' : 'none',
           cursor: 'pointer',
         }}
-        onClick={() => playEpisode(nextIndex)} // reproduce el episodio al clickear overlay
+        onClick={() => playEpisode(nextIndex)}
       >
         {/* Encabezado */}
         <div className="next-episode-header">
