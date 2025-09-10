@@ -193,14 +193,12 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
-  // Dropdown de temporadas
-  const [seasons, setSeasons] = useState([]); // temporadas disponibles
-  const [selectedSeason, setSelectedSeason] = useState(1); // temporada activa
-  const [showSeasonOptions, setShowSeasonOptions] = useState(false);
-  // Episodios organizados por temporada
   const [episodesBySeason, setEpisodesBySeason] = useState({});
-
+  const [episodes, setEpisodes] = useState([]);
+  const [seasons, setSeasons] = useState([]);
+  const [selectedSeason, setSelectedSeason] = useState(1);
+  const [showSeasonOptions, setShowSeasonOptions] = useState(false);
+  
   useEffect(() => {
     const script = document.getElementById("episodes-data");
     if (!script) return;
@@ -210,7 +208,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     const regex = /const\s+TEMPORADA_(\d+)\s*=\s*(\[.*?\]);/gs;
     const matches = [...text.matchAll(regex)];
   
-    const parsed = matches.map(match => {
+    const parsedSeasons = matches.map(match => {
       const seasonNumber = parseInt(match[1], 10);
       try {
         const episodesArray = JSON.parse(match[2]);
@@ -222,13 +220,18 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     }).filter(Boolean);
   
     const episodesMap = {};
-    parsed.forEach(p => { episodesMap[p.seasonNumber] = p.episodes; });
+    let allEpisodes = [];
+  
+    parsedSeasons.forEach(p => {
+      episodesMap[p.seasonNumber] = p.episodes;
+      allEpisodes = allEpisodes.concat(p.episodes);
+    });
   
     setEpisodesBySeason(episodesMap);
-    setSeasons(parsed.map(p => p.seasonNumber));
-    setSelectedSeason(parsed[0]?.seasonNumber || 1);
+    setSeasons(parsedSeasons.map(p => p.seasonNumber));
+    setSelectedSeason(parsedSeasons[0]?.seasonNumber || 1);
+    setEpisodes(allEpisodes); // 🔹 todos los episodios planos para "next episode"
   }, []);  
-
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
     clearTimeout(episodesTimeout.current);
