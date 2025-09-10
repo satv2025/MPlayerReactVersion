@@ -28,15 +28,12 @@ export const GlobalStyle = createGlobalStyle`
 
 const speeds = [0.5, 0.75, 1, 1.25, 1.5];
 
-
 function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
   const [dragging, setDragging] = React.useState(false);
   const [showSlider, setShowSlider] = React.useState(false);
   const sliderRef = React.useRef(null);
 
-  // Para guardar volumen temporal mientras se arrastra sin forzar render
   const tempVolumeRef = React.useRef(volume);
-
   const roundedVolume = Math.round(volume * 100) / 100;
   const isMute = roundedVolume === 0;
   const isLow = roundedVolume > 0 && roundedVolume <= 0.33;
@@ -51,7 +48,6 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
     volumeIcon = 'https://static.solargentinotv.com.ar/controls/icons/png/volume1.png';
   }
 
-  // Raf para limitar updates
   const rafId = React.useRef(null);
 
   const updateVolumeInternal = (clientY) => {
@@ -67,7 +63,6 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
     setDragging(true);
     sliderRef.current.setPointerCapture(e.pointerId);
     updateVolumeInternal(e.clientY);
-    // Actualizar inmediatamente para respuesta instantánea
     if (rafId.current) cancelAnimationFrame(rafId.current);
     rafId.current = requestAnimationFrame(() => {
       onVolumeChange(tempVolumeRef.current);
@@ -92,7 +87,6 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
       cancelAnimationFrame(rafId.current);
       rafId.current = null;
     }
-    // Al soltar confirmamos el volumen final
     onVolumeChange(tempVolumeRef.current);
   };
 
@@ -114,14 +108,14 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
       onMouseLeave={handleMouseLeave}
       style={{ position: 'relative' }}
     >
-<img
-  src={volumeIcon}
-  alt="Volume"
-  className={`volume-icon ${showSlider ? 'active' : ''}`}
-  onClick={() => onVolumeChange(isMute ? 1 : 0)}
-  onMouseEnter={handleMouseEnter}
-  style={{ width: 40, height: 40 }} // mantener tamaño
-/>
+      <img
+        src={volumeIcon}
+        alt="Volume"
+        className={`volume-icon ${showSlider ? 'active' : ''}`}
+        onClick={() => onVolumeChange(isMute ? 1 : 0)}
+        onMouseEnter={handleMouseEnter}
+        style={{ width: 40, height: 40 }}
+      />
 
       <div
         ref={sliderRef}
@@ -150,7 +144,6 @@ function VolumeControl({ volume, onVolumeChange, onSliderVisibilityChange }) {
 }
 
 function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
-  // 🎨✨ ICON BUTTON STYLE
   const iconButtonStyle = {
     background: 'none',
     border: 'none',
@@ -160,12 +153,10 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     alignItems: 'center',
   };
 
-  // 🛠️🔧 REFS
   const episodesTimeout = useRef(null);
   const videoRef = useRef(null);
   const [videoUrl, setVideoUrl] = useState("");
-  // TÍTULO DINÁMICO
-  const [videoType, setVideoType] = useState('Movie'); // 'Movie' o 'Series'
+  const [videoType, setVideoType] = useState('Movie');
   const [videoTitle, setVideoTitle] = useState('');
   const [episodeNumber, setEpisodeNumber] = useState(1);
   const [seriesName, setSeriesName] = useState('');
@@ -176,7 +167,6 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const inactivityTimer = useRef(null);
   const hideControlsTimeout = useRef(null);
 
-  // 📊📈 STATES
   const [volumeSliderVisible, setVolumeSliderVisible] = useState(false);
   const [nextOverlayVisible, setNextOverlayVisible] = useState(false);
   const [showSpeedModal, setShowSpeedModal] = useState(false);
@@ -193,37 +183,32 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
+  const [episodes, setEpisodes] = useState([]);
 
-  // 🚪➡️ HANDLE MOUSE ENTER EPISODES
+  // New states for seasons dropdown
+  const [selectedSeason, setSelectedSeason] = useState(1);
+  const [showSeasonDropdown, setShowSeasonDropdown] = useState(false);
+
   const handleMouseEnterEpisodes = () => {
     clearTimeout(episodesTimeout.current);
     setShowEpisodesModal(true);
   };
 
-  // 🚪⬅️ HANDLE MOUSE LEAVE EPISODES
   const handleMouseLeaveEpisodes = () => {
     episodesTimeout.current = setTimeout(() => {
       setShowEpisodesModal(false);
     }, 200);
   };
 
-  // ⏳🕒 RESET HIDE TIMEOUT
   const resetHideTimeout = () => {
-    // Mostrar controles inmediatamente cuando hay movimiento
     setShouldHideTimeAndBar(false);
-
-    // Limpiar timeout anterior
     clearTimeout(hideControlsTimeout.current);
-
-    // Programar ocultar controles después de 3 segundos sin movimiento
     hideControlsTimeout.current = setTimeout(() => {
       setShouldHideTimeAndBar(true);
     }, 3000);
   };
 
-// Cargar episodios y primer episodio
-useEffect(() => {
+  useEffect(() => {
   const episodesDataScript = document.getElementById("episodes-data");
   if (!episodesDataScript) {
     if (propVideoUrl) {
@@ -236,92 +221,126 @@ useEffect(() => {
 
   try {
     const parsed = JSON.parse(episodesDataScript.textContent);
-    setEpisodes(parsed);
 
-    if (parsed.length > 0) {
-      // 🔹 Usar playEpisode para inicializar el primer episodio
-      playEpisode(0, parsed);
+    // Soportar dos formas de JSON de entrada:
+    // 1) Array plano de episodios (legacy)
+    // 2) Objeto por temporadas: { t1: { 'cant-eps': n, eps: [...] }, t2: {...} }
+
+    if (Array.isArray(parsed)) {
+      // Array plano -> lo usamos directamente
+      setEpisodes(parsed);
+
+      if (parsed.length > 0) {
+        playEpisode(0, parsed);
+      }
+    } else if (parsed && typeof parsed === 'object') {
+      // Objeto por temporadas -> convertir a array plano y marcar la temporada en cada episodio
+      const seasonKeys = Object.keys(parsed).filter((k) => /^t\d+$/i.test(k));
+      // ordenamos por número de temporada
+      seasonKeys.sort((a, b) => Number(a.replace(/\D/g, '')) - Number(b.replace(/\D/g, '')));
+
+      const flat = [];
+      seasonKeys.forEach((key) => {
+        const seasonNum = Number(key.replace(/\D/g, '')) || 1;
+        const sObj = parsed[key];
+        if (sObj && Array.isArray(sObj.eps)) {
+          sObj.eps.forEach((ep) => {
+            flat.push({ ...ep, season: seasonNum });
+          });
+        }
+      });
+
+      // Si no tenemos capítulos en el formato tN, intentar detectar campos alternativos
+      if (flat.length === 0) {
+        // intentar buscar eps directamente en parsed.eps (por si el JSON viene anidado distinto)
+        const maybeFlat = parsed.eps && Array.isArray(parsed.eps) ? parsed.eps : [];
+        if (maybeFlat.length > 0) {
+          maybeFlat.forEach((ep) => flat.push({ ...ep, season: ep.season || 1 }));
+        }
+      }
+
+      setEpisodes(flat);
+
+      if (flat.length > 0) {
+        playEpisode(0, flat);
+      }
+    } else {
+      console.warn('Formato de JSON de episodios no reconocido, se esperaba array o objeto t1/t2...');
     }
   } catch (e) {
     console.error("Error parsing episodes JSON", e);
   }
 }, [propVideoUrl]);
 
-// Función para reproducir video (HLS / nativo)
-useEffect(() => {
-  const video = videoRef.current;
-  if (!video || !videoUrl) return;
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoUrl) return;
 
-  let hls;
+    let hls;
 
-  if (Hls.isSupported()) {
-    hls = new Hls();
-    hls.loadSource(videoUrl);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      video.play().catch((err) => console.warn("Error al reproducir (HLS):", err));
-    });
-  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = videoUrl;
+    if (Hls.isSupported()) {
+      hls = new Hls();
+      hls.loadSource(videoUrl);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch((err) => console.warn("Error al reproducir (HLS):", err));
+      });
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = videoUrl;
 
-    const onLoadedMetadata = () => {
-      video.play().catch((err) => console.warn("Error al reproducir (nativo HLS):", err));
-    };
-    video.addEventListener("loadedmetadata", onLoadedMetadata);
+      const onLoadedMetadata = () => {
+        video.play().catch((err) => console.warn("Error al reproducir (nativo HLS):", err));
+      };
+      video.addEventListener("loadedmetadata", onLoadedMetadata);
+
+      return () => {
+        video.removeEventListener("loadedmetadata", onLoadedMetadata);
+        if (hls) hls.destroy();
+      };
+    } else {
+      video.src = videoUrl;
+      video.load();
+      video.play().catch((err) => console.warn("Error al reproducir (formato básico):", err));
+    }
 
     return () => {
-      video.removeEventListener("loadedmetadata", onLoadedMetadata);
       if (hls) hls.destroy();
     };
-  } else {
-    video.src = videoUrl;
-    video.load();
-    video.play().catch((err) => console.warn("Error al reproducir (formato básico):", err));
-  }
+  }, [videoUrl]);
 
-  return () => {
-    if (hls) hls.destroy();
+  const playEpisode = (index, list = episodes) => {
+    if (!list[index]) return;
+
+    const ep = list[index];
+
+    setVideoUrl(ep.videoPath);
+    setVideoType(ep.titleType);
+    setVideoTitle(ep.title);
+    setEpisodeNumber(ep.episodeNumber);
+    setSeriesName(ep.seriesName || '');
+    setShowEpisodesModal(false);
+
+    setShouldHideTimeAndBar(false);
+    resetHideTimeout();
   };
-}, [videoUrl]);
 
-// ✅ Función para cambiar de episodio
-const playEpisode = (index, list = episodes) => {
-  if (!list[index]) return;
-
-  const ep = list[index];
-
-  setVideoUrl(ep.videoPath);
-  setVideoType(ep.titleType);          // "Movie" o "Series"
-  setVideoTitle(ep.title);
-  setEpisodeNumber(ep.episodeNumber);  // usar el número real del JSON
-  setSeriesName(ep.seriesName || '');
-  setShowEpisodesModal(false);
-
-  // Mostrar título y controles inmediatamente
-  setShouldHideTimeAndBar(false);
-  resetHideTimeout();
-};
-  
-  // ✅ Setear volumen inicial
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
       video.volume = 0.5;
       setVolume(0.5);
     }
-  }, []);  
+  }, []);
 
   const episodesRef = useRef(episodes);
   const videoUrlRef = useRef(videoUrl);
-  
-  // Mantener referencias actualizadas
   useEffect(() => { episodesRef.current = episodes; }, [episodes]);
   useEffect(() => { videoUrlRef.current = videoUrl; }, [videoUrl]);
-  
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-  
+
     const onTimeUpdate = () => setCurrentTime(video.currentTime);
     const onDurationChange = () => setDuration(video.duration);
     const onWaiting = () => setBuffering(true);
@@ -329,8 +348,6 @@ const playEpisode = (index, list = episodes) => {
     const onCanPlay = () => setBuffering(false);
     const onEnded = () => {
       setBuffering(false);
-  
-      // Playlist automático
       const eps = episodesRef.current;
       const current = videoUrlRef.current;
       if (eps.length > 0) {
@@ -341,25 +358,25 @@ const playEpisode = (index, list = episodes) => {
         }
       }
     };
-  
+
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
-  
+
     video.addEventListener('waiting', onWaiting);
     video.addEventListener('playing', onPlaying);
     video.addEventListener('canplay', onCanPlay);
     video.addEventListener('ended', onEnded);
-  
+
     return () => {
       video.removeEventListener('timeupdate', onTimeUpdate);
       video.removeEventListener('loadedmetadata', onDurationChange);
-  
+
       video.removeEventListener('waiting', onWaiting);
       video.removeEventListener('playing', onPlaying);
       video.removeEventListener('canplay', onCanPlay);
       video.removeEventListener('ended', onEnded);
     };
-  }, []);  
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -375,27 +392,25 @@ const playEpisode = (index, list = episodes) => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Evitar que actúe cuando el foco está en un input
       const tag = (e.target && e.target.tagName) || '';
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
-  
+
       if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
       } else if (e.code === 'Space') {
-        e.preventDefault(); // para que no haga scroll
+        e.preventDefault();
         togglePlay();
       } else if (e.key === 'ArrowLeft') {
-        rewind(); // retrocede 10s
+        rewind();
       } else if (e.key === 'ArrowRight') {
-        forward(); // avanza 10s
+        forward();
       }
     };
-  
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []); // 👈 ya no necesita dependencias  
+  }, []);
 
-  // Detectar cambios de fullscreen para actualizar estado
   useEffect(() => {
     const handleFullscreenChange = () => {
       const fsElement =
@@ -502,7 +517,6 @@ const playEpisode = (index, list = episodes) => {
       } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
       }
-      // setFullscreen(true);  // Lo controla el event listener ahora
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -513,7 +527,6 @@ const playEpisode = (index, list = episodes) => {
       } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
       }
-      // setFullscreen(false);
     }
   };
 
@@ -530,6 +543,53 @@ const playEpisode = (index, list = episodes) => {
       setShowSpeedModal(false);
     }, 300);
   };
+
+  // --- NUEVO: Agrupar episodios por temporada (soporta diferentes nombres de campo)
+  const seasons = React.useMemo(() => {
+    const map = new Map();
+    episodes.forEach((ep) => {
+      // buscar posibles campos que indiquen temporada: season, temp, temporada
+      const rawSeason = ep.season ?? ep.temp ?? ep.temporada ?? 1;
+      const s = Number(rawSeason) || 1;
+      if (!map.has(s)) map.set(s, []);
+      map.get(s).push(ep);
+    });
+
+    const sortedSeasons = Array.from(map.keys()).sort((a, b) => a - b);
+    const arr = sortedSeasons.map((s) => ({ season: s, episodes: map.get(s) }));
+
+    const jsonObj = {};
+    arr.forEach((item) => {
+      const key = `t${item.season}`;
+      jsonObj[key] = {
+        'cant-eps': item.episodes.length,
+        eps: item.episodes.map((ep) => ({
+          title: ep.title,
+          videoPath: ep.videoPath,
+          image: ep.image,
+          description: ep.description,
+          episodeNumber: ep.episodeNumber,
+        })),
+      };
+    });
+
+    return { arr, jsonObj };
+  }, [episodes]);
+
+  // cuando cambian las temporadas disponibles, asegurar selectedSeason válido
+  useEffect(() => {
+    if (seasons.arr && seasons.arr.length > 0) {
+      const firstSeasonNumber = seasons.arr[0].season;
+      setSelectedSeason((prev) => {
+        // si prev no existe en la nueva lista, usar la primera
+        const exists = seasons.arr.some((s) => s.season === prev);
+        return exists ? prev : firstSeasonNumber;
+      });
+    }
+  }, [seasons]);
+
+  const currentSeasonObj = seasons.arr.find((s) => s.season === selectedSeason) || (seasons.arr[0] ?? { episodes: episodes });
+  const seasonsCount = seasons.arr.length || 0;
 
   return (
     <div
@@ -552,58 +612,58 @@ const playEpisode = (index, list = episodes) => {
       onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
-      
-      <div
-  ref={containerRef}
-  style={{ position: 'relative', width: '100%', height: '100%' }}
->
-  <div
-    className={`title-styles ${fullscreen ? 'fullscreen' : 'windowed'}`}
-    style={{
-      position: 'absolute',
-      top: '85%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 1000,
-      display: shouldHideTimeAndBar ? 'none' : 'block', // ⬅ ocultar junto a los controles
-    }}
-  >
-{videoType === 'Movie' ? (
-  <div
-    className="MovieTitleType"
-    id="MovieTitleType"
-    style={{
-      fontWeight: 400,
-      fontSize: '22px',
-      color: 'white',
-      display: shouldHideTimeAndBar ? 'none' : 'block', // 🔹 aquí
-    }}
-  >
-    {videoTitle}
-  </div>
-    ) : (
-      <div
-        className="SeriesTitleType"
-        id="SeriesTitleType"
-        style={{
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          fontSize: '22px',
-          color: 'white',
-          display: shouldHideTimeAndBar ? 'none' : 'inline', // ⬅ ocultar junto a los controles
-        }}
-      >
-        <strong style={{ fontWeight: 500 }}>{seriesName}</strong>{' '}
-        <span style={{ fontWeight: 400 }}>
-          E{episodeNumber} {videoTitle}
-        </span>
-      </div>
-    )}
-  </div>
-</div>
 
-<video
+      <div
+        ref={containerRef}
+        style={{ position: 'relative', width: '100%', height: '100%' }}
+      >
+        <div
+          className={`title-styles ${fullscreen ? 'fullscreen' : 'windowed'}`}
+          style={{
+            position: 'absolute',
+            top: '85%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1000,
+            display: shouldHideTimeAndBar ? 'none' : 'block',
+          }}
+        >
+          {videoType === 'Movie' ? (
+            <div
+              className="MovieTitleType"
+              id="MovieTitleType"
+              style={{
+                fontWeight: 400,
+                fontSize: '22px',
+                color: 'white',
+                display: shouldHideTimeAndBar ? 'none' : 'block',
+              }}
+            >
+              {videoTitle}
+            </div>
+          ) : (
+            <div
+              className="SeriesTitleType"
+              id="SeriesTitleType"
+              style={{
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontSize: '22px',
+                color: 'white',
+                display: shouldHideTimeAndBar ? 'none' : 'inline',
+              }}
+            >
+              <strong style={{ fontWeight: 500 }}>{seriesName}</strong>{' '}
+              <span style={{ fontWeight: 400 }}>
+                E{episodeNumber} {videoTitle}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <video
         ref={videoRef}
         style={{
           maxWidth: '100%',
@@ -616,7 +676,7 @@ const playEpisode = (index, list = episodes) => {
         }}
         onClick={togglePlay}
       />
-      {/* Controles */}
+
       <div
         style={{
           position: 'absolute',
@@ -633,7 +693,6 @@ const playEpisode = (index, list = episodes) => {
         onMouseMove={resetHideTimeout}
         onMouseEnter={resetHideTimeout}
       >
-        {/* Barra de progreso */}
         <div
           ref={progressRef}
           onPointerDown={handleProgressPointerDown}
@@ -679,8 +738,7 @@ const playEpisode = (index, list = episodes) => {
             />
           </div>
         </div>
-  
-        {/* Controles inferiores (botones y demás) */}
+
         <div
           style={{
             display: 'flex',
@@ -715,14 +773,14 @@ const playEpisode = (index, list = episodes) => {
               style={{ width: 40, height: 40 }}
             />
           </button>
-  
+
           <VolumeControl
             volume={volume}
             onVolumeChange={changeVolume}
             onSliderVisibilityChange={setVolumeSliderVisible}
           />
-  
-  <div
+
+          <div
             className="countdown-current-time"
             style={{
               flexGrow: 1,
@@ -738,8 +796,7 @@ const playEpisode = (index, list = episodes) => {
           >
             {formatTime(duration - currentTime)}
           </div>
-  
-          {/* Control de velocidad */}
+
           <div
             style={{ position: 'relative', cursor: 'pointer', width: 24 }}
             onMouseEnter={handleMouseEnterSpeed}
@@ -752,14 +809,14 @@ const playEpisode = (index, list = episodes) => {
                 /* No cerramos inmediatamente para evitar parpadeo */
               }}
             >
-<img
-  className={`speed-icon ${showSpeedModal ? 'active' : ''}`}
-  src="https://static.solargentinotv.com.ar/controls/icons/png/velocidad.png"
-  alt="Speed"
-  style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
-/>
+              <img
+                className={`speed-icon ${showSpeedModal ? 'active' : ''}`}
+                src="https://static.solargentinotv.com.ar/controls/icons/png/velocidad.png"
+                alt="Speed"
+                style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
+              />
             </button>
-  
+
             {showSpeedModal && (
               <div
                 className="speed-modal"
@@ -789,7 +846,7 @@ const playEpisode = (index, list = episodes) => {
                     Velocidad de reproducción
                   </div>
                 </div>
-  
+
                 <div className="speed-options-container" style={{ display: 'flex', gap: '10px' }}>
                   {speeds.map((sp) => (
                     <button
@@ -817,214 +874,281 @@ const playEpisode = (index, list = episodes) => {
               </div>
             )}
           </div>
-  
-{/* Contenedor relativo para fullscreen y captions */}
-<div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-  <button onClick={toggleFullscreen} style={iconButtonStyle}>
-    <img
-      src={
-        fullscreen
-          ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
-          : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
-      }
-      alt="Fullscreen toggle"
-      style={{ width: 40, height: 40, marginRight: '-6.3em' }}
-    />
-  </button>
 
-  <button
-    style={{
-      ...iconButtonStyle,
-      position: 'absolute',
-      left: '-50px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-    }}
-  >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
-      alt="Captions"
-      style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em' }}
-    />
-  </button>
-</div>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <button onClick={toggleFullscreen} style={iconButtonStyle}>
+              <img
+                src={
+                  fullscreen
+                    ? 'https://static.solargentinotv.com.ar/controls/icons/png/windowed.png'
+                    : 'https://static.solargentinotv.com.ar/controls/icons/png/fullscreen.png'
+                }
+                alt="Fullscreen toggle"
+                style={{ width: 40, height: 40, marginRight: '-6.3em' }}
+              />
+            </button>
 
-{/* Control de episodios */}
-<div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-  <button
-    className="episodesReactButton"
-    id="episodesReactButton"
-    style={{
-      ...iconButtonStyle,
-      width: '40px',
-      height: '40px',
-      padding: 0,
-      margin: 0,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-    onMouseEnter={handleMouseEnterEpisodes} // SOLO este botón abre
-    onMouseLeave={handleMouseLeaveEpisodes} // cierra si salís del botón y modal
-  >
-<img
-  src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
-  alt="Episodios"
-  className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
-  style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
-/>
-  </button>
-{/* NUEVO BOTÓN NextEpisode */}
-<div
-  className="div-position-next"
-  style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
-  onMouseEnter={() => setNextOverlayVisible(true)}
-  onMouseLeave={() => setNextOverlayVisible(false)}
->
-  {/* Botón Next Episode */}
-  <button
-    className="nextEpisodeButton"
-    style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
-    onClick={() => {
-      const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
-      const nextIndex = currentIndex + 1;
-      if (nextIndex < episodes.length) playEpisode(nextIndex);
-    }}
-  >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
-      alt="Next Episode"
-      className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`}
-      style={{
-        width: '32px',
-        height: '32px',
-        objectFit: 'contain',
-        display: 'block',
-        transform: nextOverlayVisible ? 'scale(1.2)' : 'scale(1)',
-        transition: 'transform 0.2s ease',
-      }}
-    />
-  </button>
+            <button
+              style={{
+                ...iconButtonStyle,
+                position: 'absolute',
+                left: '-50px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+              }}
+            >
+              <img
+                src="https://static.solargentinotv.com.ar/controls/icons/png/captions.png"
+                alt="Captions"
+                style={{ width: 40, height: 40, marginLeft: '-7em', marginTop: '0.16em' }}
+              />
+            </button>
+          </div>
 
-  {/* Overlay Next Episode */}
-  {episodes.length > 0 && (() => {
-    const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
-    const nextIndex = currentIndex + 1;
-    if (nextIndex >= episodes.length) return null;
-    const nextEp = episodes[nextIndex];
+          <div style={{ position: 'relative', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button
+              className="episodesReactButton"
+              id="episodesReactButton"
+              style={{
+                ...iconButtonStyle,
+                width: '40px',
+                height: '40px',
+                padding: 0,
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onMouseEnter={handleMouseEnterEpisodes}
+              onMouseLeave={handleMouseLeaveEpisodes}
+            >
+              <img
+                src="https://static.solargentinotv.com.ar/controls/icons/png/episodes.png"
+                alt="Episodios"
+                className={`episodes-icon ${showEpisodesModal ? 'active' : ''}`}
+                style={{ width: '32px', height: '32px', objectFit: 'contain', display: 'block', position: 'relative', left: '-18em' }}
+              />
+            </button>
 
-    return (
-      <div
-        className="next-episode-overlay"
-        style={{
-          display: nextOverlayVisible ? 'block' : 'none',
-          cursor: 'pointer',
-        }}
-        onClick={() => playEpisode(nextIndex)} // reproduce el episodio al clickear overlay
-      >
-        {/* Encabezado */}
-        <div className="next-episode-header">
-          Siguiente episodio
-        </div>
+            <div
+              className="div-position-next"
+              style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
+              onMouseEnter={() => setNextOverlayVisible(true)}
+              onMouseLeave={() => setNextOverlayVisible(false)}
+            >
+              <button
+                className="nextEpisodeButton"
+                style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
+                onClick={() => {
+                  const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+                  const nextIndex = currentIndex + 1;
+                  if (nextIndex < episodes.length) playEpisode(nextIndex);
+                }}
+              >
+                <img
+                  src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
+                  alt="Next Episode"
+                  className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    objectFit: 'contain',
+                    display: 'block',
+                    transform: nextOverlayVisible ? 'scale(1.2)' : 'scale(1)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                />
+              </button>
 
-        {/* Imagen */}
-        <img 
-          src={nextEp.image} 
-          alt={nextEp.title} 
-          className="next-episode-image" 
-        />
+              {episodes.length > 0 && (() => {
+                const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl);
+                const nextIndex = currentIndex + 1;
+                if (nextIndex >= episodes.length) return null;
+                const nextEp = episodes[nextIndex];
 
-        {/* Título */}
-        <div 
-          className="next-episode-title" 
-          style={{
-            fontWeight: '500',
-            fontSize: '26px',
-            marginBottom: '3px',
-            paddingLeft: '9em',
-            marginTop: '-5em',
-          }}  
-        >
-          {nextEp.title}
-        </div>
+                return (
+                  <div
+                    className="next-episode-overlay"
+                    style={{
+                      display: nextOverlayVisible ? 'block' : 'none',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => playEpisode(nextIndex)}
+                  >
+                    <div className="next-episode-header">
+                      Siguiente episodio
+                    </div>
 
-        {/* Descripción */}
-        <div 
-          className="next-episode-description" 
-          style={{
-            fontSize: '19px',
-            color: 'rgb(204, 204, 204)',
-            fontWeight: '300',
-            paddingLeft: '12.4em',
-          }}
-        >
-          {nextEp.description}
-        </div>
-      </div>
-    );
-  })()}
-</div>
-  {showEpisodesModal && (
-    <div
-      className="episodes-modal"
-      onMouseEnter={handleMouseEnterEpisodes}  // mantiene abierto si estás en el modal
-      onMouseLeave={handleMouseLeaveEpisodes}  // cierra si salís del modal
-      style={{
-        position: 'absolute',
-        bottom: '50px',
-        right: 0,
-        backgroundColor: '#181818',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 100,
-        userSelect: 'none',
-        width: '300px',
-        maxHeight: '400px',
-        overflowY: 'auto',
-      }}
-    >
-      <div style={{ marginBottom: 10 }}>
-      <div
-  className="episodelist-title"
-  style={{
-    fontWeight: 'bold',
-    fontSize: '24px',
-    marginLeft: '0.8em',
-    marginTop: '0.14em',
-    color: 'white',
-  }}
->
-  Episodios
-</div>
-      </div>
+                    <img 
+                      src={nextEp.image} 
+                      alt={nextEp.title} 
+                      className="next-episode-image" 
+                    />
 
-      {episodes.map((ep, index) => (
-        <div
-          key={index}
-          className="episode-item"
-          onClick={() => {
-            playEpisode(index);
-            const epnameEl = document.getElementById('epname');
-            if (epnameEl) {
-              epnameEl.textContent = `E${index + 1} ${ep.title}`;
-            }
-            setShowEpisodesModal(false);
-          }}
-          style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
-        >
-          <img src={ep.image} alt={ep.title} id="epImage" className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
-          <div style={{ color: 'white' }}>
-            <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
-            <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
+                    <div 
+                      className="next-episode-title" 
+                      style={{
+                        fontWeight: '500',
+                        fontSize: '26px',
+                        marginBottom: '3px',
+                        paddingLeft: '9em',
+                        marginTop: '-5em',
+                      }}  
+                    >
+                      {nextEp.title}
+                    </div>
+
+                    <div 
+                      className="next-episode-description" 
+                      style={{
+                        fontSize: '19px',
+                        color: 'rgb(204, 204, 204)',
+                        fontWeight: '300',
+                        paddingLeft: '12.4em',
+                      }}
+                    >
+                      {nextEp.description}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {showEpisodesModal && (
+              <div
+                className="episodes-modal"
+                onMouseEnter={handleMouseEnterEpisodes}
+                onMouseLeave={handleMouseLeaveEpisodes}
+                style={{
+                  position: 'absolute',
+                  bottom: '50px',
+                  right: 0,
+                  backgroundColor: '#181818',
+                  padding: '10px',
+                  borderRadius: '5px',
+                  zIndex: 100,
+                  userSelect: 'none',
+                  width: '380px',
+                  maxHeight: '400px',
+                  overflowY: 'auto',
+                }}
+              >
+                <div style={{ marginBottom: 10 }}>
+                  <div
+                    className="episodelist-title"
+                    style={{
+                      fontWeight: 'bold',
+                      fontSize: '24px',
+                      marginLeft: '0.8em',
+                      marginTop: '0.14em',
+                      color: 'white',
+                    }}
+                  >
+                    Episodios
+                  </div>
+                </div>
+
+                {/* --- NUEVO: Dropdown de temporadas (si hay 2 o más) --- */}
+                <div style={{ marginBottom: 12, padding: '0 6px' }}>
+                  {seasonsCount >= 2 ? (
+                    <div className="dropdown" style={{ position: 'relative' }}>
+                      <button
+                        className="dropdown-button"
+                        onClick={() => setShowSeasonDropdown((s) => !s)}
+                        style={{
+                          padding: '8px 12px',
+                          borderRadius: 4,
+                          border: '1px solid #333',
+                          background: '#0f0f0f',
+                          color: 'white',
+                          cursor: 'pointer',
+                          width: '100%',
+                          textAlign: 'left',
+                        }}
+                      >
+                        {/* Mostrar solo "Temporada X" sin paréntesis ni conteo */}
+                        Temporada {selectedSeason}
+                      </button>
+
+                      {showSeasonDropdown && (
+                        <div
+                          className="dropdown-menu"
+                          style={{
+                            position: 'absolute',
+                            top: 'calc(100% + 6px)',
+                            left: 0,
+                            background: '#121212',
+                            border: '1px solid #333',
+                            borderRadius: 4,
+                            padding: 6,
+                            zIndex: 200,
+                            width: '100%',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.6)',
+                          }}
+                        >
+                          {seasons.arr.map((sObj) => (
+                            <div
+                              key={sObj.season}
+                              onClick={() => {
+                                setSelectedSeason(sObj.season);
+                                setShowSeasonDropdown(false);
+                              }}
+                              style={{
+                                padding: '8px 10px',
+                                cursor: 'pointer',
+                                borderRadius: 3,
+                                color: 'white',
+                                fontSize: 14,
+                              }}
+                            >
+                              {/* Mostrar "Temporada N (x episodios)" en el menú */}
+                              Temporada {sObj.season} ({sObj.episodes.length} episodios)
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    // Si solo hay 1 temporada, mostrar título con conteo pero sin dropdown
+                    <div style={{ color: '#ccc', fontSize: 14 }}>
+                      Temporada {currentSeasonObj.season || 1} ({currentSeasonObj.episodes.length} episodios)
+                    </div>
+                  )}
+                </div>
+
+                {/* Lista de episodios filtrada por temporada seleccionada */}
+                { (currentSeasonObj.episodes || []).map((ep, index) => (
+                  <div
+                    key={index}
+                    className="episode-item"
+                    onClick={() => {
+                      // Buscar índice real en el array completo para playEpisode
+                      const globalIndex = episodes.findIndex(x => x.videoPath === ep.videoPath);
+                      if (globalIndex >= 0) playEpisode(globalIndex);
+                      const epnameEl = document.getElementById('epname');
+                      if (epnameEl) {
+                        epnameEl.textContent = `E${ep.episodeNumber || index + 1} ${ep.title}`;
+                      }
+                      setShowEpisodesModal(false);
+                    }}
+                    style={{ display: 'flex', marginBottom: '10px', cursor: 'pointer', alignItems: 'center', gap: '10px', padding: '5px', borderRadius: '3px' }}
+                  >
+                    <img src={ep.image} alt={ep.title} className="epImage" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }} />
+                    <div style={{ color: 'white' }}>
+                      <h4 style={{ margin: 0, fontSize: '16px' }}>{ep.title}</h4>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#ccc' }}>{ep.description}</p>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Mostrar JSON con la estructura solicitada (t1, cant-eps, eps) */}
+                
+              </div>
+            )}
           </div>
         </div>
-      ))}
+      </div>
     </div>
-  )}
-</div>
-</div>
-</div>
-</div>
   );
 }
 
