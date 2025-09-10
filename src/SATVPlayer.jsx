@@ -1030,34 +1030,36 @@ const playEpisode = (index, list = episodes || []) => {
     </div>
 
 {/* Dropdown personalizado para temporadas */}
-<div
-  className={`season-dropdown ${showSeasonDropdown ? 'show' : ''}`}
-  onClick={() => setShowSeasonDropdown(!showSeasonDropdown)}
->
-  <div className="dropdown-button">
-    Temporada {currentSeason}
-  </div>
+{Object.keys(episodesBySeason).length > 1 && (
+  <div
+    className={`season-dropdown ${showSeasonDropdown ? 'show' : ''}`}
+    onClick={() => setShowSeasonDropdown(!showSeasonDropdown)}
+  >
+    <div className="dropdown-button">
+      Temporada {currentSeason}
+    </div>
 
-  <ul id="seasonMenu" className={`dropdown-content ${showSeasonDropdown ? 'show' : ''}`}>
-    {Object.keys(episodesBySeason).map((season) => (
-      <li key={season} className="season-option">
-        <button
-          className="texto"
-          onClick={() => {
-            setCurrentSeason(season);
-            setEpisodes(episodesBySeason[season] || []);
-            setShowSeasonDropdown(false);
-          }}
-        >
-          Temporada {season}
-          <span className="episodios-count" style={{ marginLeft: '0.6em' }}>
-            ({episodesBySeason[season]?.length ?? 0} episodios)
-          </span>
-        </button>
-      </li>
-    ))}
-  </ul>
-</div>
+    <ul id="seasonMenu" className={`dropdown-content ${showSeasonDropdown ? 'show' : ''}`}>
+      {Object.keys(episodesBySeason).map((season) => (
+        <li key={season} className="season-option">
+          <button
+            className="texto"
+            onClick={() => {
+              setCurrentSeason(season);
+              setEpisodes(episodesBySeason[season] || []);
+              setShowSeasonDropdown(false);
+            }}
+          >
+            Temporada {season}
+            <span className="episodios-count" style={{ marginLeft: '0.6em' }}>
+              ({episodesBySeason[season]?.length ?? 0} episodios)
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
 
     {/* Lista de episodios */}
     {episodes.map((ep, index) => {
