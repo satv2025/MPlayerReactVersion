@@ -193,9 +193,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [seasons, setSeasons] = useState({}); // { t1: [...], t2: [...] }
-  const [currentSeason, setCurrentSeason] = useState("t1");
-  const [episodes, setEpisodes] = useState([]); // episodios de la temporada seleccionada
+  const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
 
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
@@ -237,31 +235,17 @@ useEffect(() => {
   }
 
   try {
-    const parsed = JSON.parse(episodesDataScript.textContent); // objeto {t1:[], t2:[]}
-    setSeasons(parsed);
+    const parsed = JSON.parse(episodesDataScript.textContent);
+    setEpisodes(parsed);
 
-    const firstSeasonKey = Object.keys(parsed)[0]; // ejemplo: "t1"
-    if (firstSeasonKey && parsed[firstSeasonKey].length > 0) {
-      setCurrentSeason(firstSeasonKey);
-      setEpisodes(parsed[firstSeasonKey]);
-
-      // 🔹 Inicializar primer episodio de esa temporada
-      playEpisode(0, parsed[firstSeasonKey]);
+    if (parsed.length > 0) {
+      // 🔹 Usar playEpisode para inicializar el primer episodio
+      playEpisode(0, parsed);
     }
   } catch (e) {
     console.error("Error parsing episodes JSON", e);
   }
 }, [propVideoUrl]);
-
-// Cambiar de temporada → actualiza episodios
-useEffect(() => {
-  if (currentSeason && seasons[currentSeason]) {
-    setEpisodes(seasons[currentSeason]);
-
-    // Opcional: al cambiar de temporada, reproducir el 1er episodio
-    playEpisode(0, seasons[currentSeason]);
-  }
-}, [currentSeason, seasons]);
 
 // Función para reproducir video (HLS / nativo)
 useEffect(() => {
