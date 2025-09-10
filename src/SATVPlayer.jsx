@@ -360,38 +360,18 @@ const playEpisode = (index, list = episodes || []) => {
     const onCanPlay = () => setBuffering(false);
     const onEnded = () => {
       setBuffering(false);
-    
-      const eps = episodesRef.current; // Episodios de la temporada actual
+  
+      // Playlist automático
+      const eps = episodesRef.current;
       const current = videoUrlRef.current;
-    
-      // Encuentra índice del episodio actual en la temporada actual
-      const currentIndex = eps.findIndex(ep => ep.videoPath === current);
-    
-      if (currentIndex === -1) return; // no encontró el episodio
-    
-      // Intenta reproducir el siguiente episodio de la temporada
-      const nextIndex = currentIndex + 1;
-      if (nextIndex < eps.length) {
-        playEpisode(nextIndex, eps);
-        return;
-      }
-    
-      // Si no hay más episodios en la temporada, busca la próxima temporada
-      const seasonKeys = Object.keys(episodesBySeason).sort((a, b) => a - b);
-      const currentSeasonIndex = seasonKeys.findIndex(s => s === currentSeason);
-      const nextSeasonIndex = currentSeasonIndex + 1;
-    
-      if (nextSeasonIndex < seasonKeys.length) {
-        const nextSeason = seasonKeys[nextSeasonIndex];
-        const nextSeasonEpisodes = episodesBySeason[nextSeason];
-    
-        if (nextSeasonEpisodes && nextSeasonEpisodes.length > 0) {
-          setCurrentSeason(nextSeason);         // cambia la temporada actual
-          setEpisodes(nextSeasonEpisodes);      // actualiza la lista de episodios
-          playEpisode(0, nextSeasonEpisodes);   // reproduce el primer episodio de la nueva temporada
+      if (eps.length > 0) {
+        const currentIndex = eps.findIndex(ep => ep.videoPath === current);
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < eps.length) {
+          playEpisode(nextIndex, eps);
         }
       }
-    };     
+    };
   
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
