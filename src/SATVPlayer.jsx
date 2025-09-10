@@ -193,9 +193,7 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [shouldHideTimeAndBar, setShouldHideTimeAndBar] = useState(false);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [seasons, setSeasons] = useState({}); // { t1: [...], t2: [...] }
-  const [currentSeason, setCurrentSeason] = useState("t1");
-  const [episodes, setEpisodes] = useState([]); // episodios de la temporada seleccionada
+  const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
 
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
