@@ -360,18 +360,20 @@ const playEpisode = (index, list = episodes || []) => {
     const onCanPlay = () => setBuffering(false);
     const onEnded = () => {
       setBuffering(false);
-  
+    
       // Playlist automático
       const eps = episodesRef.current;
       const current = videoUrlRef.current;
+    
       if (eps.length > 0) {
         const currentIndex = eps.findIndex(ep => ep.videoPath === current);
         const nextIndex = currentIndex + 1;
+    
         if (nextIndex < eps.length) {
           playEpisode(nextIndex, eps);
         }
       }
-    };
+    };    
   
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
