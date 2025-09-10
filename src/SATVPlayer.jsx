@@ -943,9 +943,11 @@ const playEpisode = (index, list = episodes || []) => {
   {episodes.length > 0 && (() => {
     const currentIndex = episodes.findIndex(ep => ep.link === videoUrl);
     const nextIndex = currentIndex + 1;
+
+    // Si estamos en el último episodio, no mostrar overlay
     if (nextIndex >= episodes.length) return null;
 
-    const nextEp = episodes[nextIndex];
+    const nextEp = episodes[nextIndex]; // <- Esto garantiza que sean los datos del siguiente
 
     return (
       <div
