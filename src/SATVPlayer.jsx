@@ -985,8 +985,8 @@ const playEpisode = (index, list = episodes) => {
 {showEpisodesModal && (
   <div
     className="episodes-modal"
-    onMouseEnter={handleMouseEnterEpisodes}  // mantiene abierto si estás en el modal
-    onMouseLeave={handleMouseLeaveEpisodes}  // cierra si salís del modal
+    onMouseEnter={handleMouseEnterEpisodes}
+    onMouseLeave={handleMouseLeaveEpisodes}
     style={{
       position: 'absolute',
       bottom: '50px',
@@ -1001,7 +1001,6 @@ const playEpisode = (index, list = episodes) => {
       overflowY: 'auto',
     }}
   >
-    {/* Título */}
     <div style={{ marginBottom: 10 }}>
       <div
         className="episodelist-title"
@@ -1017,40 +1016,26 @@ const playEpisode = (index, list = episodes) => {
       </div>
     </div>
 
-    {/* Dropdown de temporadas */}
-    {Object.keys(episodesBySeason).length > 1 && (
-      <div
-        className={`season-dropdown ${seasonDropdownOpen ? 'show' : ''}`}
-        onMouseLeave={() => setSeasonDropdownOpen(false)}
-      >
-        <div
-          className="dropdown-button"
-          onClick={() => setSeasonDropdownOpen(!seasonDropdownOpen)}
-        >
-          Temporada {currentSeason}
-        </div>
-
-        <ul id="seasonMenu" className={seasonDropdownOpen ? 'show' : ''}>
-          {Object.keys(episodesBySeason).map((season) => (
-            <li key={season} className="season-option">
-              <button
-                className="texto"
-                onClick={() => {
-                  setCurrentSeason(season);
-                  setEpisodes(episodesBySeason[season] || []);
-                  setSeasonDropdownOpen(false);
-                }}
-              >
-                Temporada {season} 
-                <span className="episodios-count">
-                  ({(episodesBySeason[season] || []).length})
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+    {/* Dropdown personalizado para temporadas */}
+    <div className={`season-dropdown ${showSeasonDropdown ? 'show' : ''}`} onClick={() => setShowSeasonDropdown(!showSeasonDropdown)}>
+      <div className="dropdown-button">Temporada {currentSeason}</div>
+      <ul id="seasonMenu" className={showSeasonDropdown ? 'show' : ''} className="dropdown-content">
+        {Object.keys(episodesBySeason).map(season => (
+          <li key={season} className="season-option">
+            <button
+              className="texto"
+              onClick={() => {
+                setCurrentSeason(season);
+                setEpisodes(episodesBySeason[season] || []);
+                setShowSeasonDropdown(false);
+              }}
+            >
+              Temporada {season}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
 
     {/* Lista de episodios */}
     {episodes.map((ep, index) => (
@@ -1061,7 +1046,7 @@ const playEpisode = (index, list = episodes) => {
           playEpisode(index);
           const epnameEl = document.getElementById('epname');
           if (epnameEl) {
-            epnameEl.textContent = `E${index + 1} ${ep.title}`;
+            epnameEl.textContent = `E${ep.number} ${ep.title}`;
           }
           setShowEpisodesModal(false);
         }}
@@ -1078,7 +1063,6 @@ const playEpisode = (index, list = episodes) => {
         <img
           src={ep.image}
           alt={ep.title}
-          id="epImage"
           className="epImage"
           style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '3px' }}
         />
