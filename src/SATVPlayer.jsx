@@ -194,8 +194,6 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [episodes, setEpisodes] = useState([]); // 🎯 IMPORTANTE
-  const [episodesBySeason, setEpisodesBySeason] = useState({}); // Para guardar episodios por temporada
-  const [currentSeason, setCurrentSeason] = useState(1);        // Para controlar la temporada actual
   const [selectedSeries, setSelectedSeries] = useState("episodiosApp"); // ⚡ variable que puede cambiar según el JSON
   const [showSeasonDropdown, setShowSeasonDropdown] = useState(false); // ⚡ solo mostrar si hay >1 temporada
   
@@ -305,15 +303,15 @@ useEffect(() => {
 }, [videoUrl]);
 
 // ✅ Función para cambiar de episodio
-const playEpisode = (index, list = episodes) => {
-  if (!list[index]) return;
+const playEpisode = (index, list = episodes || []) => {
+  if (!list || !list[index]) return; // ⬅ previene errores si list es undefined o vacío
 
   const ep = list[index];
 
-  setVideoUrl(ep.videoPath);
-  setVideoType(ep.titleType);          // "Movie" o "Series"
-  setVideoTitle(ep.title);
-  setEpisodeNumber(ep.episodeNumber);  // usar el número real del JSON
+  setVideoUrl(ep.videoPath || "");        // ⬅ fallback por si no hay videoPath
+  setVideoType(ep.titleType || "Movie");  // ⬅ fallback por si no hay titleType
+  setVideoTitle(ep.title || "");          // ⬅ fallback por si no hay title
+  setEpisodeNumber(ep.episodeNumber || 1);// ⬅ fallback por si no hay episodeNumber
   setSeriesName(ep.seriesName || '');
   setShowEpisodesModal(false);
 
@@ -574,6 +572,7 @@ const playEpisode = (index, list = episodes) => {
       <GlobalStyle />
       
       <div
+  ref={containerRef}
   style={{ position: 'relative', width: '100%', height: '100%' }}
 >
   <div
