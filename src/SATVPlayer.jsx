@@ -1035,10 +1035,7 @@ const playEpisode = (index, list = episodes || []) => {
   onClick={() => setShowSeasonDropdown(!showSeasonDropdown)}
 >
   <div className="dropdown-button">
-    Temporada {currentSeason}
-    <span className="episodios-count" style={{ marginLeft: '0.6em' }}>
-      ({episodesBySeason[currentSeason]?.length ?? 0} episodios)
-    </span>
+    Temporada {currentSeason}  {/* Solo texto de temporada, sin contador */}
   </div>
 
   <ul id="seasonMenu" className={`dropdown-content ${showSeasonDropdown ? 'show' : ''}`}>
@@ -1052,10 +1049,7 @@ const playEpisode = (index, list = episodes || []) => {
             setShowSeasonDropdown(false);
           }}
         >
-          Temporada {season}
-          <span className="episodios-count" style={{ marginLeft: '0.6em' }}>
-            ({episodesBySeason[season]?.length ?? 0} episodios)
-          </span>
+          Temporada {season} → ({episodesBySeason[season]?.length ?? 0} episodios)
         </button>
       </li>
     ))}
