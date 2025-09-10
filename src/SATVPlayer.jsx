@@ -894,12 +894,14 @@ const playEpisode = (index, list = episodes) => {
     <img
       src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
       alt="Next Episode"
-      className={`next-episode-icon ${nextOverlayVisible ? 'active' : 'hover'}`} // Hover activo mientras overlay visible
+      className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`}
       style={{
         width: '32px',
         height: '32px',
         objectFit: 'contain',
         display: 'block',
+        transform: nextOverlayVisible ? 'scale(1.2)' : 'scale(1)',
+        transition: 'transform 0.2s ease',
       }}
     />
   </button>
@@ -918,7 +920,7 @@ const playEpisode = (index, list = episodes) => {
           display: nextOverlayVisible ? 'block' : 'none',
           cursor: 'pointer',
         }}
-        onClick={() => playEpisode(nextIndex)} // Reproduce el siguiente episodio al clickear overlay
+        onClick={() => playEpisode(nextIndex)} // reproduce el episodio al clickear overlay
       >
         {/* Encabezado */}
         <div className="next-episode-header">
