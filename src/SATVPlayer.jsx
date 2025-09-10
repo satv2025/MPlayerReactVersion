@@ -360,18 +360,25 @@ const playEpisode = (index, list = episodes || []) => {
     const onCanPlay = () => setBuffering(false);
     const onEnded = () => {
       setBuffering(false);
-  
-      // Playlist automático
-      const eps = episodesRef.current;
+    
+      // Generar playlist completa: todos los episodios de todas las temporadas
+      const allEpisodes = Object.values(episodesBySeason).flat(); // esto une todas las temporadas en orden
       const current = videoUrlRef.current;
-      if (eps.length > 0) {
-        const currentIndex = eps.findIndex(ep => ep.videoPath === current);
+    
+      if (allEpisodes.length > 0) {
+        const currentIndex = allEpisodes.findIndex(ep => ep.videoPath === current);
         const nextIndex = currentIndex + 1;
-        if (nextIndex < eps.length) {
-          playEpisode(nextIndex, eps);
+    
+        if (nextIndex < allEpisodes.length) {
+          // Reproducir siguiente episodio en la playlist global
+          playEpisode(nextIndex, allEpisodes);
+        } else {
+          console.log("Se terminó la playlist completa");
+          // Opcional: volver al primer episodio
+          // playEpisode(0, allEpisodes);
         }
       }
-    };
+    };    
   
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
