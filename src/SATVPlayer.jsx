@@ -11,7 +11,7 @@ const iconButtonStyle = {
 };
 
 export const GlobalStyle = createGlobalStyle`
-  @import url('https://fuentes.solargentinotv.com.ar/netflixsans.css');
+  @import url('https://solargentinotv.com.ar/assets/fonts/NetflixSans/NetflixSans.css');
   * {
     font-family: 'Netflix Sans';
     margin: 0;
@@ -237,38 +237,37 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
     if (!episodesDataScript) {
       if (propVideoUrl) {
         setVideoUrl(propVideoUrl);
-        setVideoType("Movie");
+        setVideoType("Movie");  // <- Esto es clave
         setVideoTitle("");
+        setEpisodes([]);        // <- Vaciar lista de episodios
       }
       return;
     }
   
     try {
       const parsed = JSON.parse(episodesDataScript.textContent);
+      const firstSeries = Object.keys(parsed)[0];
+      const seasons = parsed[firstSeries];
   
-      // 🔹 Inicializamos la serie dinámica
-      const firstSeries = Object.keys(parsed)[0]; // "episodiosApp", "episodiosReite666", etc.
       setSelectedSeries(firstSeries);
-  
-      const seasons = parsed[firstSeries]; // temporadas
       setEpisodesBySeason(seasons);
-  
       const firstSeason = Object.keys(seasons)[0];
       setCurrentSeason(firstSeason);
-  
-      // Mostrar dropdown solo si hay más de 1 temporada
       setShowSeasonDropdown(Object.keys(seasons).length > 1);
   
-      // Inicializamos los episodios de la primera temporada
-      setEpisodes(seasons[firstSeason] || []);
+      const firstEpisodes = seasons[firstSeason] || [];
+      setEpisodes(firstEpisodes);
   
-      // Reproducir el primer episodio si existe
-      if ((seasons[firstSeason] || []).length > 0) {
-        playEpisode(0, seasons[firstSeason]);
-      }
+      if (firstEpisodes.length > 0) playEpisode(0, firstEpisodes);
   
     } catch (e) {
       console.error("Error parsing episodes JSON", e);
+      if (propVideoUrl) {
+        setVideoUrl(propVideoUrl);
+        setVideoType("Movie");  // <- Por si falla el JSON
+        setVideoTitle("");
+        setEpisodes([]);
+      }
     }
   }, [propVideoUrl]);  
 
@@ -908,98 +907,93 @@ const playEpisode = (index, list = episodes || []) => {
 />
   </button>
 {/* NUEVO BOTÓN NextEpisode */}
-<div
-  className="div-position-next"
-  style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
-  onMouseEnter={() => setNextOverlayVisible(true)}
-  onMouseLeave={() => setNextOverlayVisible(false)}
->
-  {/* Botón Next Episode */}
-  <button
-    className="nextEpisodeButton"
-    style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
-    onClick={() => {
-      const currentIndex = episodes.findIndex(ep => ep.link === videoUrl);
-      const nextIndex = currentIndex + 1;
-      if (nextIndex < episodes.length) playEpisode(nextIndex);
-    }}
+{episodes.length > 0 && (
+  <div
+    className="div-position-next"
+    style={{ position: 'relative', width: '40px', height: '40px', marginLeft: '8px' }}
+    onMouseEnter={() => setNextOverlayVisible(true)}
+    onMouseLeave={() => setNextOverlayVisible(false)}
   >
-    <img
-      src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
-      alt="Next Episode"
-      className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`}
-      style={{
-        width: '32px',
-        height: '32px',
-        objectFit: 'contain',
-        display: 'block',
-        transform: nextOverlayVisible ? 'scale(1.2)' : 'scale(1)',
-        transition: 'transform 0.2s ease',
+    {/* Botón Next Episode */}
+    <button
+      className="nextEpisodeButton"
+      style={{ ...iconButtonStyle, width: '40px', height: '40px', padding: 0 }}
+      onClick={() => {
+        const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl || ep.link === videoUrl);
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < episodes.length) playEpisode(nextIndex);
       }}
-    />
-  </button>
-
-  {/* Overlay Next Episode */}
-  {episodes.length > 0 && (() => {
-    const currentIndex = episodes.findIndex(ep => ep.link === videoUrl);
-    const nextIndex = currentIndex + 1;
-
-    // Si estamos en el último episodio, no mostrar overlay
-    if (nextIndex >= episodes.length) return null;
-
-    const nextEp = episodes[nextIndex]; // <- Esto garantiza que sean los datos del siguiente
-
-    return (
-      <div
-        className="next-episode-overlay"
+    >
+      <img
+        src="https://static.solargentinotv.com.ar/controls/icons/png/next.png"
+        alt="Next Episode"
+        className={`next-episode-icon ${nextOverlayVisible ? 'active' : ''}`}
         style={{
-          display: nextOverlayVisible ? 'block' : 'none',
-          cursor: 'pointer',
+          width: '32px',
+          height: '32px',
+          objectFit: 'contain',
+          display: 'block',
+          transform: nextOverlayVisible ? 'scale(1.2)' : 'scale(1)',
+          transition: 'transform 0.2s ease',
         }}
-        onClick={() => playEpisode(nextIndex)}
-      >
-        {/* Encabezado */}
-        <div className="next-episode-header">
-          Siguiente episodio
-        </div>
+      />
+    </button>
 
-        {/* Imagen */}
-        <img 
-          src={nextEp.image} 
-          alt={nextEp.title} 
-          className="next-episode-image" 
-        />
+    {/* Overlay Next Episode */}
+    {(() => {
+      const currentIndex = episodes.findIndex(ep => ep.videoPath === videoUrl || ep.link === videoUrl);
+      const nextIndex = currentIndex + 1;
 
-        {/* Título */}
-        <div 
-          className="next-episode-title" 
+      if (nextIndex >= episodes.length) return null;
+
+      const nextEp = episodes[nextIndex];
+
+      return (
+        <div
+          className="next-episode-overlay"
           style={{
-            fontWeight: '500',
-            fontSize: '26px',
-            marginBottom: '3px',
-            paddingLeft: '9em',
-            marginTop: '-5em',
-          }}  
-        >
-          {nextEp.title}
-        </div>
-
-        {/* Descripción */}
-        <div 
-          className="next-episode-description" 
-          style={{
-            fontSize: '19px',
-            color: 'rgb(204, 204, 204)',
-            fontWeight: '300',
-            paddingLeft: '12.4em',
+            display: nextOverlayVisible ? 'block' : 'none',
+            cursor: 'pointer',
           }}
+          onClick={() => playEpisode(nextIndex)}
         >
-          {nextEp.description}
+          {/* Encabezado */}
+          <div className="next-episode-header">Siguiente episodio</div>
+
+          {/* Imagen */}
+          <img src={nextEp.image} alt={nextEp.title} className="next-episode-image" />
+
+          {/* Título */}
+          <div
+            className="next-episode-title"
+            style={{
+              fontWeight: '500',
+              fontSize: '26px',
+              marginBottom: '3px',
+              paddingLeft: '9em',
+              marginTop: '-5em',
+            }}
+          >
+            {nextEp.title}
+          </div>
+
+          {/* Descripción */}
+          <div
+            className="next-episode-description"
+            style={{
+              fontSize: '19px',
+              color: 'rgb(204, 204, 204)',
+              fontWeight: '300',
+              paddingLeft: '12.4em',
+            }}
+          >
+            {nextEp.description}
+          </div>
         </div>
-      </div>
-    );
-  })()}
-</div>
+      );
+    })()}
+  </div>
+)}
 {showEpisodesModal && (
   <div
     className="episodes-modal"

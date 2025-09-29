@@ -1,3 +1,9 @@
+@import url('https://solargentinotv.com.ar/assets/fonts/NetflixSans/NetflixSans.css');
+
+* {
+  font-family: 'Netflix Sans' !important;
+}
+
 .speed-modal {
   position: absolute !important;
   bottom: 130% !important;
