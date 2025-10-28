@@ -198,15 +198,15 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
   const [currentSeason, setCurrentSeason] = useState("1");     // Para controlar la temporada actual  
   const [selectedSeries, setSelectedSeries] = useState("episodiosApp"); // ⚡ variable que puede cambiar según el JSON
   const [showSeasonDropdown, setShowSeasonDropdown] = useState(false); // ⚡ solo mostrar si hay >1 temporada
-  
+
 
   // 🚪➡️ HANDLE MOUSE ENTER EPISODES
   const handleMouseEnterEpisodes = () => {
     clearTimeout(episodesTimeout.current);
-  
+
     // asegurar que el dropdown de temporadas esté cerrado
     setShowSeasonDropdown(false);
-  
+
     // ahora abrimos el modal
     setShowEpisodesModal(true);
   };
@@ -243,23 +243,23 @@ function VideoPlayer({ propVideoUrl, onEpisodeChange = () => {} }) {
       }
       return;
     }
-  
+
     try {
       const parsed = JSON.parse(episodesDataScript.textContent);
       const firstSeries = Object.keys(parsed)[0];
       const seasons = parsed[firstSeries];
-  
+
       setSelectedSeries(firstSeries);
       setEpisodesBySeason(seasons);
       const firstSeason = Object.keys(seasons)[0];
       setCurrentSeason(firstSeason);
       setShowSeasonDropdown(Object.keys(seasons).length > 1);
-  
+
       const firstEpisodes = seasons[firstSeason] || [];
       setEpisodes(firstEpisodes);
-  
+
       if (firstEpisodes.length > 0) playEpisode(0, firstEpisodes);
-  
+
     } catch (e) {
       console.error("Error parsing episodes JSON", e);
       if (propVideoUrl) {
@@ -320,11 +320,11 @@ const playEpisode = (index, list = episodes || []) => {
   const src = ep.videoPath || ep.link || "";
 
   setVideoUrl(src);
-  setVideoType(
-    ep.titleType?.toLowerCase() === "movie" || !ep.seriesName
-      ? "Movie"
-      : "Series"
-  );  
+  setVideoType(ep.titleType || "Series");
+
+
+
+
   setVideoTitle(ep.title || "");
   // episodeNumber puede venir como episodeNumber o number
   setEpisodeNumber(ep.episodeNumber ?? ep.number ?? 1);
@@ -335,7 +335,7 @@ const playEpisode = (index, list = episodes || []) => {
   setShouldHideTimeAndBar(false);
   resetHideTimeout();
 };
-  
+
   // ✅ Setear volumen inicial
   useEffect(() => {
     const video = videoRef.current;
@@ -347,15 +347,15 @@ const playEpisode = (index, list = episodes || []) => {
 
   const episodesRef = useRef(episodes);
   const videoUrlRef = useRef(videoUrl);
-  
+
   // Mantener referencias actualizadas
   useEffect(() => { episodesRef.current = episodes; }, [episodes]);
   useEffect(() => { videoUrlRef.current = videoUrl; }, [videoUrl]);
-  
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-  
+
     const onTimeUpdate = () => setCurrentTime(video.currentTime);
     const onDurationChange = () => setDuration(video.duration);
     const onWaiting = () => setBuffering(true);
@@ -363,33 +363,33 @@ const playEpisode = (index, list = episodes || []) => {
     const onCanPlay = () => setBuffering(false);
     const onEnded = () => {
       setBuffering(false);
-    
+
       // Playlist automático
       const eps = episodesRef.current;
       const current = videoUrlRef.current;
-    
+
       if (eps.length > 0) {
         const currentIndex = eps.findIndex(ep => ep.videoPath === current);
         const nextIndex = currentIndex + 1;
-    
+
         if (nextIndex < eps.length) {
           playEpisode(nextIndex, eps);
         }
       }
     };    
-  
+
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onDurationChange);
-  
+
     video.addEventListener('waiting', onWaiting);
     video.addEventListener('playing', onPlaying);
     video.addEventListener('canplay', onCanPlay);
     video.addEventListener('ended', onEnded);
-  
+
     return () => {
       video.removeEventListener('timeupdate', onTimeUpdate);
       video.removeEventListener('loadedmetadata', onDurationChange);
-  
+
       video.removeEventListener('waiting', onWaiting);
       video.removeEventListener('playing', onPlaying);
       video.removeEventListener('canplay', onCanPlay);
@@ -414,7 +414,7 @@ const playEpisode = (index, list = episodes || []) => {
       // Evitar que actúe cuando el foco está en un input
       const tag = (e.target && e.target.tagName) || '';
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
-  
+
       if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
       } else if (e.code === 'Space') {
@@ -426,7 +426,7 @@ const playEpisode = (index, list = episodes || []) => {
         forward(); // avanza 10s
       }
     };
-  
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []); // 👈 ya no necesita dependencias  
@@ -588,7 +588,7 @@ const playEpisode = (index, list = episodes || []) => {
       onMouseEnter={resetHideTimeout}
     >
       <GlobalStyle />
-      
+
       <div
   ref={containerRef}
   style={{ position: 'relative', width: '100%', height: '100%' }}
@@ -715,7 +715,7 @@ const playEpisode = (index, list = episodes || []) => {
             />
           </div>
         </div>
-  
+
         {/* Controles inferiores (botones y demás) */}
         <div
           style={{
@@ -751,13 +751,13 @@ const playEpisode = (index, list = episodes || []) => {
               style={{ width: 40, height: 40 }}
             />
           </button>
-  
+
           <VolumeControl
             volume={volume}
             onVolumeChange={changeVolume}
             onSliderVisibilityChange={setVolumeSliderVisible}
           />
-  
+
   <div
             className="countdown-current-time"
             style={{
@@ -774,7 +774,7 @@ const playEpisode = (index, list = episodes || []) => {
           >
             {formatTime(duration - currentTime)}
           </div>
-  
+
           {/* Control de velocidad */}
           <div
             style={{ position: 'relative', cursor: 'pointer', width: 24 }}
@@ -795,7 +795,7 @@ const playEpisode = (index, list = episodes || []) => {
   style={{ width: 40, height: 40, marginLeft: '-1.6em' }}
 />
             </button>
-  
+
             {showSpeedModal && (
               <div
                 className="speed-modal"
@@ -825,7 +825,7 @@ const playEpisode = (index, list = episodes || []) => {
                     Velocidad de reproducción
                   </div>
                 </div>
-  
+
                 <div className="speed-options-container" style={{ display: 'flex', gap: '10px' }}>
                   {speeds.map((sp) => (
                     <button
@@ -853,7 +853,7 @@ const playEpisode = (index, list = episodes || []) => {
               </div>
             )}
           </div>
-  
+
 {/* Contenedor relativo para fullscreen y captions */}
 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
   <button onClick={toggleFullscreen} style={iconButtonStyle}>
@@ -1111,5 +1111,3 @@ const playEpisode = (index, list = episodes || []) => {
 </div>
   );
 }
-
-export default VideoPlayer;
