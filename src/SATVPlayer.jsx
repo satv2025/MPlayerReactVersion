@@ -1111,3 +1111,5 @@ const playEpisode = (index, list = episodes || []) => {
 </div>
   );
 }
+
+export default VideoPlayer;
