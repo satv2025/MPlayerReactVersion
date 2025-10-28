@@ -320,7 +320,11 @@ const playEpisode = (index, list = episodes || []) => {
   const src = ep.videoPath || ep.link || "";
 
   setVideoUrl(src);
-  setVideoType(ep.titleType || "Series");
+  setVideoType(
+    ep.titleType?.toLowerCase() === "movie" || !ep.seriesName
+      ? "Movie"
+      : "Series"
+  );  
   setVideoTitle(ep.title || "");
   // episodeNumber puede venir como episodeNumber o number
   setEpisodeNumber(ep.episodeNumber ?? ep.number ?? 1);

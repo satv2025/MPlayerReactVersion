@@ -5,7 +5,7 @@
     "start": "webpack serve --config webpack.embed.config.js --mode development --open",
     "build": "npm run build:embed",
     "build:embed": "webpack --config webpack.embed.config.js --mode production"
-  },  
+  },
   "devDependencies": {
     "@babel/core": "^7.21.0",
     "@babel/preset-env": "^7.21.0",
@@ -15,8 +15,8 @@
     "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.6.3",
     "style-loader": "^3.3.2",
-    "webpack": "^5.80.0",
-    "webpack-cli": "^5.0.2",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.2"
   },
   "dependencies": {
